@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1>Login</h1>
+    <h1>Login Test</h1>
     Email <input type="text" v-model="user.email"> <br>
     Password <input type="password" v-model="user.password"> <br><br>
     <button @click="login">Login</button>
