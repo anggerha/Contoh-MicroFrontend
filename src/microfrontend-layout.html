@@ -20,12 +20,13 @@
     <br />
     <a href="/vue3-app">Vue3 App</a>
   </p> -->
-  <main>
-    <route default>
+  <redirect from="/" to="/login"></redirect>
+  
+    <route path="login">
       <application name="@app/sso-login"></application>
     </route>
-    <route path="homepage">
+    <route default>
       <application name="@app/homepage"></application>
     </route>
-  </main>
+  
 </single-spa-router>
