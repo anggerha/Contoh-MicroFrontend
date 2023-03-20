@@ -8,7 +8,9 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"
 import firebase from 'firebase/app';
 import './main.css'
-import 'flowbite';
+import 'flowbite'
+import ToastPlugin from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-bootstrap.css';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAB2QSI1oTZhXh-xndPusKdwE4jjMjP6JU",
@@ -41,6 +43,7 @@ const vueLifecycles = singleSpaVue({
   handleInstance(app) {
     app.use(router);
     app.use(store);
+    app.use(ToastPlugin);
   },
 });
 

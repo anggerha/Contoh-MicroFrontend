@@ -43,7 +43,11 @@ export default {
                               uid: result.user.uid
                             }))
                             // window.history.replaceState(null, null, '/homepage')
-                            this.$router.replace("/listmenu").then(() => { this.$router.go() })
+                            if(response.data.id_telegram == null || response.data.id_telegram == ''){
+                              this.$router.replace("/formpage").then(() => { this.$router.go() })
+                            } else {
+                              this.$router.replace("/listmenu").then(() => { this.$router.go() })
+                            }
                           } else {
                             this.$router.replace("/login").then(() => { this.$router.go() })
                           }
