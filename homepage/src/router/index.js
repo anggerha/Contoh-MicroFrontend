@@ -15,7 +15,7 @@ const routes = [
     path: '/formpage',
     name: 'FormPage',
     component: () => import('../components/FormPage.vue')
-  }
+  },
 ]
 
 const router = createRouter({
