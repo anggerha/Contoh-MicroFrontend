@@ -27,10 +27,10 @@ export default {
                 async (result) => {
                     if(result.additionalUserInfo.profile.hd){
                       if(result.additionalUserInfo.profile.hd == 'ti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'staff.ukdw.ac.id') {
-                        await axios.get('http://localhost:5000/mahasiswa/me', { params: { email : result.user.email.toString() }})
-                        .then((response) => {
+                        await axios.get('http://localhost:5000/mahasiswa/me', { params: { nama : result.user.displayName.toString().toUpperCase(), email: result.user.email.toString() }})
+                        .then(async (response) => {
                           if(response.status === 200){
-                            sessionStorage.setItem('dataDiri', JSON.stringify(response))
+                            sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
                             sessionStorage.setItem('idToken', result.credential.idToken)
                             sessionStorage.setItem('user', JSON.stringify({
                               displayName: result.user.displayName,
@@ -45,8 +45,27 @@ export default {
                             } else {
                               this.$router.replace("/listmenu").then(() => { this.$router.go() })
                             }
-                          } else {
-                            this.$router.replace("/login").then(() => { })
+                          } else if (response.status === 404) {
+                            await axios.get('http://localhost:5000/dosen/me', { params: { email : result.user.email.toString() }})
+                            .then((response) => {
+                              if(response.status === 200){
+                                sessionStorage.setItem('dataDiri', JSON.stringify(response))
+                                sessionStorage.setItem('idToken', result.credential.idToken)
+                                sessionStorage.setItem('user', JSON.stringify({
+                                  displayName: result.user.displayName,
+                                  profilPicture: result.additionalUserInfo.profile.picture,
+                                  email: result.user.email,
+                                  emailVerified: result.user.emailVerified,
+                                  uid: result.user.uid
+                                }))
+                                // window.history.replaceState(null, null, '/homepage')
+                                if(response.data.id_telegram == null || response.data.id_telegram == ''){
+                                  this.$router.replace("/formpage").then(() => { this.$router.go() })
+                                } else {
+                                  this.$router.replace("/listmenu").then(() => { this.$router.go() })
+                                }
+                              }
+                            })
                           }
                         })
                       } else {

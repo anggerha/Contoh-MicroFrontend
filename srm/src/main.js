@@ -8,6 +8,8 @@ import firebase from 'firebase/app';
 import * as BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import ToastPlugin from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-bootstrap.css';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAB2QSI1oTZhXh-xndPusKdwE4jjMjP6JU",
@@ -23,6 +25,7 @@ firebase.initializeApp(firebaseConfig)
 
 Vue.config.productionTip = false;
 Vue.use(BootstrapVue)
+Vue.use(ToastPlugin)
 
 const vueLifecycles = singleSpaVue({
   Vue,
@@ -38,7 +41,7 @@ const vueLifecycles = singleSpaVue({
           mountParcel: this.mountParcel,
           singleSpa: this.singleSpa,
           */
-        },
+        }
       });
     },
     router,

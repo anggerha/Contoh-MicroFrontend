@@ -6,8 +6,8 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/srm',
-    name: 'SRMPage',
-    component: () => import('../components/SRMPage.vue')
+    name: 'App',
+    component: () => import('../App.vue')
   }
 ]
 
