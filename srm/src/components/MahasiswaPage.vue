@@ -4,6 +4,7 @@
         <h6> Nama: {{ dataDiri.nama }}</h6>
         <h6> Email: {{ dataDiri.email }}</h6>
         <h6> ID Telegram: <b-input v-model="dataDiri.id_telegram"></b-input></h6>
+        <h6> Username Telegram: <b-input v-model="dataDiri.username_telegram"></b-input></h6>
         <b-button @click="updateData">Update</b-button>
         <div class="accordion" role="tablist">
             <b-card no-body class="mb-1">
@@ -62,25 +63,41 @@ export default {
     created() {
         if(sessionStorage.getItem('user') && sessionStorage.getItem('dataDiri')){
             this.user = JSON.parse(sessionStorage.getItem('user'))
-            var temp = JSON.parse(sessionStorage.getItem('dataDiri'))
-            this.dataDiri = temp.data
+            this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
         }
     },
     methods: {
-        async updateData() {
-            if(this.dataDiri.id_telegram !== null && this.dataDiri.id_telegram !== ''){
-                await axios.put(`http://localhost:5000/mahasiswa/update`, this.dataDiri, { params: { nim : this.dataDiri.nim.toString() }})
-                .then(async () => {
-                    this.$toast.open({
-                        message: 'Data berhasil diupdate !',
-                        type: 'success',
-                        position: 'top'
-                    });
-                    await axios.get('http://localhost:5000/mahasiswa/me', { params: { email : this.user.email.toString() }})
-                    .then((response) => {
-                        sessionStorage.setItem('dataDiri', JSON.stringify(response))
+        async updateData(){
+            if(this.dataDiri.id_telegram !== null && this.dataDiri.id_telegram !== '' && this.dataDiri.username_telegram !== null && this.dataDiri.username_telegram !== ''){
+                if(this.dataDiri.role == 'MAHASISWA'){
+                    await axios.put(`http://localhost:5000/mahasiswa/update`, this.dataDiri, { params: { nim : this.dataDiri.nim, email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString(), nama: this.dataDiri.nama }})
+                    .then(async () => {
+                        this.$toast.open({
+                            message: 'Data berhasil diupdate !',
+                            type: 'success',
+                            position: 'top'
+                        });
+                        await axios.get('http://localhost:5000/mahasiswa/me', { params: { nama : this.user.displayName.toString().toUpperCase(), email: this.user.email.toString() }})
+                        .then((response) => {
+                            sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
+                            this.$router.replace("/listmenu").then(() => {})
+                        })
                     })
-                })
+                } else if (this.dataDiri.role == 'DOSEN') {
+                    await axios.put(`http://localhost:5000/dosen/update`, this.dataDiri, { params: { nik : this.dataDiri.nik, email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString(), nama: this.dataDiri.nama }})
+                    .then(async () => {
+                        this.$toast.open({
+                            message: 'Data berhasil diupdate !',
+                            type: 'success',
+                            position: 'top'
+                        });
+                        await axios.get('http://localhost:5000/dosen/me', { params: { nama : this.user.displayName.toString().toUpperCase(), email: this.user.email.toString() }})
+                        .then((response) => {
+                            sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
+                            this.$router.replace("/listmenu").then(() => {})
+                        })
+                    })
+                }
             } else {
                 this.$toast.open({
                     message: 'ID telegram kosong !',
