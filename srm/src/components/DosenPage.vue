@@ -7,25 +7,58 @@
                     <div class="shadow-lg p-3 mb-5 bg-white rounded-4">
                         <p>Buat Pengumuman</p>
                         <div class="form">
-                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                            <div class="button">
-                                <b-button class="send">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-folder-plus" viewBox="0 0 16 16">
-                                        <path d="m.5 3 .04.87a1.99 1.99 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2zm5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19c-.24 0-.47.042-.683.12L1.5 2.98a1 1 0 0 1 1-.98h3.672z"/>
-                                        <path d="M13.5 10a.5.5 0 0 1 .5.5V12h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V13h-1.5a.5.5 0 0 1 0-1H13v-1.5a.5.5 0 0 1 .5-.5z"/>
-                                    </svg>
-                                </b-button>
-                                <b-button class="send">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-send-fill" viewBox="0 0 16 16">
-                                    <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/>
-                                </svg>
-                                </b-button>
+                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="8"></textarea>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <b-form-file v-model="file" ref="file-input" class="mb-2"></b-form-file>
+                            <div style="display: flex; justify-content: flex-end;">
+                                <div class="button">
+                                    <b-button class="delete" @click="file = null">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                        </svg>
+                                        Hapus
+                                    </b-button>
+                                </div>
+                                <div class="button">
+                                    <b-button class="send">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-send-fill" viewBox="0 0 16 16">
+                                            <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/>
+                                        </svg>
+                                        Kirim
+                                    </b-button>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div>
+                        <MahasiswaProfile :item="item" :key="JSON.stringify(item)"/>
+                    </div>
                 </b-col>
-                <b-col sm="4">
-                    <h3>Daftar Mahasiswa Perwalian</h3>
+                <b-col>
+                    <h4 v-if="semester == null">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }}</h4>
+                    <h4 v-if="semester == 1">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }} Semester Ganjil</h4>
+                    <h4 v-if="semester == 2">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }} Semester Genap</h4>
+                    <b-form-select v-model="semester" :options="options" @change="getMahasiswaPerwalian"></b-form-select>
+                    <div class="perwalian">
+                        <b-container v-for="item in daftarPerwalian" :key="item.id" style="margin-bottom: .5rem; padding: 1rem; border: 2px solid #e5e5e5;" class="shadow p-3 rounded listMahasiswa">
+                            <b-row style="align-items:center; margin-left: .2rem">
+                                <b-col cols="8">
+                                    <b-row>{{ item.nim }}</b-row>
+                                    <b-row>{{ item.NAMA_MAHASISWA }}</b-row>
+                                </b-col>
+                                <b-col cols="4">
+                                    <b-button style="margin: .2rem">test</b-button>
+                                    <b-button style="margin: .2rem" @click="sendData(item)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="25" height="25" fill="#32a3df" class="bi bi-send-fill">
+                                            <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
+                                        </svg>
+                                    </b-button>
+                                </b-col>
+                            </b-row>
+                        </b-container>
+                    </div>
                 </b-col>
             </b-row>
         </body>
@@ -33,12 +66,51 @@
 </template>
 
 <script>
+import axios from 'axios'
+import MahasiswaProfile from './MahasiswaProfile.vue'
+
 export default {
     name: 'SRMPage',
+    components: { MahasiswaProfile },
     data() {
       return {
-
+        user: [],
+        dataDiri: [],
+        fields: [ 'NAMA_MAHASISWA', 'nim'],
+        daftarPerwalian: [],
+        item: [],
+        file: null,
+        semester: null,
+        options: [
+            { value: null, text: 'Pilih Semester Gasal atau Genap' },
+            { value: '1', text: 'Gasal' },
+            { value: '2', text: 'Genap' },
+        ]
       }
+    },
+    created(){
+        if(sessionStorage.getItem('user') && sessionStorage.getItem('dataDiri')){
+            this.user = JSON.parse(sessionStorage.getItem('user'))
+            this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
+        }
+        // console.log(parseInt(new Date().getFullYear()-2+'2'));
+    },
+    methods: {
+        async getMahasiswaPerwalian() {
+            await axios.get(`http://localhost:8000/dosen/list-mahasiswa`, { params: {
+                nama_dosen: "Laurentius Kuncoro Probo Saputra",
+                email: this.dataDiri.email,
+                role: this.dataDiri.role,
+                kode_semester: parseInt(new Date().getFullYear()-2+this.semester)
+            } })
+            .then((response) => {
+                this.daftarPerwalian = response.data
+            })
+        },
+        sendData(item) {
+            this.item = item
+            // console.log(this.item);
+        }
     }
 }
 </script>
@@ -52,11 +124,12 @@ export default {
 }
 .judul{
     text-align: left;
-    font-size: 150%;
+    font-size: 250%;
     font-weight: bold;
 }
 p{
     text-align: left;
+    font-size: x-large;
 }
 .form{
     display: flex;
@@ -72,11 +145,25 @@ p{
     color: white;
     background-color: #32a3df;
 }
+.delete{
+    border-style: none;
+    color: #ee1010;
+    margin: 0.25rem;
+    background-color: transparent;
+}
+.delete:hover{
+    color: white;
+    background-color: #ee1010;
+}
+
 span{
     text-align: left;
 }
-h3{
-    font-size:calc(100% + 1vw);
+h4{
+    font-size:calc(80% + 1vw);
     text-align: center;
+}
+.perwalian{
+    margin-top: 1rem;
 }
 </style>

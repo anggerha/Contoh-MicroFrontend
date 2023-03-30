@@ -119,11 +119,12 @@ export default {
 }
 .judul{
     text-align: left;
-    font-size: 150%;
+    font-size: 250%;
     font-weight: bold;
 }
 p{
     text-align: left;
+    font-size: x-large;
 }
 .form{
     display: flex;

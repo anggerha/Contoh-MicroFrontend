@@ -31,7 +31,10 @@ export default {
                       console.log(result.additionalUserInfo.profile.hd);
                       if(result.additionalUserInfo.profile.hd == 'ti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'staff.ukdw.ac.id') {
                         console.log('pengecekan profile hd pass');
-                        await axios.get('http://localhost:5000/login', { params: { nama : result.user.displayName.toString().toUpperCase(), email: result.user.email.toString() }})
+                        await axios.get('http://localhost:5000/login', { params: { 
+                          nama : result.user.displayName.toString().toUpperCase(), 
+                          email: result.user.email.toString() 
+                        }})
                         .then(async (response) => {
                           console.log('get response pass');
                           console.log(response);
