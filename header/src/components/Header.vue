@@ -5,7 +5,7 @@
                 <router-link to="/listmenu" style="text-decoration: none; color: inherit;">
                     <div class="center">
                         <img style="max-width:150px;" src="../assets/fti-ukdw.png" class="d-inline-block align-top" alt="FTI UKDW">
-                        <h1>Informatika</h1>
+                        <h1 id="judulHeader">Informatika</h1>
                     </div>
                 </router-link>
             </b-navbar-brand>
@@ -71,5 +71,11 @@ h1{
 }
 hr{
     border: 2px black solid;
+}
+
+@media (max-width:480px){
+    #judulHeader{
+        visibility: hidden;
+    }
 }
 </style>

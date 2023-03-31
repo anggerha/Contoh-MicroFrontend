@@ -34,7 +34,7 @@
                     </b-card-body>
                 </b-collapse>
             </b-card>
-            <b-card no-body class="mb-1">
+            <!-- <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" class="p-1" role="tab">
                     <b-button block v-b-toggle.accordion-2 variant="info">Perwalian</b-button>
                 </b-card-header>
@@ -43,14 +43,39 @@
                     <b-card-text>{{ text }}</b-card-text>
                     </b-card-body>
                 </b-collapse>
-            </b-card>
+            </b-card> -->
+         
+            <b-row style="margin:1rem;">
+                <h1>Pengumuman</h1>
+            </b-row>
+            <vsa-list class="vsaList">
+                <vsa-item class="vsaItem">
+                    <vsa-heading>
+                        
+                            <h5>Judul</h5> 
+                    
+                            <p>Tanggal</p> 
+                       
+                    </vsa-heading>
+                    <vsa-content>
+                        INI ISI PENGUMUMAN
+                    </vsa-content>
+                </vsa-item>
+            </vsa-list>
         </div>
     </div>
 </template>
 
 <script>
 import axios from 'axios'
-
+import {
+  VsaList,
+  VsaItem,
+  VsaHeading,
+  VsaContent,
+  
+} from 'vue-simple-accordion';
+import 'vue-simple-accordion/dist/vue-simple-accordion.css';
 export default {
     name: 'MahasiswaPage',
     data(){
@@ -59,6 +84,13 @@ export default {
             user: [],
             dataDiri: []
         }
+    },
+    components:{
+        VsaList,
+        VsaItem,
+        VsaHeading,
+        VsaContent,
+       
     },
     created() {
         if(sessionStorage.getItem('user') && sessionStorage.getItem('dataDiri')){
@@ -117,6 +149,20 @@ export default {
         max-width: 1500px;
     }
 }
+.vsa-list{
+    --vsa-max-width: 100%;
+    --vsa-min-width: 300px;
+    --vsa-text-color: rgba(55, 55, 55, 1);
+    --vsa-highlight-color: #32a3df;
+    --vsa-bg-color: rgba(255, 255, 255, 1);
+    --vsa-border-color: rgba(0, 0, 0, 0.2);
+    --vsa-border-width: 1px;
+    --vsa-border-style: solid;
+    --vsa-heading-padding: 0.5rem 0.5rem;
+    --vsa-content-padding: 1rem 1rem;
+    --vsa-default-icon-size: 1;
+    text-align: justify;
+}
 .judul{
     text-align: left;
     font-size: 250%;
@@ -124,7 +170,7 @@ export default {
 }
 p{
     text-align: left;
-    font-size: x-large;
+    font-size: large;
 }
 .form{
     display: flex;
@@ -146,5 +192,8 @@ span{
 h3{
     font-size:calc(100% + 1vw);
     text-align: center;
+}
+hr{
+    border: 2px #32a3df solid;
 }
 </style>
