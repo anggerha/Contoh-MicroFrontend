@@ -1,11 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
-  // {
-  //   path: '/homepage',
-  //   name: 'App',
-  //   component: () => import('../App.vue')
-  // },
   {
     path: '/listmenu',
     name: 'ListMenu',
@@ -16,6 +11,11 @@ const routes = [
     name: 'FormPage',
     component: () => import('../components/FormPage.vue')
   },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('../components/Profile.vue')
+  }
 ]
 
 const router = createRouter({

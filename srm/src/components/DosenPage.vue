@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <b-button>Kembali</b-button>
         <p class="judul">SRM FTI UKDW</p>
         <body class="bv-example-row">
             <b-row>
@@ -108,9 +109,11 @@ export default {
             this.user = JSON.parse(sessionStorage.getItem('user'))
             this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
         }
-        // console.log(parseInt(new Date().getFullYear()-2+'2'));
     },
     methods: {
+        kembali() {
+            this.$router.replace('listMenu')
+        },
         async getMahasiswaPerwalian() {
             await axios.get(`http://localhost:8000/dosen/list-mahasiswa`, { params: {
                 nama_dosen: "Laurentius Kuncoro Probo Saputra",

@@ -2,18 +2,16 @@
     <div class="container">
         <b-navbar class="navbar" type="light" variant="faded">
             <b-navbar-brand>
-                <router-link to="/listmenu" style="text-decoration: none; color: inherit;">
-                    <div class="center">
-                        <img style="max-width:150px;" src="../assets/fti-ukdw.png" class="d-inline-block align-top" alt="FTI UKDW">
-                        <h1 id="judulHeader">Informatika</h1>
-                    </div>
-                </router-link>
+                <div class="center" @click="goHome">
+                    <img style="max-width:150px;" src="../assets/fti-ukdw.png" class="d-inline-block align-top" alt="FTI UKDW">
+                    <h1 id="judulHeader">Informatika</h1>
+                </div>
             </b-navbar-brand>
             <b-dropdown class="ml-auto" variant="link" toggle-class="text-decoration-none" no-caret>
                 <template #button-content>
                     <b-avatar class="avatar" :src="user.profilPicture" size="4rem"></b-avatar>
                 </template>
-                <b-dropdown-item >Profile</b-dropdown-item>
+                <b-dropdown-item @click="goProfile">Profile</b-dropdown-item>
                 <b-dropdown-item @click="signOut">Sign Out</b-dropdown-item>
             </b-dropdown>
         </b-navbar>
@@ -46,6 +44,12 @@ export default {
                 }).catch((err) => {
                     console.log(err);
             });
+        },
+        goProfile() {
+            this.$router.replace('/profile')
+        },
+        goHome() {
+            this.$router.replace('/listMenu').then(() => { this.$router.go() }).catch(()=>{})
         }
     }
 }

@@ -1,11 +1,11 @@
 <template>
     <div class="container">
+        <button class="btn" @click="kembali">Kembali</button>
         <p class="judul">SRM FTI UKDW</p>
         <h6> Nama: {{ dataDiri.nama }}</h6>
         <h6> Email: {{ dataDiri.email }}</h6>
-        <h6> ID Telegram: <b-input v-model="dataDiri.id_telegram"></b-input></h6>
-        <h6> Username Telegram: <b-input v-model="dataDiri.username_telegram"></b-input></h6>
-        <b-button @click="updateData">Update</b-button>
+        <h6> ID Telegram: {{ dataDiri.id_telegram }}</h6>
+        <h6> Username Telegram: {{ dataDiri.username_telegram }}</h6>
         <div class="accordion" role="tablist">
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" class="p-1" role="tab">
@@ -49,16 +49,14 @@
                 <h1>Pengumuman</h1>
             </b-row>
             <vsa-list class="vsaList">
-                <vsa-item class="vsaItem">
-                    <vsa-heading>
-                        
-                            <h5>Judul</h5> 
-                    
-                            <p>Tanggal</p> 
-                       
+                <vsa-item class="vsaItem" v-for="item in pengumuman" :key="item._id">
+                    <vsa-heading class="heading">
+                            <h5 id="judulPengumuman">{{ item.judul }}</h5> 
+                            <h6 id="tanggalPengumuman">{{ item.tanggal }}</h6>
+                            <h6>Pukul {{ new Date(item.tanggal).toLocaleTimeString('id-ID') }}</h6>
                     </vsa-heading>
                     <vsa-content>
-                        INI ISI PENGUMUMAN
+                        {{ item.isi }}
                     </vsa-content>
                 </vsa-item>
             </vsa-list>
@@ -82,7 +80,8 @@ export default {
         return {
             text: 'Pengumuman',
             user: [],
-            dataDiri: []
+            dataDiri: [],
+            pengumuman: []
         }
     },
     components:{
@@ -97,8 +96,12 @@ export default {
             this.user = JSON.parse(sessionStorage.getItem('user'))
             this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
         }
+        this.getPengumuman()
     },
     methods: {
+        kembali() {
+            this.$router.replace('listMenu')
+        },
         async updateData(){
             if(this.dataDiri.id_telegram !== null && this.dataDiri.id_telegram !== '' && this.dataDiri.username_telegram !== null && this.dataDiri.username_telegram !== ''){
                 if(this.dataDiri.role == 'MAHASISWA'){
@@ -137,6 +140,25 @@ export default {
                     position: 'top'
                 });
             }
+        },
+        async getPengumuman() {
+            await axios.get(`http://localhost:8000/mahasiswa/announcements`, { params: {
+                role: 'MAHASISWA',
+                email: this.dataDiri.email,
+                nama_dosen: 'TESTING'
+            }})
+            .then((response) => {
+                this.pengumuman = response.data
+                for(let i = 0; i < this.pengumuman.length; i++){
+                    this.pengumuman[i].tanggal = new Date(this.pengumuman[i].tanggal)
+                    .toLocaleString('id-ID', {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric"
+                    })
+                }   
+            })
         }
     }
 }
@@ -176,6 +198,13 @@ p{
     display: flex;
     text-align: left;
 }
+.btn{
+    display: flex;
+}
+.btn:hover{
+    color: white !important;
+    background-color: #32a3df;
+}
 .button .send{
     border-style: none;
     color: #32a3df;
@@ -195,5 +224,11 @@ h3{
 }
 hr{
     border: 2px #32a3df solid;
+}
+#judulPengumuman{
+    text-align: left;
+}
+h6{
+    text-align: left;
 }
 </style>
