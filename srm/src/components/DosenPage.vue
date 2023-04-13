@@ -7,14 +7,15 @@
                 <b-col sm="8">
                     <div class="shadow-lg p-3 mb-5 bg-white rounded-4">
                         <p>Buat Pengumuman</p>
-                        <div class="form">
-                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="8"></textarea>
-                        </div>
+                      
+                            <!-- <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" v-model="isiPengumuman"></textarea> -->
+                            <VueEditor v-model="isiPengumuman" id=""/>
+                       
                         <div style="margin-top: 1rem;">
                             <b-form-file v-model="file" ref="file-input" class="mb-2"></b-form-file>
                             <div class="button-group">
                                 <div class="button">
-                                    <b-button class="delete" @click="file = null">
+                                    <b-button class="delete" @click="file = null ">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                             <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                                             <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
@@ -23,7 +24,7 @@
                                     </b-button>
                                 </div>
                                 <div class="button">
-                                    <b-button class="send">
+                                    <b-button class="send" @click="kirimTele">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-send-fill" viewBox="0 0 16 16">
                                             <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/>
                                         </svg>
@@ -76,16 +77,17 @@
                 </b-col>
             </b-row>
         </body>
+        {{JSON.stringify(file)}}
     </div>
 </template>
 
 <script>
 import axios from 'axios'
 import MahasiswaProfile from './MahasiswaProfile.vue'
-
+import { VueEditor } from "vue2-editor";
 export default {
     name: 'SRMPage',
-    components: { MahasiswaProfile },
+    components: { MahasiswaProfile,VueEditor },
     data() {
       return {
         user: [],
@@ -99,7 +101,8 @@ export default {
             { value: null, text: 'Pilih Semester Gasal atau Genap' },
             { value: '1', text: 'Gasal' },
             { value: '2', text: 'Genap' },
-        ]
+        ],
+        isiPengumuman:'',
       }
     },
     created(){
@@ -126,6 +129,30 @@ export default {
         sendData(item) {
             this.item = item
             // console.log(this.item);
+        },
+        // hapusPengumuman(){
+        //     file = null
+        //     this.isiPengumuman = ''
+        // },
+        kirimTele(){
+            console.log(this.item);
+            // const files = event.target.files
+            // let filename = files[0].name
+            // const fileReader = new FileReader()
+            // const formData = new FormData()
+            //formData.append('file', this.file)
+            axios.post(`http://localhost:8000/dosen/new-announcement`, {nama_dosen:"Budi Susanto",email:this.dataDiri.email, role:this.dataDiri.role,pengumuman:this.isiPengumuman, file:this.file}).
+            then((response)=>{
+                console.log(response);
+                this.file = null
+                 this.$toast.open({
+                    message: 'Pesan Berhasil Terkirim',
+                    type: 'success',
+                    position: 'top'
+                });
+                this.isiPengumuman = ''
+                
+            })
         }
     }
 }
@@ -196,4 +223,8 @@ h6{
     font-size:calc(10% + 0.5vw);
 
 }
+</style>
+
+<style lang="css">
+    @import "~vue2-editor/dist/vue2-editor.css";
 </style>
