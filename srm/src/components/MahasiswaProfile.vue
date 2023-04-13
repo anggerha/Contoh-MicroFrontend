@@ -5,19 +5,24 @@
                 <b-col>
                     <div class="shadow-lg p-3 mb-5 bg-white rounded-4">
                         <h3>Catatan Perwalian</h3>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-vcard-fill" viewBox="0 0 16 16">
-                            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm9 1.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4a.5.5 0 0 0-.5.5ZM9 8a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4A.5.5 0 0 0 9 8Zm1 2.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 0-1h-3a.5.5 0 0 0-.5.5Zm-1 2C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1 1 0 0 0 2 13h6.96c.026-.163.04-.33.04-.5ZM7 6a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/>
-                        </svg>
-                        <span style="margin-left: 0.5rem;">{{ item.nim }}</span> <br>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
-                            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
-                        </svg>
-                        <span style="margin-left: 0.5rem;">{{ item.NAMA_MAHASISWA }}</span>
+                        <div class="nim">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-vcard-fill" viewBox="0 0 16 16">
+                                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm9 1.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4a.5.5 0 0 0-.5.5ZM9 8a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4A.5.5 0 0 0 9 8Zm1 2.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 0-1h-3a.5.5 0 0 0-.5.5Zm-1 2C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1 1 0 0 0 2 13h6.96c.026-.163.04-.33.04-.5ZM7 6a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/>
+                            </svg>
+                            <span style="margin-left: 0.5rem;">{{ item.nim }}</span>
+                        </div>
+                        <br>
+                        <div class="nama">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                            </svg>
+                            <span style="margin-left: 0.5rem;">{{ item.NAMA_MAHASISWA }}</span>
+                        </div>
                         <div class="form">
                             <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" :value="logMahasiswa.pembahasan"></textarea>
                         </div>
                         <div style="margin-top: 1rem;">
-                            <div style="display: flex; justify-content: flex-end;">
+                            <div>
                                 <div class="button">
                                     <b-button class="send">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-send-fill" viewBox="0 0 16 16">
@@ -90,7 +95,12 @@ export default {
         max-width: 1500px;
     }
 }
+.button {
+    display: flex;
+    justify-content: flex-end;
+}
 .send{
+    display: flex;
     border-style: none;
     color: #32a3df;
     margin: 0.25rem;
@@ -100,5 +110,7 @@ export default {
     color: white;
     background-color: #32a3df;
 }
-
+.nim, .nama{
+    display: flex;
+}
 </style>

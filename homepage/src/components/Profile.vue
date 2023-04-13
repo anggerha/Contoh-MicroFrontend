@@ -8,10 +8,10 @@
                 <tr class="avatar">
                     <img class="avatar" :src="user.profilPicture" alt="Profile Picture">
                 </tr>
-                <div v-if="dataDiri.nim" class="mb-6">
+                <div v-if="dataDiri.nik" class="mb-6">
                     <label for="nama" class="block mb-2 text-lg text-center font-medium text-gray-900 dark:text-white">{{ dataDiri.nik }}</label>
                 </div>
-                <div v-if="dataDiri.nik" class="mb-6">
+                <div v-if="dataDiri.nim" class="mb-6">
                     <label for="nama" class="block mb-2 text-lg text-center font-medium text-gray-900 dark:text-white">{{ dataDiri.nim }}</label>
                 </div>
                 <div class="mb-6" v-if="dataDiri.nama">

@@ -4,8 +4,7 @@ import singleSpaVue from 'single-spa-vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap"
+import 'bootstrap/dist/css/bootstrap.css'
 import firebase from 'firebase/app';
 import './main.css'
 import 'flowbite'
