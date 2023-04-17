@@ -159,7 +159,7 @@ export default {
             // const fileReader = new FileReader()
             // const formData = new FormData()
             //formData.append('file', this.file)
-            axios.post(`http://localhost:8000/dosen/new-announcement`, {nama_dosen:"Budi Susanto",email:this.dataDiri.email, role:this.dataDiri.role,pengumuman:this.isiPengumuman, file:this.file}).
+            axios.post(`http://localhost:8000/dosen/channel-announcement`, {nama_dosen:"Testing Channel",email:this.dataDiri.email, role:this.dataDiri.role,pengumuman:this.isiPengumuman, file:null}).
             then((response)=>{
                 console.log(response);
                 this.file = null
