@@ -83,6 +83,8 @@
 
 <script>
 import axios from 'axios'
+import firebase from 'firebase/app'
+import 'firebase/storage'
 import MahasiswaProfile from './MahasiswaProfile.vue'
 import { VueEditor } from "vue2-editor";
 export default {
@@ -96,6 +98,8 @@ export default {
         daftarPerwalian: [],
         item: [],
         file: null,
+        gambar:null,
+        imageData: null,
         semester: null,
         options: [
             { value: null, text: 'Pilih Semester Gasal atau Genap' },
@@ -134,6 +138,20 @@ export default {
         //     file = null
         //     this.isiPengumuman = ''
         // },
+        previewImage(event) {
+            
+            this.gambar=null;
+            this.imageData=event.target.files[0];
+            this.onUpload()
+        },
+        onUpload(){
+            this.gambar = null
+            const storageRef = firebase.storage().ref(`${this.imageData.name}`).put(this.imageData)
+            storageRef.on(`state_changed`, error => {console.log(error.message)},storageRef.snapshot.ref.getDownloadURL().then((url)=>{
+                this.gambar = url
+                console.log(url);
+            }))
+        },
         kirimTele(){
             console.log(this.item);
             // const files = event.target.files
@@ -141,6 +159,7 @@ export default {
             // const fileReader = new FileReader()
             // const formData = new FormData()
             //formData.append('file', this.file)
+           this.previewImage()
             axios.post(`http://localhost:8000/dosen/new-announcement`, {nama_dosen:"Budi Susanto",email:this.dataDiri.email, role:this.dataDiri.role,pengumuman:this.isiPengumuman, file:this.file}).
             then((response)=>{
                 console.log(response);
