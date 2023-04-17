@@ -9,7 +9,7 @@
                         <p>Buat Pengumuman</p>
                       
                             <!-- <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" v-model="isiPengumuman"></textarea> -->
-                            <VueEditor v-model="isiPengumuman" id=""/>
+                            <VueTrix v-model="isiPengumuman" id=""/>
                        
                         <div style="margin-top: 1rem;">
                             <b-form-file v-model="file" ref="file-input" class="mb-2"></b-form-file>
@@ -86,10 +86,10 @@ import axios from 'axios'
 import firebase from 'firebase/app'
 import 'firebase/storage'
 import MahasiswaProfile from './MahasiswaProfile.vue'
-import { VueEditor } from "vue2-editor";
+import VueTrix from 'vue-trix'
 export default {
     name: 'SRMPage',
-    components: { MahasiswaProfile,VueEditor },
+    components: { MahasiswaProfile,VueTrix },
     data() {
       return {
         user: [],
@@ -159,7 +159,6 @@ export default {
             // const fileReader = new FileReader()
             // const formData = new FormData()
             //formData.append('file', this.file)
-           this.previewImage()
             axios.post(`http://localhost:8000/dosen/new-announcement`, {nama_dosen:"Budi Susanto",email:this.dataDiri.email, role:this.dataDiri.role,pengumuman:this.isiPengumuman, file:this.file}).
             then((response)=>{
                 console.log(response);
