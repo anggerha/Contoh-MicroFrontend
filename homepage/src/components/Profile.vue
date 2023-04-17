@@ -22,13 +22,24 @@
                     <label for="email" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Email</label>
                     <input :value="dataDiri.email" type="text" id="email" class="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled required>
                 </div>
-                <div class="mb-6" v-if="dataDiri.id_telegram">
-                    <label for="Id Telegram" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Id Telegram</label>
-                    <input :value="dataDiri.id_telegram" type="text" id="id_telegram" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
-                </div>
                 <div class="mb-6" v-if="dataDiri.username_telegram">
                     <label for="Id Telegram" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Username Telegram</label>
                     <input :value="dataDiri.username_telegram" type="text" id="username_telegram" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                </div>
+                <div class="mb-6" v-if="dataDiri.id_telegram">
+                    <label for="Id Telegram" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Chat ID Telegram</label>
+                    <div style="margin-bottom: 1rem; background-color: lightgray; padding: 1rem; border-radius: 10px">
+                        <p>Cara mendapatkan Chat ID Telegram anda:</p>
+                        <ol style="list-style-type: number; margin-left: 2rem">
+                            <li>Buka <a href="https://t.me/RawDataBot">@RawDataBot</a> di Telegram,</li>
+                            <li>Kirim pesan "/start",</li>
+                            <li>Cari Chat ID anda pada respon yang dikembalikan,</li>
+                            <li>Masukkan Chat ID Telegram anda pada input field dibawah.</li>
+                        </ol>
+                        <p>Lokasi Chat ID:</p>
+                        <img src="../assets/locationChatId.png" alt="">
+                    </div>
+                    <input :value="dataDiri.id_telegram" type="text" id="id_telegram" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                 </div>
             </div>
             <tr>

@@ -9,13 +9,12 @@
                         <p>Buat Pengumuman</p>
                       
                             <!-- <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" v-model="isiPengumuman"></textarea> -->
-                            <VueTrix v-model="isiPengumuman" id=""/>
-                       
+                            <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman" id=""/>
+
                         <div style="margin-top: 1rem;">
-                            <b-form-file v-model="file" ref="file-input" class="mb-2"></b-form-file>
                             <div class="button-group">
                                 <div class="button">
-                                    <b-button class="delete" @click="file = null ">
+                                    <b-button class="delete" @click="hapusPengumuman">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                             <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                                             <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
@@ -77,7 +76,6 @@
                 </b-col>
             </b-row>
         </body>
-        {{JSON.stringify(file)}}
     </div>
 </template>
 
@@ -97,8 +95,7 @@ export default {
         fields: [ 'NAMA_MAHASISWA', 'nim'],
         daftarPerwalian: [],
         item: [],
-        file: null,
-        gambar:null,
+        gambar: null,
         imageData: null,
         semester: null,
         options: [
@@ -134,43 +131,34 @@ export default {
             this.item = item
             // console.log(this.item);
         },
-        // hapusPengumuman(){
-        //     file = null
-        //     this.isiPengumuman = ''
-        // },
-        previewImage(event) {
-            
-            this.gambar=null;
-            this.imageData=event.target.files[0];
-            this.onUpload()
+        hapusPengumuman(){
+            this.isiPengumuman = ''
         },
-        onUpload(){
-            this.gambar = null
-            const storageRef = firebase.storage().ref(`${this.imageData.name}`).put(this.imageData)
-            storageRef.on(`state_changed`, error => {console.log(error.message)},storageRef.snapshot.ref.getDownloadURL().then((url)=>{
-                this.gambar = url
-                console.log(url);
-            }))
-        },
-        kirimTele(){
-            console.log(this.item);
-            // const files = event.target.files
-            // let filename = files[0].name
-            // const fileReader = new FileReader()
-            // const formData = new FormData()
-            //formData.append('file', this.file)
-            axios.post(`http://localhost:8000/dosen/channel-announcement`, {nama_dosen:"Testing Channel",email:this.dataDiri.email, role:this.dataDiri.role,pengumuman:this.isiPengumuman, file:null}).
-            then((response)=>{
-                console.log(response);
-                this.file = null
-                 this.$toast.open({
+        async kirimTele(){
+            await axios.post(`http://localhost:8000/dosen/channel-announcement`, {nama_dosen:"Testing Channel",email:this.dataDiri.email, role:this.dataDiri.role,pengumuman:this.isiPengumuman, file:this.gambar}).
+            then(()=>{
+                // console.log(response)
+                this.$toast.open({
                     message: 'Pesan Berhasil Terkirim',
                     type: 'success',
                     position: 'top'
                 });
                 this.isiPengumuman = ''
-                
             })
+        },
+        handleAttachmentChanges(event) {
+            var file = event.attachment
+            console.log(event)
+            const storageRef = firebase.storage().ref(`${file.file.name}`).put(file.file)
+            storageRef.on("state_changed", snapshot => {
+                this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
+            }, error => {console.log(error.message)},
+                () => {this.uploadValue=100;
+                    storageRef.snapshot.ref.getDownloadURL().then((url)=>{
+                        this.gambar = url
+                    })
+                }
+            )
         }
     }
 }
