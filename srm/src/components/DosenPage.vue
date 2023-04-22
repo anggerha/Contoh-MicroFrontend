@@ -14,7 +14,7 @@
                         <p>Buat Pengumuman</p>
                       
                             <!-- <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" v-model="isiPengumuman"></textarea> -->
-                            <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman" id=""/>
+                            <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman"/>
 
                         <div style="margin-top: 1rem;">
                             <div class="button-group">
@@ -38,8 +38,11 @@
                             </div>
                         </div>
                     </div>
-                    <div>
-                        <MahasiswaProfile :item="item" :key="JSON.stringify(item)"/>
+                    <div v-if="isRemoveCatatan == false">
+                        <CatatanMahasiswa :itemMahasiswa="itemMahasiswa" :key="JSON.stringify(itemMahasiswa)" @clicked=onClickChildCatatan />
+                    </div>
+                    <div v-if="isRemoveProfile == false">
+                        <MahasiswaProfile :item="item" :key="JSON.stringify(item)" @clicked=onClickChildProfile />
                     </div>
                 </b-col>
                 <b-col>
@@ -58,7 +61,7 @@
                                 <div class="button-group justify-content-center">
                                     <div class="button">
                                         <a href="#catatanPerwalian">
-                                            <b-button style="margin: .2rem; border: 1px solid #32a3df;" @click="sendData(item)" class="send">
+                                            <b-button style="margin: .2rem; border: 1px solid #32a3df;" @click="sendDataProfile(item)" class="send">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" fill="currentColor" class="bi bi-file-earmark-plus" viewBox="0 0 16 16">
                                                     <path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5z"/>
                                                     <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
@@ -68,12 +71,14 @@
                                         </a>
                                     </div>
                                     <div class="button">
-                                        <b-button style="margin: .2rem; border: 1px solid #32a3df;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send">
+                                        <a href="#catatanMahasiswa">
+                                        <b-button @click="sendDataCatatan(item)" style="margin: .2rem; border: 1px solid #32a3df;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
                                                 <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
                                             </svg>
                                                 Lihat Catatan
                                         </b-button>
+                                        </a>
                                     </div>
                                 </div>
                         </b-container>
@@ -81,7 +86,7 @@
                 </b-col>
             </b-row>
         </body>
-    </div>
+    </div>     
 </template>
 
 <script>
@@ -90,16 +95,20 @@ import firebase from 'firebase/app'
 import 'firebase/storage'
 import MahasiswaProfile from './MahasiswaProfile.vue'
 import VueTrix from 'vue-trix'
+import CatatanMahasiswa from './CatatanMahasiswa.vue'
 export default {
     name: 'SRMPage',
-    components: { MahasiswaProfile,VueTrix },
+    components: { MahasiswaProfile,VueTrix, CatatanMahasiswa },
     data() {
       return {
         user: [],
+        isRemoveCatatan: false,
+        isRemoveProfile: false,
         dataDiri: [],
         fields: [ 'NAMA_MAHASISWA', 'nim'],
         daftarPerwalian: [],
         item: [],
+        itemMahasiswa: [],
         gambar: null,
         imageData: null,
         semester: null,
@@ -112,14 +121,28 @@ export default {
       }
     },
     created(){
+        //this.hapusTool();
         if(sessionStorage.getItem('user') && sessionStorage.getItem('dataDiri')){
             this.user = JSON.parse(sessionStorage.getItem('user'))
             this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
+            
         }
+       
+    },
+    mounted() {
+        this.hapusTool()
     },
     methods: {
         kembali() {
             this.$router.replace('listMenu')
+        },
+        onClickChildCatatan(value){
+            console.log(value);
+            this.isRemoveCatatan = value
+        },
+        onClickChildProfile(value){
+            console.log(value);
+            this.isRemoveProfile = value
         },
         async getMahasiswaPerwalian() {
             await axios.get(`http://localhost:8000/dosen/list-mahasiswa`, { params: {
@@ -130,11 +153,22 @@ export default {
             } })
             .then((response) => {
                 this.daftarPerwalian = response.data
+              
             })
         },
-        sendData(item) {
+        sendDataProfile(item) {
             this.item = item
+            this.isRemoveProfile = false
             // console.log(this.item);
+        },
+        sendDataCatatan(itemMahasiswa) {
+            this.itemMahasiswa = itemMahasiswa
+            this.isRemoveCatatan = false
+            //console.log(this.itemMahasiswa);
+        },
+         hapusTool(){
+            const del = document.querySelector(".trix-button-group--block-tools");
+            del.style.display = 'none'
         },
         hapusPengumuman(){
             this.isiPengumuman = ''
@@ -246,13 +280,8 @@ h6{
     font-size:calc(10% + 0.5vw);
 
 }
-.trix-content img{
-    max-width: 25%;
-    height: auto;
-    margin: auto;
-}
-progress.attachment__progress{
-    display: none !important;
+span#hapus{
+    display: none;
 }
 </style>
 
