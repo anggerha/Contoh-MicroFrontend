@@ -11,14 +11,16 @@
         <h6> Email: {{ dataDiri.email }}</h6>
         <h6> ID Telegram: {{ dataDiri.id_telegram }}</h6>
         <h6> Username Telegram: {{ dataDiri.username_telegram }}</h6>
+        <h6> Dosen Wali: {{ dataPerwalian.nama_dosen}}</h6>
+        
         <div class="accordion" role="tablist">
-            <b-card no-body class="mb-1">
+            <!-- <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" class="p-1" role="tab">
                     <b-button block v-b-toggle.accordion-1 variant="info">Matakuliah</b-button>
                 </b-card-header>
                 <b-collapse id="accordion-1" accordion="my-accordion" role="tabpanel">
                     <b-card-body>
-                        <!-- inner accordion -->
+                        inner accordion
                         <b-card>
                             <b-card-header header-tag="header" class="p-1" role="tab">
                                 <b-button block v-b-toggle.collapse-1-inner variant="info">Pemrograman Web Lanjut</b-button>
@@ -34,12 +36,12 @@
                             <b-collapse id="collapse-2-inner" class="mt-2">
                                 <b-card>Hello!</b-card>
                             </b-collapse>
-                        </b-card>
+                        </b-card> -->
                         <!-- end of inner accordion -->
-                    </b-card-body>
+                    <!-- </b-card-body>
                 </b-collapse>
-            </b-card>
-            <!-- <b-card no-body class="mb-1">
+            </b-card> 
+             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" class="p-1" role="tab">
                     <b-button block v-b-toggle.accordion-2 variant="info">Perwalian</b-button>
                 </b-card-header>
@@ -56,15 +58,34 @@
             <vsa-list class="vsaList">
                 <vsa-item class="vsaItem" v-for="item in pengumuman" :key="item._id">
                     <vsa-heading class="heading">
-                            <h5 id="judulPengumuman">{{ item.judul }}</h5> 
-                            <h6 id="tanggalPengumuman">{{ item.tanggal }}</h6>
-                            <h6>Pukul {{ new Date(item.tanggal).toLocaleTimeString('id-ID') }}</h6>
+                            <b-row>
+                                <b-col> <h5 id="judulPengumuman">{{ item.judul }}</h5></b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col>
+                                    <h6 id="tanggalPengumuman">{{ item.tanggal }}  WIB</h6>
+                                </b-col>
+                                
+                            </b-row> 
                     </vsa-heading>
-                    <vsa-content>
-                        {{ item.isi }}
+                    <vsa-content >
+                        <span v-html="item.pengumuman"></span>
+                        <div v-if="item.file != null">
+                           <span><a :href="item.file" target="_blank">Download File Disini</a></span>
+                          
+                        </div>
+                     
+                           
+                        
                     </vsa-content>
                 </vsa-item>
             </vsa-list>
+            <b-row style="margin:1rem;">
+                <h4>Catatan Perwalian saya</h4>
+            </b-row>
+            <b-row style="margin:1rem;">
+                <div style="margin:auto; color:grey;" v-if="perwalianEror != ''"><h5>{{this.perwalianEror}}</h5></div>
+            </b-row>
         </div>
     </div>
 </template>
@@ -86,7 +107,10 @@ export default {
             text: 'Pengumuman',
             user: [],
             dataDiri: [],
-            pengumuman: []
+            pengumuman: [],
+            pengumumanPerwalian:[],
+            dataPerwalian:[],
+            perwalianEror: '',
         }
     },
     components:{
@@ -102,6 +126,8 @@ export default {
             this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
         }
         this.getPengumuman()
+        this.getPengumumanPerwalian()
+        this.getDataPerwalian()
     },
     methods: {
         kembali() {
@@ -150,20 +176,58 @@ export default {
             await axios.get(`http://localhost:8000/mahasiswa/announcements`, { params: {
                 role: 'MAHASISWA',
                 email: this.dataDiri.email,
-                nama_dosen: 'TESTING'
+                nama_dosen: 'Testing Channel'
             }})
             .then((response) => {
                 this.pengumuman = response.data
                 for(let i = 0; i < this.pengumuman.length; i++){
-                    this.pengumuman[i].tanggal = new Date(this.pengumuman[i].tanggal)
-                    .toLocaleString('id-ID', {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric"
-                    })
-                }   
+                    this.pengumuman[i].tanggal = this.pengumuman[i].tanggal.replaceAll('.',':')
+                    
+                }
+                
             })
+        },
+        async getPengumumanPerwalian() {
+            try {
+                await axios.get(`http://localhost:8000/mahasiswa/logs`, { params: {
+                role: 'MAHASISWA',
+                email: this.dataDiri.email,
+                nama_dosen: 'TESTING'
+                }})
+                .then((response) => {
+                    
+                    this.pengumumanPerwalian = response.data
+                    console.log(this.pengumumanPerwalian);
+                    for(let i = 0; i < this.pengumuman.length; i++){
+                        this.pengumuman[i].tanggal = new Date(this.pengumuman[i].tanggal)
+                        .toLocaleString('id-ID', {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric"
+                        })
+                    }   
+                })
+            } catch (error) {
+                console.log(error.response.data.message);
+                this.perwalianEror = error.response.data.message
+            }
+            
+        },
+        async getDataPerwalian(){
+            try {
+                await axios.get(`http://localhost:8000/mahasiswa/perwalian`,  {params:{
+                    role:'MAHASISWA',
+                    email: this.dataDiri.email,
+                    nim: this.dataDiri.nim,
+                    nama_mahasiswa: this.dataDiri.nama
+                }}).then((response)=>{
+                    this.dataPerwalian = response.data
+                    console.log(this.dataPerwalian);
+                })
+            } catch (error) {
+                console.log(error.response.data.message);
+            }
         }
     }
 }
@@ -191,9 +255,10 @@ export default {
     text-align: justify;
 }
 .judul{
-    text-align: left;
+
     font-size: 250%;
     font-weight: bold;
+    text-align: center;
 }
 p{
     text-align: left;

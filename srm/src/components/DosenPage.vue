@@ -12,7 +12,8 @@
                 <b-col sm="8">
                     <div class="shadow-lg p-3 mb-5 bg-white rounded-4">
                         <p>Buat Pengumuman</p>
-                      
+
+                            <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman"></b-input>
                             <!-- <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" v-model="isiPengumuman"></textarea> -->
                             <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman"/>
 
@@ -109,6 +110,7 @@ export default {
         daftarPerwalian: [],
         item: [],
         itemMahasiswa: [],
+        files: [],
         gambar: null,
         imageData: null,
         semester: null,
@@ -118,6 +120,7 @@ export default {
             { value: '2', text: 'Genap' },
         ],
         isiPengumuman:'',
+        judulPengumuman:''
       }
     },
     created(){
@@ -174,7 +177,7 @@ export default {
             this.isiPengumuman = ''
         },
         async kirimTele(){
-            await axios.post(`http://localhost:8000/dosen/channel-announcement`, {nama_dosen:"Testing Channel",email:this.dataDiri.email, role:this.dataDiri.role,pengumuman:this.isiPengumuman, file:this.gambar}).
+            await axios.post(`http://localhost:8000/dosen/channel-announcement`, {nama_dosen:"Testing Channel",email:this.dataDiri.email, role:this.dataDiri.role,pengumuman:this.isiPengumuman, file:this.gambar, judul:this.judulPengumuman}).
             then(()=>{
                 // console.log(response)
                 this.$toast.open({
@@ -183,12 +186,11 @@ export default {
                     position: 'top'
                 });
                 this.isiPengumuman = ''
+                this.judulPengumuman = ''
             })
         },
         handleAttachmentChanges(event) {
             var file = event.attachment
-            console.log(event)
-           
             const storageRef = firebase.storage().ref(`${file.file.name}`).put(file.file)
             storageRef.on("state_changed", snapshot => {
                 this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
