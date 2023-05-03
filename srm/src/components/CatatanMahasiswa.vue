@@ -112,6 +112,7 @@ export default {
                 await axios.get(`http://localhost:8000/dosen/log-mahasiswa`, { params: {
                     email: this.dataDiri.email,
                     role: 'DOSEN',
+                    
                     nama_mahasiswa: this.itemMahasiswa.NAMA_MAHASISWA.toUpperCase(),
                     nim: this.itemMahasiswa.nim
                 }})

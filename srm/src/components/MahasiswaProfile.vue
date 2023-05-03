@@ -107,12 +107,14 @@ export default {
         //     }
         // },
         async kirimPersonal(){
-            await axios.post(`http://localhost:8000/dosen/personal-announcement`, {
+            await axios.post(`http://localhost:8000/dosen/log-mahasiswa`, {
                 nama_dosen: this.dataDiri.nama,
                 nama_mahasiswa: this.dataPerwalian.NAMA_MAHASISWA,
                 email: this.dataDiri.email,
+                kode_semester: this.dataPerwalian.KODE_SEMESTER,
+                nim: this.dataPerwalian.nim,
                 role: this.dataDiri.role,
-                pengumuman: this.isiPengumuman,
+                pembahasan: this.isiPengumuman,
                 judul: this.judulPengumuman,
                 file: ''
             })

@@ -149,7 +149,7 @@ export default {
         },
         async getMahasiswaPerwalian() {
             await axios.get(`http://localhost:8000/dosen/list-mahasiswa`, { params: {
-                nama_dosen: "Maria Nila Anggia Rini",
+                nama_dosen: "Laurentius Kuncoro Probo Saputra",
                 email: this.dataDiri.email,
                 role: this.dataDiri.role,
                 kode_semester: parseInt(new Date().getFullYear()-2+this.semester)
@@ -176,7 +176,7 @@ export default {
             this.isiPengumuman = ''
         },
         async kirimTele(){
-            await axios.post(`http://localhost:8000/dosen/channel-announcement`, {
+            await axios.post(`http://localhost:8000/dosen/announcement`, {
                 nama_dosen: "Testing Channel",
                 email: this.dataDiri.email,
                 role: this.dataDiri.role,

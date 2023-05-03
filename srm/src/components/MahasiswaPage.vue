@@ -9,8 +9,8 @@
         <p class="judul">SRM FTI UKDW</p>
         <h6> Nama: {{ dataDiri.nama }}</h6>
         <h6> Email: {{ dataDiri.email }}</h6>
-        <h6> ID Telegram: {{ dataDiri.id_telegram }}</h6>
-        <h6> Username Telegram: {{ dataDiri.username_telegram }}</h6>
+        <!-- <h6> ID Telegram: {{ dataDiri.id_telegram }}</h6>
+        <h6> Username Telegram: {{ dataDiri.username_telegram }}</h6> -->
         <h6> Dosen Wali: {{ dataPerwalian.nama_dosen}}</h6>
         
         <div class="accordion" role="tablist">
@@ -85,6 +85,13 @@
             </b-row>
             <b-row style="margin:1rem;">
                 <div style="margin:auto; color:grey;" v-if="perwalianEror != ''"><h5>{{this.perwalianEror}}</h5></div>
+                <div style="margin:auto; color:grey;" v-if="perwalianEror == ''">
+                    <b-card-group deck>
+                        <b-card v-for="item in pengumumanPerwalian" :key="item._id" :header="item.tanggal_perwalian">
+                            <b-card-text>{{item.pembahasan}}</b-card-text>
+                        </b-card>
+                    </b-card-group>
+                </div>
             </b-row>
         </div>
     </div>
@@ -125,9 +132,10 @@ export default {
             this.user = JSON.parse(sessionStorage.getItem('user'))
             this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
         }
+        this.getDataPerwalian()
         this.getPengumuman()
         this.getPengumumanPerwalian()
-        this.getDataPerwalian()
+       
     },
     methods: {
         kembali() {
@@ -189,17 +197,19 @@ export default {
         },
         async getPengumumanPerwalian() {
             try {
+              
                 await axios.get(`http://localhost:8000/mahasiswa/logs`, { params: {
                 role: 'MAHASISWA',
                 email: this.dataDiri.email,
-                nama_dosen: 'TESTING'
+                nim: this.dataDiri.nim,
+               
                 }})
                 .then((response) => {
                     
                     this.pengumumanPerwalian = response.data
                     console.log(this.pengumumanPerwalian);
-                    for(let i = 0; i < this.pengumuman.length; i++){
-                        this.pengumuman[i].tanggal = new Date(this.pengumuman[i].tanggal)
+                    for(let i = 0; i < this.pengumumanPerwalian.length; i++){
+                        this.pengumumanPerwalian[i].tanggal = new Date(this.pengumumanPerwalian[i].tanggal)
                         .toLocaleString('id-ID', {
                             weekday: "long",
                             year: "numeric",
