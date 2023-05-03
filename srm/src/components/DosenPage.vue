@@ -149,14 +149,13 @@ export default {
         },
         async getMahasiswaPerwalian() {
             await axios.get(`http://localhost:8000/dosen/list-mahasiswa`, { params: {
-                nama_dosen: "Laurentius Kuncoro Probo Saputra",
+                nama_dosen: "Maria Nila Anggia Rini",
                 email: this.dataDiri.email,
                 role: this.dataDiri.role,
                 kode_semester: parseInt(new Date().getFullYear()-2+this.semester)
             } })
             .then((response) => {
                 this.daftarPerwalian = response.data
-              
             })
         },
         sendDataProfile(item) {
@@ -177,8 +176,15 @@ export default {
             this.isiPengumuman = ''
         },
         async kirimTele(){
-            await axios.post(`http://localhost:8000/dosen/channel-announcement`, {nama_dosen:"Testing Channel",email:this.dataDiri.email, role:this.dataDiri.role,pengumuman:this.isiPengumuman, file:this.gambar, judul:this.judulPengumuman}).
-            then(()=>{
+            await axios.post(`http://localhost:8000/dosen/channel-announcement`, {
+                nama_dosen: "Testing Channel",
+                email: this.dataDiri.email,
+                role: this.dataDiri.role,
+                pengumuman: this.isiPengumuman,
+                file: this.gambar,
+                judul: this.judulPengumuman
+            })
+            .then(()=>{
                 // console.log(response)
                 this.$toast.open({
                     message: 'Pesan Berhasil Terkirim',

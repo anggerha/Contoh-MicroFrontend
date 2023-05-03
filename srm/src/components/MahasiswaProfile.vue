@@ -36,12 +36,13 @@
                             <span style="margin-left: 0.5rem;">{{ item.NAMA_MAHASISWA }}</span>
                         </div>
                         <div class="form">
-                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" :value="logMahasiswa.pembahasan"></textarea>
+                            <b-input type="text" placeholder="Judul" style="margin-bottom: 1rem; margin-top: 1rem" v-model="judulPengumuman"></b-input>
+                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" v-model="isiPengumuman"></textarea>
                         </div>
                         <div style="margin-top: 1rem;">
                             <div>
                                 <div class="button">
-                                    <b-button class="send">
+                                    <b-button class="send" @click="kirimPersonal">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-send-fill" viewBox="0 0 16 16">
                                             <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/>
                                         </svg>
@@ -50,7 +51,6 @@
                                 </div>
                             </div>
                         </div>
-                        
                     </div>
                 </b-col>
             </b-row>
@@ -66,14 +66,17 @@ export default {
     props: ['item'],
     data() {
         return {
-            dataMahasiswa: [],
-            logMahasiswa: [],
-            dataDiri: []
+            dataPerwalian: [],
+            user: [],
+            dataDiri: [],
+            judulPengumuman: '',
+            isiPengumuman: ''
         }
     },
     created(){
-        this.dataMahasiswa = this.item
-        this.dataDiri = JSON.parse(sessionStorage.getItem('user'))
+        this.dataPerwalian = this.item
+        this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
+        this.user = JSON.parse(sessionStorage.getItem('user'))
     },
     watch: {
         // eslint-disable-next-line no-unused-vars
@@ -83,24 +86,46 @@ export default {
         }
     },
     methods: {
-        async getLogMahasiswa() {
-            try {
-                await axios.get(`http://localhost:8000/dosen/log-mahasiswa`, { params: {
-                    email: this.dataDiri.email,
-                    role: 'DOSEN',
-                    nama_mahasiswa: this.item.NAMA_MAHASISWA.toUpperCase(),
-                    nim: this.item.nim
-                }})
-                .then((response) => {
-                    this.logMahasiswa = response.data[0]
-                })
-            } catch (error) {
+        // async getLogMahasiswa() {
+        //     try {
+        //         await axios.get(`http://localhost:8000/dosen/log-mahasiswa`, { params: {
+        //             email: this.dataDiri.email,
+        //             role: 'DOSEN',
+        //             nama_mahasiswa: this.item.NAMA_MAHASISWA.toUpperCase(),
+        //             nim: this.item.nim
+        //         }})
+        //         .then((response) => {
+        //             console.log(response);
+        //             this.logMahasiswa = response.data[0]
+        //         })
+        //     } catch (error) {
+        //         this.$toast.open({
+        //             message: error.response.data.message,
+        //             type: 'warning',
+        //             position: 'top'
+        //         });
+        //     }
+        // },
+        async kirimPersonal(){
+            await axios.post(`http://localhost:8000/dosen/personal-announcement`, {
+                nama_dosen: this.dataDiri.nama,
+                nama_mahasiswa: this.dataPerwalian.NAMA_MAHASISWA,
+                email: this.dataDiri.email,
+                role: this.dataDiri.role,
+                pengumuman: this.isiPengumuman,
+                judul: this.judulPengumuman,
+                file: ''
+            })
+            .then((response) => {
+                console.log(response);
                 this.$toast.open({
-                    message: error.response.data.message,
-                    type: 'warning',
+                    message: 'Pesan Berhasil Terkirim',
+                    type: 'success',
                     position: 'top'
                 });
-            }
+                this.isiPengumuman = ''
+                this.judulPengumuman = ''
+            })
         },
         hapusKomponen(){
             this.$emit('clicked',true)
