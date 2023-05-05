@@ -27,7 +27,7 @@ export default {
                 async (result) => {
                     if(result.additionalUserInfo.profile.hd){
                       if(result.additionalUserInfo.profile.hd == 'ti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'staff.ukdw.ac.id') {
-                        await axios.get('http://localhost:5000/login', { params: { 
+                        await axios.get('http://localhost:10000/login', { params: { 
                           nama : result.user.displayName.toString().toUpperCase(), 
                           email: result.user.email.toString() 
                         }})
