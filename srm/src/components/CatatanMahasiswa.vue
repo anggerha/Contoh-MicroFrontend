@@ -109,7 +109,7 @@ export default {
     methods: {
         async getLogMahasiswa() {
             try {
-                await axios.get(`http://localhost:8000/dosen/log-mahasiswa`, { params: {
+                await axios.get(`http://localhost:10002/dosen/log-mahasiswa`, { params: {
                     email: this.dataDiri.email,
                     role: 'DOSEN',
                     

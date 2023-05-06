@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service --port 8083 serve",
+    "serve": "vue-cli-service --port 9004 serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "serve:standalone": "vue-cli-service serve --mode standalone"
@@ -16,6 +16,7 @@
     "core-js": "^3.8.3",
     "firebase": "^8.10.0",
     "flowbite": "^1.6.4",
+    "moment": "^2.29.4",
     "register-service-worker": "^1.7.2",
     "single-spa-vue": "^2.1.0",
     "vue": "^2.6.12",

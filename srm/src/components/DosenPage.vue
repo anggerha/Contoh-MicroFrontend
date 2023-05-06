@@ -16,7 +16,9 @@
                             <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman"></b-input>
                             <!-- <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" v-model="isiPengumuman"></textarea> -->
                             <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman"/>
-
+                            <p class="tanggalBerakhir">Tanggal Pengumuman Berakhir</p>
+                            <b-input required placeholder="Tanggal Berakhir" type="datetime-local" v-model="periode_akhir"></b-input> 
+                            {{periode_akhir}}
                         <div style="margin-top: 1rem;">
                             <div class="button-group">
                                 <div class="button">
@@ -51,8 +53,20 @@
                     <h4 v-if="semester == 1">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }} Semester Ganjil</h4>
                     <h4 v-if="semester == 2">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }} Semester Genap</h4>
                     <b-form-select v-model="semester" :options="options" @change="getMahasiswaPerwalian"></b-form-select>
+                    <b-row v-if="jumlahPage !=null" style="margin-top: 1rem;">
+                        <b-col>
+                            <b-button class="page" id="prev" :disabled="page <=1" @click="page -=1">prev</b-button>
+                        </b-col>
+                        <b-col style="text-align:center; margin:auto;">
+                            {{page}}/{{Math.ceil(jumlahPage)}}
+                        </b-col>
+                        <b-col>
+                            <b-button class="page" id="next" :disabled="page >= jumlahPage" @click="page +=1">next</b-button>
+                        </b-col>
+                    </b-row>
+
                     <div class="perwalian">
-                        <b-container v-for="item in daftarPerwalian" :key="item.id" style="margin-bottom: .5rem; padding: 1rem; border: 2px solid #e5e5e5;" class="shadow p-3 rounded listMahasiswa">
+                        <b-container v-for="item in daftarPerwalian.slice(page*10-10,page*10 )" :key="item.id" style="margin-bottom: .5rem; padding: 1rem; border: 2px solid #e5e5e5;" class="shadow p-3 rounded listMahasiswa">
                             <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
                                 <b-col cols="8">
                                     <b-row>{{ item.nim }}</b-row>
@@ -84,6 +98,7 @@
                                 </div>
                         </b-container>
                     </div>
+                   
                 </b-col>
             </b-row>
         </body>
@@ -108,6 +123,8 @@ export default {
         dataDiri: [],
         fields: [ 'NAMA_MAHASISWA', 'nim'],
         daftarPerwalian: [],
+        page: 1,
+        jumlahPage: null,
         item: [],
         itemMahasiswa: [],
         files: [],
@@ -115,12 +132,13 @@ export default {
         imageData: null,
         semester: null,
         options: [
-            { value: null, text: 'Pilih Semester Gasal atau Genap' },
+            { value: null, text: 'Pilih Semester Gasal atau Genap', disabled:true },
             { value: '1', text: 'Gasal' },
             { value: '2', text: 'Genap' },
         ],
         isiPengumuman:'',
-        judulPengumuman:''
+        judulPengumuman:'',
+        periode_akhir: null
       }
     },
     created(){
@@ -128,9 +146,7 @@ export default {
         if(sessionStorage.getItem('user') && sessionStorage.getItem('dataDiri')){
             this.user = JSON.parse(sessionStorage.getItem('user'))
             this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
-            
         }
-       
     },
     mounted() {
         this.hapusTool()
@@ -148,14 +164,15 @@ export default {
             this.isRemoveProfile = value
         },
         async getMahasiswaPerwalian() {
-            await axios.get(`http://localhost:8000/dosen/list-mahasiswa`, { params: {
-                nama_dosen: "Laurentius Kuncoro Probo Saputra",
+            let kodeSems = new Date().getFullYear()-2+this.semester
+            kodeSems.toString()
+            await axios.get(`http://localhost:10002/dosen/list-mahasiswa/Laurentius%20Kuncoro%20Probo%20Saputra/${kodeSems}`, { params: {
                 email: this.dataDiri.email,
                 role: this.dataDiri.role,
-                kode_semester: parseInt(new Date().getFullYear()-2+this.semester)
             } })
             .then((response) => {
                 this.daftarPerwalian = response.data
+                this.jumlahPage = this.daftarPerwalian.length/10
             })
         },
         sendDataProfile(item) {
@@ -176,16 +193,18 @@ export default {
             this.isiPengumuman = ''
         },
         async kirimTele(){
-            await axios.post(`http://localhost:8000/dosen/announcement`, {
+            
+            await axios.post(`http://localhost:10002/dosen/announcement/Testing%20Channel`, {
                 nama_dosen: "Testing Channel",
                 email: this.dataDiri.email,
                 role: this.dataDiri.role,
                 pengumuman: this.isiPengumuman,
                 file: this.gambar,
-                judul: this.judulPengumuman
+                judul: this.judulPengumuman,
+                periode_akhir: this.periode_akhir
             })
-            .then(()=>{
-                // console.log(response)
+            .then((response)=>{
+                 console.log(response)
                 this.$toast.open({
                     message: 'Pesan Berhasil Terkirim',
                     type: 'success',
@@ -193,6 +212,7 @@ export default {
                 });
                 this.isiPengumuman = ''
                 this.judulPengumuman = ''
+                this.periode_akhir = null
             })
         },
         handleAttachmentChanges(event) {
@@ -231,6 +251,10 @@ export default {
 p{
     text-align: left;
     font-size: x-large;
+}
+p.tanggalBerakhir{
+    font-size: large;
+    margin-top:1rem;
 }
 .form{
     display: flex;
@@ -290,6 +314,20 @@ h6{
 }
 span#hapus{
     display: none;
+}
+.page{
+
+    color: #32a3df;
+    border-color: #32a3df;
+    background-color: transparent;
+}
+.page[disabled]{
+    pointer-events: none;
+}
+
+button#next{
+    
+    float: right;
 }
 </style>
 

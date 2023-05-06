@@ -91,7 +91,7 @@ export default {
             if(this.dataDiri.id_telegram !== null && this.dataDiri.id_telegram !== '' && this.dataDiri.username_telegram !== null && this.dataDiri.username_telegram !== ''){
                 if(this.dataDiri.role == 'MAHASISWA'){
                    
-                    await axios.put(`http://localhost:10000/mahasiswa/update`, this.dataDiri, { params: { email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString() }})
+                    await axios.put(`http://localhost:10001/mahasiswa/update`, this.dataDiri, { params: { email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString() }})
                     .then(async () => {
                         console.log(this.dataDiri);
                         this.$toast.open({
@@ -99,21 +99,21 @@ export default {
                             type: 'success',
                             position: 'top'
                         });
-                        await axios.get('http://localhost:5000/mahasiswa/me', { params: {email: this.user.email.toString(), role: this.dataDiri.role.toString() }})
+                        await axios.get('http://localhost:10001/mahasiswa/me', { params: {email: this.user.email.toString(), role: this.dataDiri.role.toString() }})
                         .then((response) => {
                             sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
                             //this.$router.replace("/listmenu").then(() => {})
                         })
                     })
                 } else if (this.dataDiri.role == 'DOSEN') {
-                    await axios.put(`http://localhost:10000/dosen/update`, this.dataDiri, { params: { nik : this.dataDiri.nik, email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString(), nama: this.dataDiri.nama }})
+                    await axios.put(`http://localhost:10001/dosen/update`, this.dataDiri, { params: { nik : this.dataDiri.nik, email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString(), nama: this.dataDiri.nama }})
                     .then(async () => {
                         this.$toast.open({
                             message: 'Data berhasil diupdate !',
                             type: 'success',
                             position: 'top'
                         });
-                        await axios.get('http://localhost:10000/dosen/me', { params: { nama : this.user.displayName.toString().toUpperCase(), email: this.user.email.toString() }})
+                        await axios.get('http://localhost:10001/dosen/me', { params: { nama : this.user.displayName.toString().toUpperCase(), email: this.user.email.toString() }})
                         .then((response) => {
                             sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
                             this.$router.replace("/listmenu").then(() => {})

@@ -107,7 +107,7 @@ export default {
         //     }
         // },
         async kirimPersonal(){
-            await axios.post(`http://localhost:8000/dosen/log-mahasiswa`, {
+            await axios.post(`http://localhost:10002/dosen/log-mahasiswa`, {
                 nama_dosen: this.dataDiri.nama,
                 nama_mahasiswa: this.dataPerwalian.NAMA_MAHASISWA,
                 email: this.dataDiri.email,

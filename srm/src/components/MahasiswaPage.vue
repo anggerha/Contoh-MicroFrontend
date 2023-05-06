@@ -11,7 +11,7 @@
         <h6> Email: {{ dataDiri.email }}</h6>
         <!-- <h6> ID Telegram: {{ dataDiri.id_telegram }}</h6>
         <h6> Username Telegram: {{ dataDiri.username_telegram }}</h6> -->
-        <h6> Dosen Wali: {{ dataPerwalian.nama_dosen}}</h6>
+        <h6> Dosen Wali: {{dataPerwalian[0].nama_dosen}}</h6>
         
         <div class="accordion" role="tablist">
             <!-- <b-card no-body class="mb-1">
@@ -74,7 +74,9 @@
                            <span><a :href="item.file" target="_blank">Download File Disini</a></span>
                           
                         </div>
-                     
+                        <div style="margin-top: 2rem;">
+                            <span>periode pengumuman berakhir: {{item.periode_akhir}}</span>
+                        </div>
                            
                         
                     </vsa-content>
@@ -89,6 +91,7 @@
                     <b-card-group deck>
                         <b-card v-for="item in pengumumanPerwalian" :key="item._id" :header="item.tanggal_perwalian">
                             <b-card-text>{{item.pembahasan}}</b-card-text>
+                            
                         </b-card>
                     </b-card-group>
                 </div>
@@ -107,6 +110,7 @@ import {
   
 } from 'vue-simple-accordion';
 import 'vue-simple-accordion/dist/vue-simple-accordion.css';
+import moment from 'moment';
 export default {
     name: 'MahasiswaPage',
     data(){
@@ -144,28 +148,28 @@ export default {
         async updateData(){
             if(this.dataDiri.id_telegram !== null && this.dataDiri.id_telegram !== '' && this.dataDiri.username_telegram !== null && this.dataDiri.username_telegram !== ''){
                 if(this.dataDiri.role == 'MAHASISWA'){
-                    await axios.put(`http://localhost:5000/mahasiswa/update`, this.dataDiri, { params: { nim : this.dataDiri.nim, email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString(), nama: this.dataDiri.nama }})
+                    await axios.put(`http://localhost:10001/mahasiswa/update`, this.dataDiri, { params: { nim : this.dataDiri.nim, email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString(), nama: this.dataDiri.nama }})
                     .then(async () => {
                         this.$toast.open({
                             message: 'Data berhasil diupdate !',
                             type: 'success',
                             position: 'top'
                         });
-                        await axios.get('http://localhost:5000/mahasiswa/me', { params: { nama : this.user.displayName.toString().toUpperCase(), email: this.user.email.toString() }})
+                        await axios.get('http://localhost:10001/mahasiswa/me', { params: { nama : this.user.displayName.toString().toUpperCase(), email: this.user.email.toString() }})
                         .then((response) => {
                             sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
                             this.$router.replace("/listmenu").then(() => {})
                         })
                     })
                 } else if (this.dataDiri.role == 'DOSEN') {
-                    await axios.put(`http://localhost:5000/dosen/update`, this.dataDiri, { params: { nik : this.dataDiri.nik, email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString(), nama: this.dataDiri.nama }})
+                    await axios.put(`http://localhost:10001/dosen/update`, this.dataDiri, { params: { nik : this.dataDiri.nik, email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString(), nama: this.dataDiri.nama }})
                     .then(async () => {
                         this.$toast.open({
                             message: 'Data berhasil diupdate !',
                             type: 'success',
                             position: 'top'
                         });
-                        await axios.get('http://localhost:5000/dosen/me', { params: { nama : this.user.displayName.toString().toUpperCase(), email: this.user.email.toString() }})
+                        await axios.get('http://localhost:10001/dosen/me', { params: { nama : this.user.displayName.toString().toUpperCase(), email: this.user.email.toString() }})
                         .then((response) => {
                             sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
                             this.$router.replace("/listmenu").then(() => {})
@@ -181,7 +185,7 @@ export default {
             }
         },
         async getPengumuman() {
-            await axios.get(`http://localhost:8000/mahasiswa/announcements`, { params: {
+            await axios.get(`http://localhost:10002/mahasiswa/pengumuman/Testing%20Channel`, { params: {
                 role: 'MAHASISWA',
                 email: this.dataDiri.email,
                 nama_dosen: 'Testing Channel'
@@ -190,7 +194,7 @@ export default {
                 this.pengumuman = response.data
                 for(let i = 0; i < this.pengumuman.length; i++){
                     this.pengumuman[i].tanggal = this.pengumuman[i].tanggal.replaceAll('.',':')
-                    
+                    this.pengumuman[i].periode_berakhir = moment(this.pengumuman[i].periode_berakhir)
                 }
                 
             })
@@ -198,7 +202,7 @@ export default {
         async getPengumumanPerwalian() {
             try {
               
-                await axios.get(`http://localhost:8000/mahasiswa/logs`, { params: {
+                await axios.get(`http://localhost:10002/mahasiswa/log-perwalian/${this.dataDiri.nim}`, { params: {
                 role: 'MAHASISWA',
                 email: this.dataDiri.email,
                 nim: this.dataDiri.nim,
@@ -207,7 +211,7 @@ export default {
                 .then((response) => {
                     
                     this.pengumumanPerwalian = response.data
-                    console.log(this.pengumumanPerwalian);
+                    console.log("ini data log "+ this.pengumumanPerwalian);
                     for(let i = 0; i < this.pengumumanPerwalian.length; i++){
                         this.pengumumanPerwalian[i].tanggal = new Date(this.pengumumanPerwalian[i].tanggal)
                         .toLocaleString('id-ID', {
@@ -226,14 +230,15 @@ export default {
         },
         async getDataPerwalian(){
             try {
-                await axios.get(`http://localhost:8000/mahasiswa/perwalian`,  {params:{
+                await axios.get(`http://localhost:10002/mahasiswa/perwalian/${this.dataDiri.nim}`,  {params:{
                     role:'MAHASISWA',
                     email: this.dataDiri.email,
                     nim: this.dataDiri.nim,
-                    nama_mahasiswa: this.dataDiri.nama
+                    nama_mahasiswa: this.dataDiri.nama,
+                    kode_semester: this.dataDiri.kode_semester
                 }}).then((response)=>{
                     this.dataPerwalian = response.data
-                    console.log(this.dataPerwalian);
+                    console.log("ini data perwalian= "+this.dataPerwalian);
                 })
             } catch (error) {
                 console.log(error.response.data.message);
