@@ -98,7 +98,6 @@
                                 </div>
                         </b-container>
                     </div>
-                   
                 </b-col>
             </b-row>
         </body>
@@ -164,9 +163,10 @@ export default {
             this.isRemoveProfile = value
         },
         async getMahasiswaPerwalian() {
+            this.page = 1
             let kodeSems = new Date().getFullYear()-2+this.semester
             kodeSems.toString()
-            await axios.get(`http://localhost:10002/dosen/list-mahasiswa/Laurentius%20Kuncoro%20Probo%20Saputra/${kodeSems}`, { params: {
+            await axios.get(`http://localhost:10002/dosen/list-mahasiswa/Maria%20Nila%20Anggia%20Rini/${kodeSems}`, { params: {
                 email: this.dataDiri.email,
                 role: this.dataDiri.role,
             } })
@@ -193,7 +193,6 @@ export default {
             this.isiPengumuman = ''
         },
         async kirimTele(){
-            
             await axios.post(`http://localhost:10002/dosen/announcement/Testing%20Channel`, {
                 nama_dosen: "Testing Channel",
                 email: this.dataDiri.email,
@@ -202,6 +201,12 @@ export default {
                 file: this.gambar,
                 judul: this.judulPengumuman,
                 periode_akhir: this.periode_akhir
+            }, 
+            {
+                params: {
+                    role: this.dataDiri.role,
+                    email: this.dataDiri.email
+                }
             })
             .then((response)=>{
                  console.log(response)

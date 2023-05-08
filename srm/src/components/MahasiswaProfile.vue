@@ -107,16 +107,22 @@ export default {
         //     }
         // },
         async kirimPersonal(){
-            await axios.post(`http://localhost:10002/dosen/log-mahasiswa`, {
+            await axios.post(`http://localhost:10002/dosen/new-log/${this.dataPerwalian.nim}`, {
                 nama_dosen: this.dataDiri.nama,
                 nama_mahasiswa: this.dataPerwalian.NAMA_MAHASISWA,
-                email: this.dataDiri.email,
+                email: '',
                 kode_semester: this.dataPerwalian.KODE_SEMESTER,
                 nim: this.dataPerwalian.nim,
                 role: this.dataDiri.role,
                 pembahasan: this.isiPengumuman,
                 judul: this.judulPengumuman,
                 file: ''
+            },
+            {
+                params: {
+                    role: this.dataDiri.role,
+                    email: this.dataDiri.email
+                }
             })
             .then((response) => {
                 console.log(response);

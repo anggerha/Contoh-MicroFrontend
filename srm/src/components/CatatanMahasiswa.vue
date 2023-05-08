@@ -47,34 +47,26 @@
                                 <p>IPS :</p>
                             </b-col>
                         </b-row>
-                        
-                        <!-- <div class="form">
-                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" :value="logMahasiswa.pembahasan"></textarea>
-                        </div>
-                        <div style="margin-top: 1rem;">
-                            <div>
-                                <div class="button">
-                                    <b-button class="send">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-send-fill" viewBox="0 0 16 16">
-                                            <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/>
-                                        </svg>
-                                        Kirim
-                                    </b-button>
-                                </div>
-                            </div>
-                            <div style="margin-top: 1rem;">
-                            <div>
-                                <div class="button">
-                                    <b-button class="send" @click="hapusKomponen()">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-send-fill" viewBox="0 0 16 16">
-                                            <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/>
-                                        </svg>
-                                        Hapus
-                                    </b-button>
-                                </div>
-                            </div>
-                        </div> -->
-                        <!-- </div> -->
+                        <b-row style="margin-top: 1rem">
+                            <b-col>
+                                <h2 v-if="logMahasiswa.length != 0">Catatan Perwalian {{ logMahasiswa[0]?.kode_semester?.slice(0, 4) }}</h2>
+                                <h2 v-if="logMahasiswa.length == 0">Catatan Perwalian Kosong</h2>
+                                <h4 v-if="logMahasiswa[0]?.kode_semester?.slice(4, 5) == 1">Semester Gasal</h4>
+                                <h4 v-if="logMahasiswa[0]?.kode_semester?.slice(4, 5) == 2">Semester Genap</h4>
+                                <b-card v-for="item in logMahasiswa" :key="item._id" style="margin-bottom: 1rem">
+                                    <b-card-title>{{ item.judul }}</b-card-title>
+                                        <b-card-text>
+                                            {{ item.pembahasan }}
+                                        </b-card-text>
+                                    <b-card-text class="small text-muted">Dikirim pada tanggal {{ item.tanggal }}</b-card-text>
+                                </b-card>
+                            </b-col>
+                        </b-row>
+                        <b-row>
+                            <b-col>
+                                <b-button block>Arsip Catatan Perwalian</b-button>
+                            </b-col>
+                        </b-row>
                     </div>
                 </b-col>
             </b-row>
@@ -90,18 +82,19 @@ export default {
     props: ['itemMahasiswa'],
     data() {
         return {
-            dataMahasiswa: [],
+            dataPerwalian: [],
             logMahasiswa: [],
-            dataDiri: []
+            dataDiri: [],
+            logMahasiswaGrouped: []
         }
     },
     created(){
-        this.dataMahasiswa = this.itemMahasiswa
+        this.dataPerwalian = this.itemMahasiswa
         this.dataDiri = JSON.parse(sessionStorage.getItem('user'))
     },
     watch: {
         // eslint-disable-next-line no-unused-vars
-        dataMahasiswa(newValue, oldValue) {
+        dataPerwalian(newValue, oldValue) {
             if(this.itemMahasiswa.length !== 0)
                 this.getLogMahasiswa()
         }
@@ -109,23 +102,38 @@ export default {
     methods: {
         async getLogMahasiswa() {
             try {
-                await axios.get(`http://localhost:10002/dosen/log-mahasiswa`, { params: {
+                await axios.get(`http://localhost:10002/dosen/log-mahasiswa/${this.dataPerwalian.nim}`, { params: {
                     email: this.dataDiri.email,
-                    role: 'DOSEN',
-                    
-                    nama_mahasiswa: this.itemMahasiswa.NAMA_MAHASISWA.toUpperCase(),
-                    nim: this.itemMahasiswa.nim
+                    role: 'DOSEN'
                 }})
                 .then((response) => {
-                    this.logMahasiswa = response.data[0]
+                    // console.log(response);
+                    this.logMahasiswa = response.data
+                    this.groupLog()
+                    // this.logMahasiswaGrouped = this.logMahasiswa.reduce((group, kodeSemester) => {
+                    //     for(let i = 0; i < this.logMahasiswa.length; i++){
+                    //         this.logMahasiswa[i].kode_semester = kodeSemester
+                    //         group[this.logMahasiswa[i].kode_semester] = group[this.logMahasiswa[i].kode_semester] ?? []
+                    //         group[this.logMahasiswa[i].kode_semester].push(kodeSemester)
+                    //     }
+                    //     return group
+                    // })
+                    // this.logMahasiswaGrouped = this.logMahasiswa.group(({ this.logMahasiswa.kode_semester }) => this.logMahasiswa.kode_semester)
+                    // console.log(this.logMahasiswaGrouped);
                 })
             } catch (error) {
                 this.$toast.open({
-                    message: error.response.data.message,
+                    message: 'Tidak Ada Catatan Perwalian !',
                     type: 'warning',
                     position: 'top'
                 });
             }
+        },
+        groupLog() {
+            this.logMahasiswaGrouped = this.logMahasiswa.groupBy((log) => {
+                return log.kode_semester
+            })
+            console.log(JSON.stringify(this.logMahasiswaGrouped, null, 2));
         },
         hapusKomponen(){
             this.$emit('clicked',true)
