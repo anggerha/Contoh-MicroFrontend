@@ -76,6 +76,7 @@
 
 <script>
 import axios from 'axios'
+import "core-js/actual/array/group-by"
 
 export default {
     name: 'CatatanMahasiswa',
@@ -85,7 +86,7 @@ export default {
             dataPerwalian: [],
             logMahasiswa: [],
             dataDiri: [],
-            logMahasiswaGrouped: []
+            logMahasiswaGrouped: null
         }
     },
     created(){
@@ -109,31 +110,19 @@ export default {
                 .then((response) => {
                     // console.log(response);
                     this.logMahasiswa = response.data
-                    this.groupLog()
-                    // this.logMahasiswaGrouped = this.logMahasiswa.reduce((group, kodeSemester) => {
-                    //     for(let i = 0; i < this.logMahasiswa.length; i++){
-                    //         this.logMahasiswa[i].kode_semester = kodeSemester
-                    //         group[this.logMahasiswa[i].kode_semester] = group[this.logMahasiswa[i].kode_semester] ?? []
-                    //         group[this.logMahasiswa[i].kode_semester].push(kodeSemester)
-                    //     }
-                    //     return group
-                    // })
-                    // this.logMahasiswaGrouped = this.logMahasiswa.group(({ this.logMahasiswa.kode_semester }) => this.logMahasiswa.kode_semester)
-                    // console.log(this.logMahasiswaGrouped);
+                    this.logMahasiswaGrouped = this.logMahasiswa.groupBy((log) => {
+                        return log.kode_semester
+                    })
+                    console.log(this.logMahasiswaGrouped)
                 })
             } catch (error) {
+                console.log(error)
                 this.$toast.open({
                     message: 'Tidak Ada Catatan Perwalian !',
                     type: 'warning',
                     position: 'top'
                 });
             }
-        },
-        groupLog() {
-            this.logMahasiswaGrouped = this.logMahasiswa.groupBy((log) => {
-                return log.kode_semester
-            })
-            console.log(JSON.stringify(this.logMahasiswaGrouped, null, 2));
         },
         hapusKomponen(){
             this.$emit('clicked',true)
