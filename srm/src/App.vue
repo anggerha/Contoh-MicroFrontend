@@ -20,16 +20,21 @@ export default {
     }
   },
   created() {
-    if(sessionStorage.getItem('dataDiri')){
-      var data = JSON.parse(sessionStorage.getItem('dataDiri'))
-      if (data.nim){
-        this.role = 'MAHASISWA'
-      } else if (data.nik) {
-        this.role = 'DOSEN'
-      } else {
-        this.role = ''
+    if(!sessionStorage.getItem('user') && !sessionStorage.getItem('dataDiri')){
+      this.$router.replace('/Login').then(() => { this.$router.go() })
+    } else {
+      if(sessionStorage.getItem('dataDiri')){
+        var data = JSON.parse(sessionStorage.getItem('dataDiri'))
+        if (data.nim){
+          this.role = 'MAHASISWA'
+        } else if (data.nik) {
+          this.role = 'DOSEN'
+        } else {
+          this.role = ''
+        }
       }
     }
+    
   }
 }
 </script>

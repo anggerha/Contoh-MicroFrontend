@@ -24,6 +24,7 @@ export default {
     showNavBar(){
       if(!sessionStorage.getItem('user') && !sessionStorage.getItem('dataDiri')){
         this.show = false
+        this.$router.replace('/Login').then(() => { this.$router.go() })
       } else {
         this.show = true
       }

@@ -65,6 +65,17 @@
                         <b-row>
                             <b-col>
                                 <b-button block>Arsip Catatan Perwalian</b-button>
+                                <b-card v-for="item in kodeSemester" :key="item" style="margin-bottom: 1rem">
+                                    <div v-if="logMahasiswa[0].kode_semester !== item">
+                                        <b-card-title>{{ item }}</b-card-title>
+                                        <b-card-text v-for="data in logMahasiswaGrouped[item]" :key="data._id">
+                                            <h3>{{ data.judul }}</h3>
+                                            <b-card-text class="small text-muted">Dikirim pada tanggal {{ data.tanggal }}</b-card-text>
+                                            <p>Catatan: <br>{{ data.pembahasan }}</p>
+                                            <hr>
+                                        </b-card-text>
+                                    </div>
+                                </b-card>   
                             </b-col>
                         </b-row>
                     </div>
@@ -86,7 +97,8 @@ export default {
             dataPerwalian: [],
             logMahasiswa: [],
             dataDiri: [],
-            logMahasiswaGrouped: null
+            logMahasiswaGrouped: null,
+            kodeSemester: null
         }
     },
     created(){
@@ -114,6 +126,8 @@ export default {
                         return log.kode_semester
                     })
                     console.log(this.logMahasiswaGrouped)
+                    this.kodeSemester = Object.keys(this.logMahasiswaGrouped).reverse()
+                    console.log(this.kodeSemester);
                 })
             } catch (error) {
                 console.log(error)
