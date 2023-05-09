@@ -54,7 +54,12 @@
          
             <b-row style="margin:1rem;">
                 <h1>Pengumuman</h1>
+               
             </b-row>
+            <!-- <b-row style="margin:1rem;">
+
+                 <h4>{{tanggalNow}}</h4>
+            </b-row> -->
             <vsa-list class="vsaList">
                 <vsa-item class="vsaItem" v-for="item in pengumuman.valid" :key="item._id">
                     <vsa-heading class="heading">
@@ -82,33 +87,44 @@
                     </vsa-content>
                 </vsa-item>
             </vsa-list>
-            <!-- <vsa-list class="vsaList">
-                <vsa-item class="vsaItem" v-for="item in pengumuman.archived" :key="item._id">
-                    <vsa-heading class="heading">
-                            <b-row>
-                                <b-col> <h5 id="judulPengumuman">{{ item.judul }}</h5></b-col>
-                            </b-row>
-                            <b-row>
-                                <b-col>
-                                    <h6 id="tanggalPengumuman">{{ item.tanggal }}  WIB</h6>
-                                </b-col>
-                                
-                            </b-row> 
-                    </vsa-heading>
-                    <vsa-content >
-                        <span v-html="item.pengumuman"></span>
-                        <div v-if="item.file != null">
-                           <span><a :href="item.file" target="_blank">Download File Disini</a></span>
-                          
-                        </div>
-                        <div style="margin-top: 2rem;">
-                            <span>periode pengumuman berakhir: {{item.periode_akhir}}</span>
-                        </div>
-                           
-                        
-                    </vsa-content>
-                </vsa-item>
-            </vsa-list> -->
+            <b-row style="margin-top: 2rem;">
+                <b-col>
+                    <b-button v-b-toggle.collapse-2 ><svg xmlns="http://www.w3.org/2000/svg" style="margin-right:0.5rem;" width="20" height="20" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
+                        <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z"/>
+                        </svg>Arsip Pengumuman 
+                    </b-button>
+                    <b-collapse id="collapse-2">
+                        <vsa-list class="vsaList">
+                            <vsa-item class="vsaItem" v-for="item in pengumuman.archived" :key="item._id">
+                                <vsa-heading class="heading">
+                                        <b-row>
+                                            <b-col> <h5 id="judulPengumuman">{{ item.judul }}</h5></b-col>
+                                        </b-row>
+                                        <b-row>
+                                            <b-col>
+                                                <h6 id="tanggalPengumuman">{{ item.tanggal }}  WIB</h6>
+                                            </b-col>
+                                            
+                                        </b-row> 
+                                </vsa-heading>
+                                <vsa-content >
+                                    <span v-html="item.pengumuman"></span>
+                                    <div v-if="item.file != null">
+                                    <span><a :href="item.file" target="_blank">Download File Disini</a></span>
+                                    
+                                    </div>
+                                    <div style="margin-top: 2rem;">
+                                        <span>periode pengumuman berakhir: {{item.periode_akhir}}</span>
+                                    </div>
+                                    
+                                    
+                                </vsa-content>
+                            </vsa-item>
+                        </vsa-list>
+                    </b-collapse>
+                </b-col>
+            </b-row>
+            
             <b-row style="margin:1rem;">
                 <h4>Catatan Perwalian saya</h4>
             </b-row>
@@ -148,6 +164,7 @@ export default {
             pengumumanPerwalian:[],
             dataPerwalian:[],
             perwalianEror: '',
+            tanggalNow: ''
         }
     },
     components:{
@@ -165,11 +182,15 @@ export default {
         this.getDataPerwalian()
         this.getPengumuman()
         this.getPengumumanPerwalian()
-       
+        this.getDateNow()
+
     },
     methods: {
         kembali() {
             this.$router.replace('listMenu')
+        },
+        getDateNow(){
+            this.tanggalNow = moment().locale('id').format('ll')
         },
         async getPengumuman() {
             await axios.get(`http://localhost:10002/mahasiswa/pengumuman/Testing%20Channel`, { params: {
@@ -181,12 +202,13 @@ export default {
                 this.pengumuman = response.data
                 for(let i = 0; i < this.pengumuman.valid.length; i++){
                     // this.pengumuman[i].tanggal = this.pengumuman[i].tanggal.replaceAll('.',':')
-                    this.pengumuman.valid[i].tanggal = moment(this.pengumuman.valid[i].tanggal).locale('id').format('ll')
+                    this.pengumuman.valid[i].tanggal = moment(this.pengumuman.valid[i].tanggal).locale('id').format('lll')
                     this.pengumuman.valid[i].periode_akhir = moment(this.pengumuman.valid[i].periode_akhir).locale('id').format('ll')
                 }
                 for(let i = 0; i < this.pengumuman.archived.length; i++){
                     // this.pengumuman[i].tanggal = this.pengumuman[i].tanggal.replaceAll('.',':')
-                    this.pengumuman.archived[i].periode_akhir = moment(this.pengumuman.archived[i].periode_akhir).locale('id').format('l')
+                     this.pengumuman.archived[i].tanggal = moment(this.pengumuman.archived[i].tanggal).locale('id').format('lll')
+                    this.pengumuman.archived[i].periode_akhir = moment(this.pengumuman.archived[i].periode_akhir).locale('id').format('ll')
                 }
             })
         },
