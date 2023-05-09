@@ -49,11 +49,18 @@
                         </b-row>
                         <b-row style="margin-top: 1rem">
                             <b-col>
+                                <h2 v-if="logMahasiswa.length != 0">Catatan Perwalian {{ logMahasiswa[0]?.kode_semester?.slice(0, 4) }}</h2> 
+                                <h2 v-if="logMahasiswa.length == 0">Catatan Perwalian Kosong</h2>
+                                <b-row>
+                                    <b-col style="display: flex;">
+                                        <h4 v-if="logMahasiswa[0]?.kode_semester?.slice(4, 5) == 1">Semester Gasal</h4>
+                                        <h4 v-if="logMahasiswa[0]?.kode_semester?.slice(4, 5) == 2">Semester Genap</h4>
+
+                                        <p id="terbaru">Terbaru</p>
+                                    </b-col>
+                                </b-row>
+                                
                                 <div v-for="item in kodeSemester" :key="item">
-                                    <h2 v-if="logMahasiswa.length != 0">Catatan Perwalian {{ logMahasiswa[0]?.kode_semester?.slice(0, 4) }}</h2>
-                                    <h2 v-if="logMahasiswa.length == 0">Catatan Perwalian Kosong</h2>
-                                    <h4 v-if="logMahasiswa[0]?.kode_semester?.slice(4, 5) == 1">Semester Gasal</h4>
-                                    <h4 v-if="logMahasiswa[0]?.kode_semester?.slice(4, 5) == 2">Semester Genap</h4>
                                     <div v-for="data in logMahasiswaGrouped[item]" :key="data._id" style="margin-bottom: 1rem">
                                         <b-card v-if="logMahasiswa[0].kode_semester == item">
                                             <b-card-title>{{ data.judul }}</b-card-title>
@@ -137,13 +144,14 @@ export default {
                 }})
                 .then((response) => {
                     // console.log(response);
-                    this.logMahasiswa = response.data.reverse()
+                    this.logMahasiswa = response.data
                     this.logMahasiswaGrouped = this.logMahasiswa.groupBy((log) => {
                         return log.kode_semester
                     })
                     // console.log(this.logMahasiswaGrouped)
                     this.kodeSemester = Object.keys(this.logMahasiswaGrouped).reverse()
-                    // console.log(this.kodeSemester);
+                    console.log(this.kodeSemester);
+                    console.log(this.logMahasiswa);
                 })
             } catch (error) {
                 // console.log(error)
@@ -197,5 +205,13 @@ export default {
 .delete:hover{
     color: white;
     background-color: darkgray;
+}
+#terbaru{
+    
+    padding: 0.3rem; 
+    margin-left: 0.5rem; 
+    border-radius: 1rem; 
+    color: white; 
+    background-color:#38e54d;
 }
 </style>
