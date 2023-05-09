@@ -49,33 +49,49 @@
                         </b-row>
                         <b-row style="margin-top: 1rem">
                             <b-col>
-                                <h2 v-if="logMahasiswa.length != 0">Catatan Perwalian {{ logMahasiswa[0]?.kode_semester?.slice(0, 4) }}</h2>
-                                <h2 v-if="logMahasiswa.length == 0">Catatan Perwalian Kosong</h2>
-                                <h4 v-if="logMahasiswa[0]?.kode_semester?.slice(4, 5) == 1">Semester Gasal</h4>
-                                <h4 v-if="logMahasiswa[0]?.kode_semester?.slice(4, 5) == 2">Semester Genap</h4>
-                                <b-card v-for="item in logMahasiswa" :key="item._id" style="margin-bottom: 1rem">
-                                    <b-card-title>{{ item.judul }}</b-card-title>
-                                        <b-card-text>
-                                            {{ item.pembahasan }}
-                                        </b-card-text>
-                                    <b-card-text class="small text-muted">Dikirim pada tanggal {{ item.tanggal }}</b-card-text>
-                                </b-card>
+                                <div v-for="item in kodeSemester" :key="item">
+                                    <h2 v-if="logMahasiswa.length != 0">Catatan Perwalian {{ logMahasiswa[0]?.kode_semester?.slice(0, 4) }}</h2>
+                                    <h2 v-if="logMahasiswa.length == 0">Catatan Perwalian Kosong</h2>
+                                    <h4 v-if="logMahasiswa[0]?.kode_semester?.slice(4, 5) == 1">Semester Gasal</h4>
+                                    <h4 v-if="logMahasiswa[0]?.kode_semester?.slice(4, 5) == 2">Semester Genap</h4>
+                                    <div v-for="data in logMahasiswaGrouped[item]" :key="data._id" style="margin-bottom: 1rem">
+                                        <b-card v-if="logMahasiswa[0].kode_semester == item">
+                                            <b-card-title>{{ data.judul }}</b-card-title>
+                                                <b-card-text>
+                                                    {{ data.pembahasan }}
+                                                </b-card-text>
+                                            <b-card-text class="small text-muted">Dikirim pada tanggal {{ data.tanggal }}</b-card-text>
+                                        </b-card>
+                                    </div>
+                                </div>
                             </b-col>
                         </b-row>
                         <b-row>
                             <b-col>
-                                <b-button block>Arsip Catatan Perwalian</b-button>
-                                <b-card v-for="item in kodeSemester" :key="item" style="margin-bottom: 1rem">
-                                    <div v-if="logMahasiswa[0].kode_semester !== item">
-                                        <b-card-title>{{ item }}</b-card-title>
-                                        <b-card-text v-for="data in logMahasiswaGrouped[item]" :key="data._id">
-                                            <h3>{{ data.judul }}</h3>
-                                            <b-card-text class="small text-muted">Dikirim pada tanggal {{ data.tanggal }}</b-card-text>
-                                            <p>Catatan: <br>{{ data.pembahasan }}</p>
-                                            <hr>
-                                        </b-card-text>
+                                <b-button block v-b-toggle.accordion-1 variant="info">Arsip Catatan Perwalian</b-button>
+                                <b-collapse id="accordion-1" visible role="tabpanel">
+                                    <div style="margin-top: 1rem;width: 100%;">
+                                        <ul style="display: grid;grid-template-columns:repeat(5,1fr);">
+                                            <li v-show="logMahasiswa[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="width: 20%; display: inline" >
+                                                <b-button v-b-toggle="'accordion-' + item">{{ item.slice(0, 4) }}</b-button>
+                                            </li>
+                                        </ul>                                            
                                     </div>
-                                </b-card>   
+                                        <div v-show="logMahasiswa[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="margin-bottom: 1rem">
+                                            <b-collapse :id="'accordion-' + item" role="tabpanel">
+                                                <b-card-title v-if="item.slice(4, 5) == 1">{{ item.slice(0, 4) }} Gasal</b-card-title>
+                                                <b-card-title v-if="item.slice(4, 5) == 2">{{ item.slice(0, 4) }} Genap</b-card-title>
+                                                <b-card>
+                                                    <b-card-text v-for="data in logMahasiswaGrouped[item]" :key="data._id">
+                                                        <h3>{{ data.judul }}</h3>
+                                                        <b-card-text class="small text-muted">Dikirim pada tanggal {{ data.tanggal }}</b-card-text>
+                                                        <p>Catatan: <br>{{ data.pembahasan }}</p>
+                                                        <hr>
+                                                    </b-card-text>
+                                                </b-card>
+                                            </b-collapse>
+                                        </div>
+                                </b-collapse>
                             </b-col>
                         </b-row>
                     </div>
@@ -121,16 +137,16 @@ export default {
                 }})
                 .then((response) => {
                     // console.log(response);
-                    this.logMahasiswa = response.data
+                    this.logMahasiswa = response.data.reverse()
                     this.logMahasiswaGrouped = this.logMahasiswa.groupBy((log) => {
                         return log.kode_semester
                     })
-                    console.log(this.logMahasiswaGrouped)
+                    // console.log(this.logMahasiswaGrouped)
                     this.kodeSemester = Object.keys(this.logMahasiswaGrouped).reverse()
-                    console.log(this.kodeSemester);
+                    // console.log(this.kodeSemester);
                 })
             } catch (error) {
-                console.log(error)
+                // console.log(error)
                 this.$toast.open({
                     message: 'Tidak Ada Catatan Perwalian !',
                     type: 'warning',
