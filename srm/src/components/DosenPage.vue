@@ -185,7 +185,7 @@ export default {
             this.isRemoveCatatan = false
             //console.log(this.itemMahasiswa);
         },
-         hapusTool(){
+        hapusTool(){
             const del = document.querySelector(".trix-button-group--block-tools");
             del.style.display = 'none'
         },
@@ -193,6 +193,7 @@ export default {
             this.isiPengumuman = ''
         },
         async kirimTele(){
+            const tempDate = new Date(this.periode_akhir)
             await axios.post(`http://localhost:10002/dosen/announcement/Testing%20Channel`, {
                 nama_dosen: "Testing Channel",
                 email: this.dataDiri.email,
@@ -200,7 +201,7 @@ export default {
                 pengumuman: this.isiPengumuman,
                 file: this.gambar,
                 judul: this.judulPengumuman,
-                periode_akhir: this.periode_akhir
+                periode_akhir: tempDate.toLocaleString('ID')
             }, 
             {
                 params: {
