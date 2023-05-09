@@ -56,7 +56,7 @@
                 <h1>Pengumuman</h1>
             </b-row>
             <vsa-list class="vsaList">
-                <vsa-item class="vsaItem" v-for="item in pengumuman" :key="item._id">
+                <vsa-item class="vsaItem" v-for="item in pengumuman.valid" :key="item._id">
                     <vsa-heading class="heading">
                             <b-row>
                                 <b-col> <h5 id="judulPengumuman">{{ item.judul }}</h5></b-col>
@@ -82,6 +82,33 @@
                     </vsa-content>
                 </vsa-item>
             </vsa-list>
+            <!-- <vsa-list class="vsaList">
+                <vsa-item class="vsaItem" v-for="item in pengumuman.archived" :key="item._id">
+                    <vsa-heading class="heading">
+                            <b-row>
+                                <b-col> <h5 id="judulPengumuman">{{ item.judul }}</h5></b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col>
+                                    <h6 id="tanggalPengumuman">{{ item.tanggal }}  WIB</h6>
+                                </b-col>
+                                
+                            </b-row> 
+                    </vsa-heading>
+                    <vsa-content >
+                        <span v-html="item.pengumuman"></span>
+                        <div v-if="item.file != null">
+                           <span><a :href="item.file" target="_blank">Download File Disini</a></span>
+                          
+                        </div>
+                        <div style="margin-top: 2rem;">
+                            <span>periode pengumuman berakhir: {{item.periode_akhir}}</span>
+                        </div>
+                           
+                        
+                    </vsa-content>
+                </vsa-item>
+            </vsa-list> -->
             <b-row style="margin:1rem;">
                 <h4>Catatan Perwalian saya</h4>
             </b-row>
@@ -89,7 +116,7 @@
                 <div style="margin:auto; color:grey;" v-if="perwalianEror != ''"><h5>{{this.perwalianEror}}</h5></div>
                 <div style="margin:auto; color:grey;" v-if="perwalianEror == ''">
                     <b-card-group deck>
-                        <b-card v-for="item in pengumumanPerwalian" :key="item._id" :header="item.tanggal_perwalian">
+                        <b-card v-for="item in pengumumanPerwalian" :key="item._id" :header="item.tanggal">
                             <b-card-text>{{item.pembahasan}}</b-card-text>
                         </b-card>
                     </b-card-group>
@@ -152,17 +179,21 @@ export default {
             }})
             .then((response) => {
                 this.pengumuman = response.data
-                for(let i = 0; i < this.pengumuman.length; i++){
-                    this.pengumuman[i].tanggal = this.pengumuman[i].tanggal.replaceAll('.',':')
-                    this.pengumuman[i].periode_berakhir = moment(this.pengumuman[i].periode_berakhir)
+                for(let i = 0; i < this.pengumuman.valid.length; i++){
+                    // this.pengumuman[i].tanggal = this.pengumuman[i].tanggal.replaceAll('.',':')
+                    this.pengumuman.valid[i].tanggal = moment(this.pengumuman.valid[i].tanggal).locale('id').format('ll')
+                    this.pengumuman.valid[i].periode_akhir = moment(this.pengumuman.valid[i].periode_akhir).locale('id').format('ll')
                 }
-                
+                for(let i = 0; i < this.pengumuman.archived.length; i++){
+                    // this.pengumuman[i].tanggal = this.pengumuman[i].tanggal.replaceAll('.',':')
+                    this.pengumuman.archived[i].periode_akhir = moment(this.pengumuman.archived[i].periode_akhir).locale('id').format('l')
+                }
             })
         },
         async getPengumumanPerwalian() {
             try {
               
-                await axios.get(`http://localhost:10002/mahasiswa/log-perwalian/${this.dataDiri.nim}`, { params: {
+                await axios.get(`http://localhost:10002/mahasiswa/log-perwalian/71180291`, { params: {
                 role: 'MAHASISWA',
                 email: this.dataDiri.email,
                 nim: this.dataDiri.nim,
@@ -198,7 +229,8 @@ export default {
                     kode_semester: this.dataDiri.kode_semester
                 }}).then((response)=>{
                     this.dataPerwalian = response.data
-                    console.log("ini data perwalian= "+this.dataPerwalian);
+                    console.log("ini data perwalian= ")
+                    console.log(this.dataPerwalian)
                 })
             } catch (error) {
                 console.log(error.response.data.message);

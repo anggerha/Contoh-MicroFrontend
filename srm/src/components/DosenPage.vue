@@ -111,6 +111,7 @@ import 'firebase/storage'
 import MahasiswaProfile from './MahasiswaProfile.vue'
 import VueTrix from 'vue-trix'
 import CatatanMahasiswa from './CatatanMahasiswa.vue'
+import moment from 'moment'
 export default {
     name: 'SRMPage',
     components: { MahasiswaProfile,VueTrix, CatatanMahasiswa },
@@ -193,7 +194,6 @@ export default {
             this.isiPengumuman = ''
         },
         async kirimTele(){
-            const tempDate = new Date(this.periode_akhir)
             await axios.post(`http://localhost:10002/dosen/announcement/Testing%20Channel`, {
                 nama_dosen: "Testing Channel",
                 email: this.dataDiri.email,
@@ -201,7 +201,7 @@ export default {
                 pengumuman: this.isiPengumuman,
                 file: this.gambar,
                 judul: this.judulPengumuman,
-                periode_akhir: tempDate.toLocaleString('ID')
+                periode_akhir: moment(this.periode_akhir).locale('id')
             }, 
             {
                 params: {
