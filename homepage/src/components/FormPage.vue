@@ -31,8 +31,8 @@
             <div style="margin-bottom: 1rem; background-color: lightgray; padding: 1rem; border-radius: 10px">
                 <p>Cara mendapatkan Chat ID Telegram anda:</p>
                 <ol style="list-style-type: number; margin-left: 2rem">
-                    <li>Buka <a href="https://t.me/RawDataBot">@RawDataBot</a> di Telegram,</li>
-                    <li>Kirim pesan "/start",</li>
+                    <li>Buka <a href="https://t.me/RawDataBot" target="_blank">@RawDataBot</a> di Telegram,</li>
+                    <li>Tekan pilihan "start",</li>
                     <li>Cari Chat ID anda pada respon yang dikembalikan,</li>
                     <li>Masukkan Chat ID Telegram anda pada input field dibawah.</li>
                 </ol>

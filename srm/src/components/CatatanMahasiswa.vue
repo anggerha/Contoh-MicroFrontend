@@ -63,6 +63,7 @@
                                 <div v-for="item in kodeSemester" :key="item">
                                     <div v-for="data in logMahasiswaGrouped[item]" :key="data._id" style="margin-bottom: 1rem">
                                         <b-card v-if="logMahasiswa[0].kode_semester == item">
+                                            
                                             <b-card-title>{{ data.judul }}</b-card-title>
                                                 <b-card-text>
                                                     {{ data.pembahasan }}
@@ -75,19 +76,24 @@
                         </b-row>
                         <b-row>
                             <b-col>
-                                <b-button block v-b-toggle.accordion-1 variant="info">Arsip Catatan Perwalian</b-button>
-                                <b-collapse id="accordion-1" visible role="tabpanel">
+                                <b-button block v-b-toggle.accordion-1 variant="info" ><svg xmlns="http://www.w3.org/2000/svg" style="margin-right:0.5rem;" width="20" height="20" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
+                                    <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z"/>
+                                    </svg> Arsip Catatan Perwalian
+                                </b-button>
+                                <b-collapse id="accordion-1" role="tabpanel">
                                     <div style="margin-top: 1rem;width: 100%;">
-                                        <ul style="display: grid;grid-template-columns:repeat(5,1fr);">
-                                            <li v-show="logMahasiswa[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="width: 20%; display: inline" >
-                                                <b-button v-b-toggle="'accordion-' + item">{{ item.slice(0, 4) }}</b-button>
+                                        <ul style="display: grid;grid-template-columns:repeat(5,1fr); padding:0;">
+                                            <li v-show="logMahasiswa[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="width: 100%; display:inline;" >
+                                               
+                                                <b-button v-b-toggle="'accordion-' + item">{{ item.slice(0, 4) }}<span v-if="item.slice(4, 5) == 1"> Gasal</span><span v-if="item.slice(4, 5) == 2"> Genap</span></b-button>
                                             </li>
                                         </ul>                                            
                                     </div>
                                         <div v-show="logMahasiswa[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="margin-bottom: 1rem">
+                                           
                                             <b-collapse :id="'accordion-' + item" role="tabpanel">
-                                                <b-card-title v-if="item.slice(4, 5) == 1">{{ item.slice(0, 4) }} Gasal</b-card-title>
-                                                <b-card-title v-if="item.slice(4, 5) == 2">{{ item.slice(0, 4) }} Genap</b-card-title>
+                                                <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 1">{{ item.slice(0, 4) }} Gasal</b-card-title>
+                                                <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 2">{{ item.slice(0, 4) }} Genap</b-card-title>
                                                 <b-card>
                                                     <b-card-text v-for="data in logMahasiswaGrouped[item]" :key="data._id">
                                                         <h3>{{ data.judul }}</h3>
@@ -144,7 +150,7 @@ export default {
                 }})
                 .then((response) => {
                     // console.log(response);
-                    this.logMahasiswa = response.data
+                    this.logMahasiswa = response.data.reverse()
                     this.logMahasiswaGrouped = this.logMahasiswa.groupBy((log) => {
                         return log.kode_semester
                     })

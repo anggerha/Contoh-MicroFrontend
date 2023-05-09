@@ -74,13 +74,13 @@
                             </b-row> 
                     </vsa-heading>
                     <vsa-content >
-                        <span v-html="item.pengumuman"></span>
+                        <span id="pengumuman" v-html="item.pengumuman"></span>
                         <div v-if="item.file != null">
                            <span><a :href="item.file" target="_blank">Download File Disini</a></span>
                           
                         </div>
                         <div style="margin-top: 2rem;">
-                            <span>periode pengumuman berakhir: {{item.periode_akhir}}</span>
+                            <span id="pengumuman" >periode pengumuman berakhir: {{item.periode_akhir}}</span>
                         </div>
                            
                         
@@ -89,7 +89,7 @@
             </vsa-list>
             <b-row style="margin-top: 2rem;">
                 <b-col>
-                    <b-button v-b-toggle.collapse-2 ><svg xmlns="http://www.w3.org/2000/svg" style="margin-right:0.5rem;" width="20" height="20" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
+                    <b-button block v-b-toggle.collapse-2 ><svg xmlns="http://www.w3.org/2000/svg" style="margin-right:0.5rem;" width="20" height="20" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
                         <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z"/>
                         </svg>Arsip Pengumuman 
                     </b-button>
@@ -108,13 +108,13 @@
                                         </b-row> 
                                 </vsa-heading>
                                 <vsa-content >
-                                    <span v-html="item.pengumuman"></span>
+                                    <span id="pengumuman"  v-html="item.pengumuman"></span>
                                     <div v-if="item.file != null">
-                                    <span><a :href="item.file" target="_blank">Download File Disini</a></span>
+                                    <span id="pengumuman" ><a :href="item.file" target="_blank">Download File Disini</a></span>
                                     
                                     </div>
                                     <div style="margin-top: 2rem;">
-                                        <span>periode pengumuman berakhir: {{item.periode_akhir}}</span>
+                                        <span id="pengumuman" >periode pengumuman berakhir: {{item.periode_akhir}}</span>
                                     </div>
                                     
                                     
@@ -125,18 +125,69 @@
                 </b-col>
             </b-row>
             
-            <b-row style="margin:1rem;">
-                <h4>Catatan Perwalian saya</h4>
+            <b-row style="margin-top: 1rem">
+                <b-col>
+                    <h2 v-if="pengumumanPerwalian.length != 0">Catatan Perwalian {{ pengumumanPerwalian[0]?.kode_semester?.slice(0, 4) }}</h2> 
+                    <h2 v-if="pengumumanPerwalian.length == 0">Catatan Perwalian Kosong</h2>
+                    <b-row>
+                        <b-col style="display: flex;">
+                            <h4 v-if="pengumumanPerwalian[0]?.kode_semester?.slice(4, 5) == 1">Semester Gasal</h4>
+                            <h4 v-if="pengumumanPerwalian[0]?.kode_semester?.slice(4, 5) == 2">Semester Genap</h4>
+
+                            <p id="terbaru">Terbaru</p>
+                        </b-col>
+                    </b-row>
+                    
+                    <div v-for="item in kodeSemester" :key="item">
+                        <div v-for="data in pengumumanPerwalianGrouped[item]" :key="data._id" style="margin-bottom: 1rem">
+                            <b-card v-if="pengumumanPerwalian[0].kode_semester == item">
+                                
+                                <b-card-title>{{ data.judul }}</b-card-title>
+                                    <b-card-text>
+                                        {{ data.pembahasan }}
+                                    </b-card-text>
+                                <b-card-text class="small text-muted">Dikirim pada tanggal {{ data.tanggal }}</b-card-text>
+                            </b-card>
+                        </div>
+                    </div>
+                </b-col>
             </b-row>
-            <b-row style="margin:1rem;">
+            <b-row >
                 <div style="margin:auto; color:grey;" v-if="perwalianEror != ''"><h5>{{this.perwalianEror}}</h5></div>
-                <div style="margin:auto; color:grey;" v-if="perwalianEror == ''">
-                    <b-card-group deck>
-                        <b-card v-for="item in pengumumanPerwalian" :key="item._id" :header="item.tanggal">
-                            <b-card-text>{{item.pembahasan}}</b-card-text>
-                        </b-card>
-                    </b-card-group>
-                </div>
+                
+            </b-row>
+            <b-row style="margin-bottom:1rem;">
+                <b-col>
+                    <b-button block v-b-toggle.accordion-1  ><svg xmlns="http://www.w3.org/2000/svg" style="margin-right:0.5rem;" width="20" height="20" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
+                        <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z"/>
+                        </svg> Arsip Catatan Perwalian
+                    </b-button>
+                    <b-collapse id="accordion-1" role="tabpanel">
+                        <div style="margin-top: 1rem;width: 100%;">
+                            <ul style="display: grid;grid-template-columns:repeat(5,1fr); padding:0;">
+                                <li v-show="pengumumanPerwalian[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="width: 100%; display:inline;" >
+                                    
+                                    <b-button v-b-toggle="'accordion-' + item">{{ item.slice(0, 4) }}<span v-if="item.slice(4, 5) == 1">&nbsp;Gasal</span><span v-if="item.slice(4, 5) == 2">&nbsp;Genap</span></b-button>
+                                </li>
+                            </ul>                                            
+                        </div>
+                            <div v-show="pengumumanPerwalian[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="margin-bottom: 1rem">
+                                
+                                <b-collapse :id="'accordion-' + item" role="tabpanel">
+                                    <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 1">{{ item.slice(0, 4) }} Gasal</b-card-title>
+                                    <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 2">{{ item.slice(0, 4) }} Genap</b-card-title>
+                                    <b-card>
+                                        <b-card-text v-for="data in pengumumanPerwalianGrouped[item]" :key="data._id">
+                                            <h4 style="text-align:left;">{{ data.judul }}</h4>
+                                            <b-card-text class="small text-muted">Dikirim pada tanggal {{ data.tanggal }}</b-card-text>
+                                            <p>Catatan: <br>{{ data.pembahasan }}</p>
+                                            <hr style="border: 1px solid black;">
+                                        </b-card-text>
+                                    </b-card>
+                                </b-collapse>
+                            </div>
+                    </b-collapse>
+                </b-col>
             </b-row>
         </div>
     </div>
@@ -162,6 +213,8 @@ export default {
             dataDiri: [],
             pengumuman: [],
             pengumumanPerwalian:[],
+            pengumumanPerwalianGrouped:[],
+            kodeSemester:[],
             dataPerwalian:[],
             perwalianEror: '',
             tanggalNow: ''
@@ -223,8 +276,14 @@ export default {
                 }})
                 .then((response) => {
                     
-                    this.pengumumanPerwalian = response.data
+                    this.pengumumanPerwalian = response.data.reverse()
+                    this.pengumumanPerwalianGrouped = this.pengumumanPerwalian.groupBy((log)=>{
+                        return log.kode_semester
+                    })
+                    this.kodeSemester = Object.keys(this.pengumumanPerwalianGrouped).reverse()
+
                     console.log("ini data log "+ this.pengumumanPerwalian);
+                    console.log("ini data kode  "+ this.kodeSemester);
                     for(let i = 0; i < this.pengumumanPerwalian.length; i++){
                         this.pengumumanPerwalian[i].tanggal = new Date(this.pengumumanPerwalian[i].tanggal)
                         .toLocaleString('id-ID', {
@@ -336,5 +395,13 @@ hr{
 }
 h6{
     text-align: left;
+}
+#terbaru{
+    
+    padding: 0.3rem; 
+    margin-left: 0.5rem; 
+    border-radius: 1rem; 
+    color: white; 
+    background-color:#38e54d;
 }
 </style>
