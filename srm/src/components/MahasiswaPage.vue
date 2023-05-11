@@ -276,7 +276,7 @@ export default {
                 }})
                 .then((response) => {
                     
-                    this.pengumumanPerwalian = response.data.reverse()
+                    this.pengumumanPerwalian = response.data
                     this.pengumumanPerwalianGrouped = this.pengumumanPerwalian.groupBy((log)=>{
                         return log.kode_semester
                     })

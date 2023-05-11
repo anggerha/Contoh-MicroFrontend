@@ -2,7 +2,7 @@
   <div id="app">
     <DosenPage v-if="role == 'DOSEN'"/>
     <MahasiswaPage v-if="role == 'MAHASISWA'"/>
-   
+    <AdminPage v-if="role == 'ADMIN'"/>
   </div>
     
 </template>
@@ -10,10 +10,11 @@
 <script>
 import DosenPage from './components/DosenPage.vue'
 import MahasiswaPage from './components/MahasiswaPage.vue'
+import AdminPage from './components/AdminPage.vue'
 
 export default {
   name: 'App',
-  components: { DosenPage, MahasiswaPage },
+  components: { DosenPage, MahasiswaPage, AdminPage },
   data(){
     return {
       role: ''
@@ -27,9 +28,11 @@ export default {
         var data = JSON.parse(sessionStorage.getItem('dataDiri'))
         if (data.nim){
           this.role = 'MAHASISWA'
-        } else if (data.nik) {
+        } else if (data.nik && data.role == 'DOSEN') {
           this.role = 'DOSEN'
-        } else {
+        } else if(data.nik && data.role == 'ADMIN'){
+          this.role = 'ADMIN'
+        } else{
           this.role = ''
         }
       }
