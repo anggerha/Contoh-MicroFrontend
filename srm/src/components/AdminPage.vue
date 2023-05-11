@@ -6,12 +6,12 @@
             </svg>
             Kembali
         </b-button>
-        <p class="judul">SRM FTI UKDW</p>
+        <p class="judul">SRM FTI UKDW ADMIN</p>
         <body class="bv-example-row">
             <b-row>
                 <b-col sm="8">
                     <div class="shadow-lg p-3 mb-5 bg-white rounded-4">
-                        <p>Buat Pengumuman</p>
+                        <p>Buat Berita</p>
 
                             <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman"></b-input>
                             <!-- <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" v-model="isiPengumuman"></textarea> -->
@@ -68,14 +68,15 @@
                     <div class="perwalian">
                         <b-container v-for="item in daftarPerwalian.slice(page*10-10,page*10 )" :key="item.id" style="margin-bottom: .5rem; padding: 1rem; border: 2px solid #e5e5e5;" class="shadow p-3 rounded listMahasiswa">
                             <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
-                                <b-col cols="8">
+                                <b-col cols="12">
                                     <b-row>{{ item.nim }}</b-row>
                                     <b-row>{{ item.NAMA_MAHASISWA }}</b-row>
+                                    <b-row>Dosen Wali: {{ item.nama_dosen }}</b-row>
                                 </b-col>
                             </b-row>
-                                <div class="button-group justify-content-center">
+                                <div class="button-group justify-content-center"> 
                                     <div class="button">
-                                        <a href="#catatanPerwalian">
+                                        <a href="#ubahDosenWali">
                                             <b-button style="margin: .2rem; border: 1px solid #32a3df;" @click="sendDataProfile(item)" class="send">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" fill="currentColor" class="bi bi-file-earmark-plus" viewBox="0 0 16 16">
                                                     <path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5z"/>
@@ -85,7 +86,7 @@
                                             </b-button>
                                         </a>
                                     </div>
-                                    <div class="button">
+                                    <!-- <div class="button">
                                         <a href="#catatanMahasiswa">
                                         <b-button @click="sendDataCatatan(item)" style="margin: .2rem; border: 1px solid #32a3df;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
@@ -94,8 +95,8 @@
                                                 Lihat Catatan
                                         </b-button>
                                         </a>
-                                    </div>
-                                </div>
+                                    </div> -->
+                                </div> 
                         </b-container>
                     </div>
                 </b-col>
@@ -120,8 +121,7 @@ export default {
         user: [],
         isRemoveCatatan: false,
         isRemoveProfile: false,
-        firebaseToken: null,
-        profile: [],
+        dataDiri: [],
         fields: [ 'NAMA_MAHASISWA', 'nim'],
         daftarPerwalian: [],
         page: 1,
@@ -144,20 +144,15 @@ export default {
     },
     created(){
         //this.hapusTool();
-        if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
-            //this.user = JSON.parse(sessionStorage.getItem('user'))
-            this.firebaseToken = JSON.parse(sessionStorage.getItem('firebase-uid'))
+        if(sessionStorage.getItem('user') && sessionStorage.getItem('dataDiri')){
+            this.user = JSON.parse(sessionStorage.getItem('user'))
+            this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
         }
     },
     mounted() {
         this.hapusTool()
     },
     methods: {
-        async getProfile(){
-            await axios.get(`http://localhost:10001/dosen/${this.firebaseToken}`).then((response)=>{
-                this.profile = response.data
-            })
-        },
         kembali() {
             this.$router.replace('listMenu')
         },
@@ -173,7 +168,10 @@ export default {
             this.page = 1
             let kodeSems = new Date().getFullYear()-2+this.semester
             kodeSems.toString()
-            await axios.get(`http://localhost:10002/dosen/${this.firebaseToken.firebase-uid}/list-perwalian/${kodeSems}`)
+            await axios.get(`http://localhost:10002/admin/list-mahasiswa/${kodeSems}`, { params: {
+                email: this.dataDiri.email,
+                role: this.dataDiri.role,
+            } })
             .then((response) => {
                 this.daftarPerwalian = response.data
                 this.jumlahPage = this.daftarPerwalian.length/10
@@ -197,45 +195,32 @@ export default {
             this.isiPengumuman = ''
         },
         async kirimTele(){
-            var semester = ''
-            if(new Date().getMonth() <= 6){
-                semester = 2
-            }else if(new Date().getMonth() >= 7 && new Date().getMonth() <= 12){
-                semester = 1
-            }
-            try {
-                await axios.post(`http://localhost:10002/dosen/${this.firebaseToken.firebase-uid}/new-pengumuman`, {
+            await axios.post(`http://localhost:10002/admin/announcement/Testing%20Channel`, {
                 nama_dosen: "Testing Channel",
-                email: this.profile.email,
-                role: this.profile.role,
-                kode_semester: new Date().getFullYear()-2+semester,
-                semester: semester,
+                email: this.dataDiri.email,
+                role: this.dataDiri.role,
                 pengumuman: this.isiPengumuman,
                 file: this.gambar,
                 judul: this.judulPengumuman,
-                periode_akhir: moment(this.periode_akhir).locale('id').toString()
-                }, 
-                {
-                    params: {
-                        role: this.dataDiri.role,
-                        email: this.dataDiri.email
-                    }
-                })
-                .then((response)=>{
-                    console.log(response)
-                    this.$toast.open({
-                        message: 'Pesan Berhasil Terkirim',
-                        type: 'success',
-                        position: 'top'
-                    });
-                    this.isiPengumuman = ''
-                    this.judulPengumuman = ''
-                    this.periode_akhir = null
-                })
-            } catch (error) {
-                
-            }
-            
+                periode_akhir: moment(this.periode_akhir).locale('id')
+            }, 
+            {
+                params: {
+                    role: this.dataDiri.role,
+                    email: this.dataDiri.email
+                }
+            })
+            .then((response)=>{
+                 console.log(response)
+                this.$toast.open({
+                    message: 'Pesan Berhasil Terkirim',
+                    type: 'success',
+                    position: 'top'
+                });
+                this.isiPengumuman = ''
+                this.judulPengumuman = ''
+                this.periode_akhir = null
+            })
         },
         handleAttachmentChanges(event) {
             var file = event.attachment
@@ -282,7 +267,7 @@ p.tanggalBerakhir{
     display: flex;
     text-align: left;
 }
-.btn:hover {
+.btn.kembali:hover {
     color: white !important;
     background-color: #32a3df;
 }

@@ -39,7 +39,7 @@ export default {
                               profilPicture: result.additionalUserInfo.profile.picture,
                               uid: result.user.uid
                             }))
-                            if(response.data.id_telegram == null || response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
+                            if(response.data.id_telegram == null || response.data.id_telegram == ''){
                               this.$router.replace("/formpage").then(() => { this.$router.go() })
                             } else {
                               this.$router.replace("/listmenu").then(() => { this.$router.go() })

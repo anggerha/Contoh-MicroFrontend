@@ -68,15 +68,18 @@ export default {
         return {
             dataPerwalian: [],
             user: [],
-            dataDiri: [],
+            profile: [],
+            firebaseToken:[],
             judulPengumuman: '',
             isiPengumuman: ''
         }
     },
     created(){
         this.dataPerwalian = this.item
-        this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
-        this.user = JSON.parse(sessionStorage.getItem('user'))
+        if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
+            //this.user = JSON.parse(sessionStorage.getItem('user'))
+            this.firebaseToken = JSON.parse(sessionStorage.getItem('firebase-uid'))
+        }
     },
     watch: {
         // eslint-disable-next-line no-unused-vars
@@ -86,6 +89,11 @@ export default {
         }
     },
     methods: {
+        async getProfile(){
+            await axios.get(`http://localhost:10001/dosen/${this.firebaseToken}`).then((response)=>{
+                this.profile = response.data
+            })
+        },
         // async getLogMahasiswa() {
         //     try {
         //         await axios.get(`http://localhost:8000/dosen/log-mahasiswa`, { params: {
@@ -107,15 +115,15 @@ export default {
         //     }
         // },
         async kirimPersonal(){
-            await axios.post(`http://localhost:10002/dosen/new-log/${this.dataPerwalian.nim}`, {
-                nama_dosen: this.dataDiri.nama,
+            await axios.post(`http://localhost:10002/dosen/${this.firebaseToken.firebase-uid}/new-log/${this.dataPerwalian.nim}`, {
+                nama_dosen: this.profile.nama,
+                nik: this.profile.nik,
                 nama_mahasiswa: this.dataPerwalian.NAMA_MAHASISWA,
-                email: '',
-                kode_semester: this.dataPerwalian.KODE_SEMESTER,
                 nim: this.dataPerwalian.nim,
+                kode_semester: this.dataPerwalian.KODE_SEMESTER,
+                judul: this.judulPengumuman,
                 role: this.dataDiri.role,
                 pembahasan: this.isiPengumuman,
-                judul: this.judulPengumuman,
                 file: ''
             },
             {

@@ -244,6 +244,7 @@ export default {
             try {
                 await axios.get(`http://localhost:10002/mahasiswa/${this.firebaseUID.uid}/log-perwalian`)
                 .then((response) => {
+                    
                     this.pengumumanPerwalian = response.data.reverse()
                     this.pengumumanPerwalianGrouped = this.pengumumanPerwalian.groupBy((log)=>{
                         return log.kode_semester
