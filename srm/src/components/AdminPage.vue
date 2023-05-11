@@ -6,12 +6,12 @@
             </svg>
             Kembali
         </b-button>
-        <p class="judul">SRM FTI UKDW ADMIN</p>
+        <p class="judul">ADMIN FTI UKDW</p>
         <body class="bv-example-row">
             <b-row>
                 <b-col sm="8">
                     <div class="shadow-lg p-3 mb-5 bg-white rounded-4">
-                        <p>Buat Berita</p>
+                        <p>Buat Pengumuman</p>
 
                             <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman"></b-input>
                             <!-- <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" v-model="isiPengumuman"></textarea> -->
@@ -49,10 +49,7 @@
                     </div>
                 </b-col>
                 <b-col>
-                    <h4 v-if="semester == null">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }}</h4>
-                    <h4 v-if="semester == 1">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }} Semester Ganjil</h4>
-                    <h4 v-if="semester == 2">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }} Semester Genap</h4>
-                    <b-form-select v-model="semester" :options="options" @change="getMahasiswaPerwalian"></b-form-select>
+                    <h4>Daftar Mahasiswa Informatika</h4>
                     <b-row v-if="jumlahPage !=null" style="margin-top: 1rem;">
                         <b-col>
                             <b-button class="page" id="prev" :disabled="page <=1" @click="page -=1">prev</b-button>
@@ -68,15 +65,14 @@
                     <div class="perwalian">
                         <b-container v-for="item in daftarPerwalian.slice(page*10-10,page*10 )" :key="item.id" style="margin-bottom: .5rem; padding: 1rem; border: 2px solid #e5e5e5;" class="shadow p-3 rounded listMahasiswa">
                             <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
-                                <b-col cols="12">
+                                <b-col cols="8">
                                     <b-row>{{ item.nim }}</b-row>
-                                    <b-row>{{ item.NAMA_MAHASISWA }}</b-row>
-                                    <b-row>Dosen Wali: {{ item.nama_dosen }}</b-row>
+                                    <b-row>{{ item.nama_lengkap }}</b-row>
                                 </b-col>
                             </b-row>
-                                <div class="button-group justify-content-center"> 
-                                    <div class="button">
-                                        <a href="#ubahDosenWali">
+                                <div class="justify-content-center">
+                                    <!-- <div class="button">
+                                        <a href="#catatanPerwalian">
                                             <b-button style="margin: .2rem; border: 1px solid #32a3df;" @click="sendDataProfile(item)" class="send">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" fill="currentColor" class="bi bi-file-earmark-plus" viewBox="0 0 16 16">
                                                     <path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5z"/>
@@ -85,18 +81,18 @@
                                                     Tambah Catatan
                                             </b-button>
                                         </a>
-                                    </div>
-                                    <!-- <div class="button">
+                                    </div> -->
+                                    <div class="button">
                                         <a href="#catatanMahasiswa">
-                                        <b-button @click="sendDataCatatan(item)" style="margin: .2rem; border: 1px solid #32a3df;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
+                                        <b-button block @click="sendDataCatatan(item)" style="margin: .2rem; border: 1px solid #32a3df;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
                                                 <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
                                             </svg>
-                                                Lihat Catatan
+                                                Lihat Detail
                                         </b-button>
                                         </a>
-                                    </div> -->
-                                </div> 
+                                    </div>
+                                </div>
                         </b-container>
                     </div>
                 </b-col>
@@ -114,14 +110,15 @@ import VueTrix from 'vue-trix'
 import CatatanMahasiswa from './CatatanMahasiswa.vue'
 import moment from 'moment'
 export default {
-    name: 'SRMPage',
+    name: 'AdminPage',
     components: { MahasiswaProfile,VueTrix, CatatanMahasiswa },
     data() {
       return {
         user: [],
         isRemoveCatatan: false,
         isRemoveProfile: false,
-        dataDiri: [],
+        firebaseUID: null,
+        profile: [],
         fields: [ 'NAMA_MAHASISWA', 'nim'],
         daftarPerwalian: [],
         page: 1,
@@ -131,12 +128,6 @@ export default {
         files: [],
         gambar: null,
         imageData: null,
-        semester: null,
-        options: [
-            { value: null, text: 'Pilih Semester Gasal atau Genap', disabled:true },
-            { value: '1', text: 'Gasal' },
-            { value: '2', text: 'Genap' },
-        ],
         isiPengumuman:'',
         judulPengumuman:'',
         periode_akhir: null
@@ -144,15 +135,21 @@ export default {
     },
     created(){
         //this.hapusTool();
-        if(sessionStorage.getItem('user') && sessionStorage.getItem('dataDiri')){
-            this.user = JSON.parse(sessionStorage.getItem('user'))
-            this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
+        if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
+            //this.user = JSON.parse(sessionStorage.getItem('user'))
+            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+            this.getMahasiswa()
         }
     },
     mounted() {
         this.hapusTool()
     },
     methods: {
+        async getProfile(){
+            await axios.get(`http://localhost:10001/dosen/${this.firebaseUID}`).then((response)=>{
+                this.profile = response.data
+            })
+        },
         kembali() {
             this.$router.replace('listMenu')
         },
@@ -164,15 +161,11 @@ export default {
             console.log(value);
             this.isRemoveProfile = value
         },
-        async getMahasiswaPerwalian() {
+        async getMahasiswa() {
             this.page = 1
-            let kodeSems = new Date().getFullYear()-2+this.semester
-            kodeSems.toString()
-            await axios.get(`http://localhost:10002/admin/list-mahasiswa/${kodeSems}`, { params: {
-                email: this.dataDiri.email,
-                role: this.dataDiri.role,
-            } })
+            await axios.get(`http://localhost:10001/admin/${this.firebaseUID.uid}/list-mahasiswa`)
             .then((response) => {
+                console.log(response.data);
                 this.daftarPerwalian = response.data
                 this.jumlahPage = this.daftarPerwalian.length/10
             })
@@ -195,32 +188,45 @@ export default {
             this.isiPengumuman = ''
         },
         async kirimTele(){
-            await axios.post(`http://localhost:10002/admin/announcement/Testing%20Channel`, {
+            var semester = ''
+            if(new Date().getMonth() <= 6){
+                semester = 2
+            }else if(new Date().getMonth() >= 7 && new Date().getMonth() <= 12){
+                semester = 1
+            }
+            try {
+                await axios.post(`http://localhost:10002/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
                 nama_dosen: "Testing Channel",
-                email: this.dataDiri.email,
-                role: this.dataDiri.role,
+                email: this.profile.email,
+                role: this.profile.role,
+                kode_semester: new Date().getFullYear()-2+semester,
+                semester: semester,
                 pengumuman: this.isiPengumuman,
                 file: this.gambar,
                 judul: this.judulPengumuman,
-                periode_akhir: moment(this.periode_akhir).locale('id')
-            }, 
-            {
-                params: {
-                    role: this.dataDiri.role,
-                    email: this.dataDiri.email
-                }
-            })
-            .then((response)=>{
-                 console.log(response)
-                this.$toast.open({
-                    message: 'Pesan Berhasil Terkirim',
-                    type: 'success',
-                    position: 'top'
-                });
-                this.isiPengumuman = ''
-                this.judulPengumuman = ''
-                this.periode_akhir = null
-            })
+                periode_akhir: moment(this.periode_akhir).locale('id').toString()
+                }, 
+                {
+                    params: {
+                        role: this.dataDiri.role,
+                        email: this.dataDiri.email
+                    }
+                })
+                .then((response)=>{
+                    console.log(response)
+                    this.$toast.open({
+                        message: 'Pesan Berhasil Terkirim',
+                        type: 'success',
+                        position: 'top'
+                    });
+                    this.isiPengumuman = ''
+                    this.judulPengumuman = ''
+                    this.periode_akhir = null
+                })
+            } catch (error) {
+                console.log(error.response.data.message);
+            }
+            
         },
         handleAttachmentChanges(event) {
             var file = event.attachment
@@ -267,7 +273,7 @@ p.tanggalBerakhir{
     display: flex;
     text-align: left;
 }
-.btn.kembali:hover {
+.btn:hover {
     color: white !important;
     background-color: #32a3df;
 }
@@ -276,7 +282,6 @@ p.tanggalBerakhir{
     justify-content: flex-end;
 }
 .button .send{
-    display: flex;
     border-style: none;
     color: #32a3df;
     margin: 0.25rem;

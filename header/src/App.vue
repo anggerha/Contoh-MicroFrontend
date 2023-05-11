@@ -24,7 +24,6 @@ export default {
     showNavBar(){
       if(!sessionStorage.getItem('firebase-token') && !sessionStorage.getItem('firebase-uid')){
         this.show = false
-        // this.$router.replace('/Login').then(() => { this.$router.go() })
       } else {
         this.show = true
       }

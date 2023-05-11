@@ -15,7 +15,7 @@ import axios from "axios"
 export default {
     name: 'LoginPage',
     created(){
-      if(sessionStorage.getItem('user') && sessionStorage.getItem('dataDiri')){
+      if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
         this.$router.replace("/listmenu").then(() => { })
       }
     },
@@ -27,35 +27,45 @@ export default {
                 async (result) => {
                     if(result.additionalUserInfo.profile.hd){
                       if(result.additionalUserInfo.profile.hd == 'ti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'staff.ukdw.ac.id') {
-                        await axios.get(`http://localhost:10001/login/${result.user.uid}`, { params: { 
-                          nama : result.user.displayName.toString().toUpperCase(), 
+                        await axios.get(`http://localhost:10001/login/${result.user.uid}`, { params: {
                           email: result.user.email.toString() 
                         }})
-                        .then((response) => {
-                          if(response.status === 200){
-                            // sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
+                        .then( async (response) => {
+                          if(response.status == 200){
                             sessionStorage.setItem('firebase-token', result.credential.idToken)
                             sessionStorage.setItem('firebase-uid', JSON.stringify({
                               profilPicture: result.additionalUserInfo.profile.picture,
                               uid: result.user.uid
                             }))
-                            if(response.data.id_telegram == null || response.data.id_telegram == ''){
-                              this.$router.replace("/formpage").then(() => { this.$router.go() })
-                            } else {
-                              this.$router.replace("/listmenu").then(() => { this.$router.go() })
-                            }
+                            await axios.get(`http://localhost:10001/${result.user.uid}`)
+                            .then( async (response) => {
+                              if(response.status == 200) {
+                                if(response.data.role == 'MAHASISWA'){
+                                  if(response.data.username_telegram !== null && response.data.username_telegram !== '' && response.data.id_telegram !== null && response.data.id_telegram !== ''){
+                                    this.$router.replace("/listmenu").then(() => { this.$router.go() })
+                                  } else {
+                                    this.$router.replace("/formpage").then(() => { this.$router.go() })
+                                  }
+                                } else if (response.data.role == 'DOSEN') {
+                                  this.$router.replace("/listmenu").then(() => { this.$router.go() })
+                                }
+                              } 
+                            })
                           }
                         })
                       } else {
+                        sessionStorage.clear()
                         this.$router.replace("/login").then(() => { })
                       }
                     } else {
+                      sessionStorage.clear()
                       this.$router.replace("/login").then(() => { })
                     }
                 }
             )
-            .catch((err) => {
-                console.log(err.message)
+            .catch((error) => {
+              sessionStorage.clear()
+              console.log(error);
             })
         }
     }

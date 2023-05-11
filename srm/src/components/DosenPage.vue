@@ -120,7 +120,7 @@ export default {
         user: [],
         isRemoveCatatan: false,
         isRemoveProfile: false,
-        firebaseToken: null,
+        firebaseUID: null,
         profile: [],
         fields: [ 'NAMA_MAHASISWA', 'nim'],
         daftarPerwalian: [],
@@ -146,7 +146,7 @@ export default {
         //this.hapusTool();
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             //this.user = JSON.parse(sessionStorage.getItem('user'))
-            this.firebaseToken = JSON.parse(sessionStorage.getItem('firebase-uid'))
+            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
         }
     },
     mounted() {
@@ -154,7 +154,7 @@ export default {
     },
     methods: {
         async getProfile(){
-            await axios.get(`http://localhost:10001/dosen/${this.firebaseToken}`).then((response)=>{
+            await axios.get(`http://localhost:10001/dosen/${this.firebaseUID}`).then((response)=>{
                 this.profile = response.data
             })
         },
@@ -173,7 +173,7 @@ export default {
             this.page = 1
             let kodeSems = new Date().getFullYear()-2+this.semester
             kodeSems.toString()
-            await axios.get(`http://localhost:10002/dosen/${this.firebaseToken.firebase-uid}/list-perwalian/${kodeSems}`)
+            await axios.get(`http://localhost:10002/dosen/${this.firebaseUID.uid}/list-perwalian/${kodeSems}`)
             .then((response) => {
                 this.daftarPerwalian = response.data
                 this.jumlahPage = this.daftarPerwalian.length/10
@@ -204,8 +204,8 @@ export default {
                 semester = 1
             }
             try {
-                await axios.post(`http://localhost:10002/dosen/${this.firebaseToken.firebase-uid}/new-pengumuman`, {
-                nama_dosen: "Testing Channel",
+                await axios.post(`http://localhost:10002/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
+                nama_dosen: "ANGGER HERLAMBANG AMANDEGANI",
                 email: this.profile.email,
                 role: this.profile.role,
                 kode_semester: new Date().getFullYear()-2+semester,
@@ -214,12 +214,6 @@ export default {
                 file: this.gambar,
                 judul: this.judulPengumuman,
                 periode_akhir: moment(this.periode_akhir).locale('id').toString()
-                }, 
-                {
-                    params: {
-                        role: this.dataDiri.role,
-                        email: this.dataDiri.email
-                    }
                 })
                 .then((response)=>{
                     console.log(response)
@@ -233,7 +227,7 @@ export default {
                     this.periode_akhir = null
                 })
             } catch (error) {
-                
+                console.log(error.response.data.message);
             }
             
         },

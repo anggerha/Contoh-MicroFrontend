@@ -11,7 +11,7 @@
             </tr>
             <div class="form">
                 <tr class="avatar">
-                    <img class="avatar" :src="user.profilPicture" alt="Profile Picture">
+                    <img class="avatar" :src="firebaseUID.profilPicture" alt="Profile Picture">
                 </tr>
                 <div v-if="dataDiri.nik" class="mb-6">
                     <label for="nama" class="block mb-2 text-lg text-center font-medium text-gray-900 dark:text-white">{{ dataDiri.nik }}</label>
@@ -27,34 +27,23 @@
                     <label for="email" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Email</label>
                     <input :value="dataDiri.email" type="text" id="email" class="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled required>
                 </div>
-                <div class="mb-6" v-if="dataDiri.username_telegram || dataDiri.username_telegram ==''">
+                <div class="mb-6" v-if="dataDiri.username_telegram || dataDiri.username_telegram =='' && dataDiri.role == 'MAHASISWA'">
                     <label for="Id Telegram" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Username Telegram</label>
                     <input v-model="dataDiri.username_telegram" type="text" id="username_telegram" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required/>
                 </div>
-                <div class="mb-6" v-if="dataDiri.id_telegram || dataDiri.id_telegram == ''">
+                <div class="mb-6" v-if="dataDiri.id_telegram || dataDiri.id_telegram == '' && dataDiri.role == 'MAHASISWA' ">
                     <label for="Id Telegram" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Chat ID Telegram</label>
-                    <div style="margin-bottom: 1rem; background-color: lightgray; padding: 1rem; border-radius: 10px">
-                        <p>Cara mendapatkan Chat ID Telegram anda:</p>
-                        <ol style="list-style-type: number; margin-left: 2rem">
-                            <li>Buka <a href="https://t.me/RawDataBot" target="_blank">@RawDataBot</a> di Telegram,</li>
-                            <li>Tekan pilihan "start",</li>
-                            <li>Cari Chat ID anda pada respon yang dikembalikan,</li>
-                            <li>Masukkan Chat ID Telegram anda pada input field dibawah.</li>
-                        </ol>
-                        <p>Lokasi Chat ID:</p>
-                        <img src="../assets/locationChatId.png" alt="">
-                    </div>
-                    <input v-model="dataDiri.id_telegram" type="text" id="id_telegram" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required/>
+                    <input v-model="dataDiri.id_telegram" type="text" id="id_telegram" class="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled required/>
                 </div>
             </div>
-            <tr>
+            <!-- <tr>
                 <button class="btn simpan" type="button" @click="updateData">
                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" id="logo" class="bi bi-check2" viewBox="0 0 16 16">
                         <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                     </svg>
                     Simpan
                 </button>
-            </tr>
+            </tr> -->
         </div>
     </div>
 </template>
@@ -67,31 +56,34 @@ export default {
     name: 'Profile',
     data() {
         return {
-            user: [],
-            dataDiri: []
+            dataDiri: [],
+            firebaseUID: null
         }
     },
     created() {
-        if(sessionStorage.getItem('dataDiri') && sessionStorage.getItem('user')){
+        if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             this.getMahasiswa()
         } else {
             this.$router.replace('/Login').then(() => { this.$router.go() })
         }
     },
     methods: {
-        getMahasiswa() {
-            this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
-            this.user = JSON.parse(sessionStorage.getItem('user'))
+        async getMahasiswa() {
+            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+            await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)
+            .then( async (response) => {
+                if(response.status == 200){
+                    this.dataDiri = response.data
+                }
+            })
         },
         kembali() {
             this.$router.replace('/ListMenu').then(() => {})
         },
         async updateData() {
-           
             if(this.dataDiri.id_telegram !== null && this.dataDiri.id_telegram !== '' && this.dataDiri.username_telegram !== null && this.dataDiri.username_telegram !== ''){
                 if(this.dataDiri.role == 'MAHASISWA'){
-                   
-                    await axios.put(`http://localhost:10001/mahasiswa/update`, this.dataDiri, { params: { email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString() }})
+                    await axios.put(`http://localhost:10001/mahasiswa/${this.firebaseUID.uid}/update`, this.dataDiri, { params: { email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString() }})
                     .then(async () => {
                         console.log(this.dataDiri);
                         this.$toast.open({
@@ -99,27 +91,28 @@ export default {
                             type: 'success',
                             position: 'top'
                         });
-                        await axios.get('http://localhost:10001/mahasiswa/me', { params: {email: this.user.email.toString(), role: this.dataDiri.role.toString() }})
+                        await axios.get('http://localhost:10001/${this.firebaseUID.uid}', { params: {email: this.user.email.toString(), role: this.dataDiri.role.toString() }})
                         .then((response) => {
                             sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
                             //this.$router.replace("/listmenu").then(() => {})
                         })
                     })
-                } else if (this.dataDiri.role == 'DOSEN') {
-                    await axios.put(`http://localhost:10001/dosen/update`, this.dataDiri, { params: { nik : this.dataDiri.nik, email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString(), nama: this.dataDiri.nama }})
-                    .then(async () => {
-                        this.$toast.open({
-                            message: 'Data berhasil diupdate !',
-                            type: 'success',
-                            position: 'top'
-                        });
-                        await axios.get('http://localhost:10001/dosen/me', { params: { nama : this.user.displayName.toString().toUpperCase(), email: this.user.email.toString() }})
-                        .then((response) => {
-                            sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
-                            this.$router.replace("/listmenu").then(() => {})
-                        })
-                    })
-                }
+                } 
+                // else if (this.dataDiri.role == 'DOSEN') {
+                //     await axios.put(`http://localhost:10001/dosen/${this.firebaseUID.uid}/update`, this.dataDiri, { params: { nik : this.dataDiri.nik, email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString(), nama: this.dataDiri.nama }})
+                //     .then(async () => {
+                //         this.$toast.open({
+                //             message: 'Data berhasil diupdate !',
+                //             type: 'success',
+                //             position: 'top'
+                //         });
+                //         await axios.get('http://localhost:10001/${this.firebaseUID.uid}', { params: { nama : this.user.displayName.toString().toUpperCase(), email: this.user.email.toString() }})
+                //         .then((response) => {
+                //             sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
+                //             this.$router.replace("/listmenu").then(() => {})
+                //         })
+                //     })
+                // }
             } else {
                 this.$toast.open({
                     message: 'ID telegram kosong !',

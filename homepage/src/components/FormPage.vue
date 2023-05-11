@@ -23,7 +23,7 @@
             <div style="margin-bottom: 1rem; background-color: lightgray; padding: 1rem; border-radius: 10px">
                 <p>Cara mendapatkan Chat ID Telegram anda:</p>
                 <ol style="list-style-type: number; margin-left: 2rem">
-                    <li>Buka <a href="https://t.me/srm_informatika_ukdw_bot" target="_blank">Bot SRM Informatika UKDW</a> di Telegram,</li>
+                    <li>Buka <a href="https://t.me/portalalunalun_bot" target="_blank">Bot SRM Informatika UKDW</a> di Telegram,</li>
                     <li>Tekan START,</li>
                     <li>Tekan pilihan MAHASISWA</li>
                     <li>Masukkan NIM anda</li>

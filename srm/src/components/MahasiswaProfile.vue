@@ -69,7 +69,7 @@ export default {
             dataPerwalian: [],
             user: [],
             profile: [],
-            firebaseToken:[],
+            firebaseUID:[],
             judulPengumuman: '',
             isiPengumuman: ''
         }
@@ -78,7 +78,7 @@ export default {
         this.dataPerwalian = this.item
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             //this.user = JSON.parse(sessionStorage.getItem('user'))
-            this.firebaseToken = JSON.parse(sessionStorage.getItem('firebase-uid'))
+            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
         }
     },
     watch: {
@@ -90,7 +90,7 @@ export default {
     },
     methods: {
         async getProfile(){
-            await axios.get(`http://localhost:10001/dosen/${this.firebaseToken}`).then((response)=>{
+            await axios.get(`http://localhost:10001/dosen/${this.firebaseUID}`).then((response)=>{
                 this.profile = response.data
             })
         },
@@ -115,7 +115,7 @@ export default {
         //     }
         // },
         async kirimPersonal(){
-            await axios.post(`http://localhost:10002/dosen/${this.firebaseToken.firebase-uid}/new-log/${this.dataPerwalian.nim}`, {
+            await axios.post(`http://localhost:10002/dosen/${this.firebaseUID.uid}/new-log/${this.dataPerwalian.nim}`, {
                 nama_dosen: this.profile.nama,
                 nik: this.profile.nik,
                 nama_mahasiswa: this.dataPerwalian.NAMA_MAHASISWA,

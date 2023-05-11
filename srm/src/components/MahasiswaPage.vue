@@ -206,9 +206,9 @@ export default {
         async getDataPerwalian(){
             var kode_semester
             if(new Date().getMonth() <= 6) {
-                kode_semester = new Date().getFullYear()-2+'1'
-            } else if(new Date().getMonth() >=7 && new Date.getMonth() <=12) {
                 kode_semester = new Date().getFullYear()-2+'2'
+            } else if(new Date().getMonth() >=7 && new Date.getMonth() <=12) {
+                kode_semester = new Date().getFullYear()-2+'1'
             }
             try {
                 await axios.get(`http://localhost:10002/mahasiswa/${this.firebaseUID.uid}/perwalian/${kode_semester}`,  {params:{
