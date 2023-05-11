@@ -120,7 +120,8 @@ export default {
         user: [],
         isRemoveCatatan: false,
         isRemoveProfile: false,
-        dataDiri: [],
+        firebaseToken: null,
+        profile: [],
         fields: [ 'NAMA_MAHASISWA', 'nim'],
         daftarPerwalian: [],
         page: 1,
@@ -143,15 +144,20 @@ export default {
     },
     created(){
         //this.hapusTool();
-        if(sessionStorage.getItem('user') && sessionStorage.getItem('dataDiri')){
-            this.user = JSON.parse(sessionStorage.getItem('user'))
-            this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
+        if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
+            //this.user = JSON.parse(sessionStorage.getItem('user'))
+            this.firebaseToken = JSON.parse(sessionStorage.getItem('firebase-uid'))
         }
     },
     mounted() {
         this.hapusTool()
     },
     methods: {
+        async getProfile(){
+            await axios.get(`http://localhost:10001/dosen/${this.firebaseToken}`).then((response)=>{
+                this.profile = response.data
+            })
+        },
         kembali() {
             this.$router.replace('listMenu')
         },
@@ -167,10 +173,7 @@ export default {
             this.page = 1
             let kodeSems = new Date().getFullYear()-2+this.semester
             kodeSems.toString()
-            await axios.get(`http://localhost:10002/dosen/list-mahasiswa/Maria%20Nila%20Anggia%20Rini/${kodeSems}`, { params: {
-                email: this.dataDiri.email,
-                role: this.dataDiri.role,
-            } })
+            await axios.get(`http://localhost:10002/dosen/${this.firebaseToken.firebase-uid}/list-perwalian/${kodeSems}`)
             .then((response) => {
                 this.daftarPerwalian = response.data
                 this.jumlahPage = this.daftarPerwalian.length/10
@@ -194,32 +197,45 @@ export default {
             this.isiPengumuman = ''
         },
         async kirimTele(){
-            await axios.post(`http://localhost:10002/dosen/announcement/Testing%20Channel`, {
+            var semester = ''
+            if(new Date().getMonth() <= 6){
+                semester = 2
+            }else if(new Date().getMonth() >= 7 && new Date().getMonth() <= 12){
+                semester = 1
+            }
+            try {
+                await axios.post(`http://localhost:10002/dosen/${this.firebaseToken.firebase-uid}/new-pengumuman`, {
                 nama_dosen: "Testing Channel",
-                email: this.dataDiri.email,
-                role: this.dataDiri.role,
+                email: this.profile.email,
+                role: this.profile.role,
+                kode_semester: new Date().getFullYear()-2+semester,
+                semester: semester,
                 pengumuman: this.isiPengumuman,
                 file: this.gambar,
                 judul: this.judulPengumuman,
-                periode_akhir: moment(this.periode_akhir).locale('id')
-            }, 
-            {
-                params: {
-                    role: this.dataDiri.role,
-                    email: this.dataDiri.email
-                }
-            })
-            .then((response)=>{
-                 console.log(response)
-                this.$toast.open({
-                    message: 'Pesan Berhasil Terkirim',
-                    type: 'success',
-                    position: 'top'
-                });
-                this.isiPengumuman = ''
-                this.judulPengumuman = ''
-                this.periode_akhir = null
-            })
+                periode_akhir: moment(this.periode_akhir).locale('id').toString()
+                }, 
+                {
+                    params: {
+                        role: this.dataDiri.role,
+                        email: this.dataDiri.email
+                    }
+                })
+                .then((response)=>{
+                    console.log(response)
+                    this.$toast.open({
+                        message: 'Pesan Berhasil Terkirim',
+                        type: 'success',
+                        position: 'top'
+                    });
+                    this.isiPengumuman = ''
+                    this.judulPengumuman = ''
+                    this.periode_akhir = null
+                })
+            } catch (error) {
+                
+            }
+            
         },
         handleAttachmentChanges(event) {
             var file = event.attachment

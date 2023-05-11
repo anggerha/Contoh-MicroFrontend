@@ -128,13 +128,17 @@ export default {
             dataPerwalian: [],
             logMahasiswa: [],
             dataDiri: [],
+            firebaseToken:[],
             logMahasiswaGrouped: null,
             kodeSemester: null
         }
     },
     created(){
         this.dataPerwalian = this.itemMahasiswa
-        this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
+        if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
+            //this.user = JSON.parse(sessionStorage.getItem('user'))
+            this.firebaseToken = JSON.parse(sessionStorage.getItem('firebase-uid'))
+        }
     },
     watch: {
         // eslint-disable-next-line no-unused-vars
@@ -146,10 +150,7 @@ export default {
     methods: {
         async getLogMahasiswa() {
             try {
-                await axios.get(`http://localhost:10002/dosen/log-mahasiswa/${this.dataPerwalian.nim}`, { params: {
-                    email: this.dataDiri.email,
-                    role: 'DOSEN'
-                }})
+                await axios.get(`http://localhost:10002/dosen/${this.firebaseToken.firebase-uid}/log-mahasiswa/${this.dataPerwalian.nim}`, )
                 .then((response) => {
                     // console.log(response);
                     this.logMahasiswa = response.data
