@@ -9,52 +9,10 @@
         <p class="judul">SRM FTI UKDW</p>
         <h6> Nama: {{ dataDiri.nama }}</h6>
         <h6> Email: {{ dataDiri.email }}</h6>
-        <!-- <h6> ID Telegram: {{ dataDiri.id_telegram }}</h6>
-        <h6> Username Telegram: {{ dataDiri.username_telegram }}</h6> -->
-        <h6> Dosen Wali: {{dataPerwalian[0]?.nama_dosen}}</h6>
-        
+        <h6> Dosen Wali: {{dataPerwalian.nama_dosen}}</h6>
         <div class="accordion" role="tablist">
-            <!-- <b-card no-body class="mb-1">
-                <b-card-header header-tag="header" class="p-1" role="tab">
-                    <b-button block v-b-toggle.accordion-1 variant="info">Matakuliah</b-button>
-                </b-card-header>
-                <b-collapse id="accordion-1" accordion="my-accordion" role="tabpanel">
-                    <b-card-body>
-                        inner accordion
-                        <b-card>
-                            <b-card-header header-tag="header" class="p-1" role="tab">
-                                <b-button block v-b-toggle.collapse-1-inner variant="info">Pemrograman Web Lanjut</b-button>
-                            </b-card-header>
-                            <b-collapse id="collapse-1-inner" class="mt-2">
-                                <b-card>Hello!</b-card>
-                            </b-collapse>
-                        </b-card>
-                        <b-card>
-                            <b-card-header header-tag="header" class="p-1" role="tab">
-                                <b-button block v-b-toggle.collapse-2-inner variant="info">Logika Matematika</b-button>
-                            </b-card-header>
-                            <b-collapse id="collapse-2-inner" class="mt-2">
-                                <b-card>Hello!</b-card>
-                            </b-collapse>
-                        </b-card> -->
-                        <!-- end of inner accordion -->
-                    <!-- </b-card-body>
-                </b-collapse>
-            </b-card> 
-             <b-card no-body class="mb-1">
-                <b-card-header header-tag="header" class="p-1" role="tab">
-                    <b-button block v-b-toggle.accordion-2 variant="info">Perwalian</b-button>
-                </b-card-header>
-                <b-collapse id="accordion-2" accordion="my-accordion" role="tabpanel">
-                    <b-card-body>
-                    <b-card-text>{{ text }}</b-card-text>
-                    </b-card-body>
-                </b-collapse>
-            </b-card> -->
-         
             <b-row style="margin:1rem;">
                 <h1>Pengumuman</h1>
-               
             </b-row>
             <!-- <b-row style="margin:1rem;">
 
@@ -70,7 +28,6 @@
                                 <b-col>
                                     <h6 id="tanggalPengumuman">{{ item.tanggal }}  WIB</h6>
                                 </b-col>
-                                
                             </b-row> 
                     </vsa-heading>
                     <vsa-content >
@@ -82,8 +39,6 @@
                         <div style="margin-top: 2rem;">
                             <span id="pengumuman" >periode pengumuman berakhir: {{item.periode_akhir}}</span>
                         </div>
-                           
-                        
                     </vsa-content>
                 </vsa-item>
             </vsa-list>
@@ -116,8 +71,6 @@
                                     <div style="margin-top: 2rem;">
                                         <span id="pengumuman" >periode pengumuman berakhir: {{item.periode_akhir}}</span>
                                     </div>
-                                    
-                                    
                                 </vsa-content>
                             </vsa-item>
                         </vsa-list>
@@ -134,7 +87,7 @@
                             <h4 v-if="pengumumanPerwalian[0]?.kode_semester?.slice(4, 5) == 1">Semester Gasal</h4>
                             <h4 v-if="pengumumanPerwalian[0]?.kode_semester?.slice(4, 5) == 2">Semester Genap</h4>
 
-                            <p id="terbaru">Terbaru</p>
+                            <p id="terbaru" v-if="pengumumanPerwalian.length != 0">Terbaru</p>
                         </b-col>
                     </b-row>
                     
@@ -209,7 +162,7 @@ export default {
     data(){
         return {
             text: 'Pengumuman',
-            user: [],
+            firebaseUID: null,
             dataDiri: [],
             pengumuman: [],
             pengumumanPerwalian:[],
@@ -228,15 +181,9 @@ export default {
        
     },
     created() {
-        if(sessionStorage.getItem('user') && sessionStorage.getItem('dataDiri')){
-            this.user = JSON.parse(sessionStorage.getItem('user'))
-            this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
+        if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
+            this.getProfile()
         }
-        this.getDataPerwalian()
-        this.getPengumuman()
-        this.getPengumumanPerwalian()
-        this.getDateNow()
-
     },
     methods: {
         kembali() {
@@ -245,12 +192,40 @@ export default {
         getDateNow(){
             this.tanggalNow = moment().locale('id').format('ll')
         },
+        async getProfile() {
+            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+            await axios.get(`http://localhost:10001/mahasiswa/${this.firebaseUID.uid}`)
+            .then((response) => {
+                this.dataDiri = response.data
+                this.getDataPerwalian()
+                this.getPengumuman()
+                this.getPengumumanPerwalian()
+                this.getDateNow()
+            })
+        },
+        async getDataPerwalian(){
+            var kode_semester
+            if(new Date().getMonth() <= 6) {
+                kode_semester = new Date().getFullYear()-2+'1'
+            } else if(new Date().getMonth() >=7 && new Date.getMonth() <=12) {
+                kode_semester = new Date().getFullYear()-2+'2'
+            }
+            try {
+                await axios.get(`http://localhost:10002/mahasiswa/${this.firebaseUID.uid}/perwalian/${kode_semester}`,  {params:{
+                    role:'MAHASISWA',
+                    email: this.dataDiri.email,
+                    nim: this.dataDiri.nim,
+                    nama_mahasiswa: this.dataDiri.nama
+                }}).then((response)=>{
+                    this.dataPerwalian = response.data[0]
+                    // console.log("ini data perwalian= ")
+                })
+            } catch (error) {
+                console.log(error.response.data.message);
+            }
+        },
         async getPengumuman() {
-            await axios.get(`http://localhost:10002/mahasiswa/pengumuman/Testing%20Channel`, { params: {
-                role: 'MAHASISWA',
-                email: this.dataDiri.email,
-                nama_dosen: 'Testing Channel'
-            }})
+            await axios.get(`http://localhost:10002/mahasiswa/${this.firebaseUID.uid}/list-pengumuman`)
             .then((response) => {
                 this.pengumuman = response.data
                 for(let i = 0; i < this.pengumuman.valid.length; i++){
@@ -267,21 +242,13 @@ export default {
         },
         async getPengumumanPerwalian() {
             try {
-              
-                await axios.get(`http://localhost:10002/mahasiswa/log-perwalian/71180291`, { params: {
-                role: 'MAHASISWA',
-                email: this.dataDiri.email,
-                nim: this.dataDiri.nim,
-               
-                }})
+                await axios.get(`http://localhost:10002/mahasiswa/${this.firebaseUID.uid}/log-perwalian`)
                 .then((response) => {
-                    
                     this.pengumumanPerwalian = response.data.reverse()
                     this.pengumumanPerwalianGrouped = this.pengumumanPerwalian.groupBy((log)=>{
                         return log.kode_semester
                     })
                     this.kodeSemester = Object.keys(this.pengumumanPerwalianGrouped).reverse()
-
                     console.log("ini data log "+ this.pengumumanPerwalian);
                     console.log("ini data kode  "+ this.kodeSemester);
                     for(let i = 0; i < this.pengumumanPerwalian.length; i++){
@@ -298,25 +265,7 @@ export default {
                 console.log(error.response.data.message);
                 this.perwalianEror = error.response.data.message
             }
-            
         },
-        async getDataPerwalian(){
-            try {
-                await axios.get(`http://localhost:10002/mahasiswa/perwalian/${this.dataDiri.nim}`,  {params:{
-                    role:'MAHASISWA',
-                    email: this.dataDiri.email,
-                    nim: this.dataDiri.nim,
-                    nama_mahasiswa: this.dataDiri.nama,
-                    kode_semester: this.dataDiri.kode_semester
-                }}).then((response)=>{
-                    this.dataPerwalian = response.data
-                    console.log("ini data perwalian= ")
-                    console.log(this.dataPerwalian)
-                })
-            } catch (error) {
-                console.log(error.response.data.message);
-            }
-        }
     }
 }
 </script>

@@ -7,7 +7,7 @@
 export default {
   name: 'App',
   created() {
-    if(!sessionStorage.getItem('user') && !sessionStorage.getItem('dataDiri')){
+    if(!sessionStorage.getItem('firebase-token') && !sessionStorage.getItem('firebase-uid')){
       this.$router.replace('/Login').then(() => { this.$router.go() })
     }
   }

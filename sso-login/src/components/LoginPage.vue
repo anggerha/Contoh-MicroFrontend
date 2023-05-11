@@ -27,22 +27,19 @@ export default {
                 async (result) => {
                     if(result.additionalUserInfo.profile.hd){
                       if(result.additionalUserInfo.profile.hd == 'ti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'staff.ukdw.ac.id') {
-                        await axios.get('http://localhost:10001/login', { params: { 
+                        await axios.get(`http://localhost:10001/login/${result.user.uid}`, { params: { 
                           nama : result.user.displayName.toString().toUpperCase(), 
                           email: result.user.email.toString() 
                         }})
                         .then((response) => {
                           if(response.status === 200){
-                            sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
-                            sessionStorage.setItem('idToken', result.credential.idToken)
-                            sessionStorage.setItem('user', JSON.stringify({
-                              displayName: result.user.displayName,
+                            // sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
+                            sessionStorage.setItem('firebase-token', result.credential.idToken)
+                            sessionStorage.setItem('firebase-uid', JSON.stringify({
                               profilPicture: result.additionalUserInfo.profile.picture,
-                              email: result.user.email,
-                              emailVerified: result.user.emailVerified,
                               uid: result.user.uid
                             }))
-                            if(response.data.id_telegram == null || response.data.id_telegram == ''){
+                            if(response.data.id_telegram == null || response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
                               this.$router.replace("/formpage").then(() => { this.$router.go() })
                             } else {
                               this.$router.replace("/listmenu").then(() => { this.$router.go() })

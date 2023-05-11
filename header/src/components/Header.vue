@@ -9,7 +9,7 @@
             </b-navbar-brand>
             <b-dropdown class="ml-auto" variant="link" toggle-class="text-decoration-none" no-caret>
                 <template #button-content>
-                    <b-avatar class="avatar" :src="user.profilPicture" size="4rem"></b-avatar>
+                    <b-avatar class="avatar" :src="profilPicture.profilPicture" size="4rem"></b-avatar>
                 </template>
                 <b-dropdown-item @click="goProfile">Profile</b-dropdown-item>
                 <b-dropdown-item @click="signOut">Sign Out</b-dropdown-item>
@@ -27,13 +27,11 @@ export default {
     name: 'Header',
     data() {
         return {
-            user: [],
-            dataDiri: []
+            profilPicture: null
         }
     },
     created() {
-        this.user = JSON.parse(sessionStorage.getItem('user'))
-        this.dataDiri = JSON.parse(sessionStorage.getItem('dataDiri'))
+        this.profilPicture = JSON.parse(sessionStorage.getItem('firebase-uid'))
     },
     methods: {
         signOut() {
