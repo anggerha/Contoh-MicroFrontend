@@ -42,6 +42,7 @@ export default {
                               emailVerified: result.user.emailVerified,
                               uid: result.user.uid
                             }))
+                            
                             if(response.data.id_telegram == null || response.data.id_telegram == ''){
                               this.$router.replace("/formpage").then(() => { this.$router.go() })
                             } else {
