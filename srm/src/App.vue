@@ -32,13 +32,10 @@ export default {
         this.$router.replace('/Login').then(() => { this.$router.go() })
       } else {
         this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
-        console.log(this.firebaseUID.uid);
         await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)
         .then( async (response) => {
-          console.log(response);
           if(response.status == 200){
             var listAdmin = await axios.get(`http://localhost:10001/${this.firebaseUID.uid}/accessPass`)
-            console.log(listAdmin);
             if(listAdmin.data.access == "granted"){
               this.role = response.data.role
               this.isAdmin = true
@@ -46,7 +43,6 @@ export default {
               this.role = response.data.role
               this.isAdmin = false
             }
-            console.log('isAdmin: ' + this.isAdmin);
           } else {
             console.log(response);
           }

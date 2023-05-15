@@ -61,7 +61,6 @@
                             <b-button class="page" id="next" :disabled="page >= jumlahPage" @click="page +=1">next</b-button>
                         </b-col>
                     </b-row>
-
                     <div class="perwalian">
                         <b-container v-for="item in daftarPerwalian.slice(page*10-10,page*10 )" :key="item.id" style="margin-bottom: .5rem; padding: 1rem; border: 2px solid #e5e5e5;" class="shadow p-3 rounded listMahasiswa">
                             <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
@@ -165,7 +164,6 @@ export default {
             this.page = 1
             await axios.get(`http://localhost:10001/admin/${this.firebaseUID.uid}/list-mahasiswa`)
             .then((response) => {
-                console.log(response.data);
                 this.daftarPerwalian = response.data
                 this.jumlahPage = this.daftarPerwalian.length/10
             })
@@ -269,19 +267,13 @@ p.tanggalBerakhir{
     font-size: large;
     margin-top:1rem;
 }
-.form{
-    display: flex;
-    text-align: left;
-}
-.btn:hover {
-    color: white !important;
-    background-color: #32a3df;
-}
 .button-group{
     display: flex; 
     justify-content: flex-end;
 }
 .button .send{
+    display: flex;
+    justify-content: center;
     border-style: none;
     color: #32a3df;
     margin: 0.25rem;
