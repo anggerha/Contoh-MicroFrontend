@@ -187,14 +187,14 @@ export default {
     },
     methods: {
         kembali() {
-            this.$router.replace('listMenu')
+            this.$router.replace('listMenu').then(this.$router.go({}))
         },
         getDateNow(){
             this.tanggalNow = moment().locale('id').format('ll')
         },
         async getProfile() {
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
-            await axios.get(`http://localhost:10001/mahasiswa/${this.firebaseUID.uid}`)
+            await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)
             .then((response) => {
                 this.dataDiri = response.data
                 this.getDataPerwalian()
