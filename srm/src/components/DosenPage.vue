@@ -70,7 +70,7 @@
                             <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
                                 <b-col cols="8">
                                     <b-row>{{ item.nim }}</b-row>
-                                    <b-row>{{ item.NAMA_MAHASISWA }}</b-row>
+                                    <b-row>{{ item.nama_mahasiswa }}</b-row>
                                 </b-col>
                             </b-row>
                                 <div class="button-group justify-content-center">
