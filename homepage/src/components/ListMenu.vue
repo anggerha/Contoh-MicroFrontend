@@ -40,7 +40,7 @@ export default {
                 this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
                 await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)
                 .then((response) => {
-                    if(response.data.username_telegram == '' && response.data.id_telegram == ''){
+                    if(response.data.username_telegram == '' && response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
                         this.$router.replace('/formPage')
                     }
                 })

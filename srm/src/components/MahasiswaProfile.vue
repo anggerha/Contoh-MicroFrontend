@@ -33,7 +33,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
                                 <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
                             </svg>
-                            <span style="margin-left: 0.5rem;">{{ item.NAMA_MAHASISWA }}</span>
+                            <span style="margin-left: 0.5rem;">{{ item.nama_mahasiswa }}</span>
                         </div>
                         <div class="form">
                             <b-input type="text" placeholder="Judul" style="margin-bottom: 1rem; margin-top: 1rem" v-model="judulPengumuman"></b-input>
@@ -115,21 +115,21 @@ export default {
         //     }
         // },
         async kirimPersonal(){
-            await axios.post(`http://localhost:10002/dosen/${this.firebaseUID.uid}/new-log/${this.dataPerwalian.nim}`, {
+            await axios.post(`http://localhost:10002/dosen/${this.firebaseUID.uid}/new-log`, {
                 nama_dosen: this.profile.nama,
                 nik: this.profile.nik,
-                nama_mahasiswa: this.dataPerwalian.NAMA_MAHASISWA,
+                nama_mahasiswa: this.dataPerwalian.nama_mahasiswa,
                 nim: this.dataPerwalian.nim,
-                kode_semester: this.dataPerwalian.KODE_SEMESTER,
+                kode_semester: this.dataPerwalian.kode_semester,
                 judul: this.judulPengumuman,
-                role: this.dataDiri.role,
+                role: this.profile.role,
                 pembahasan: this.isiPengumuman,
                 file: ''
             },
             {
                 params: {
-                    role: this.dataDiri.role,
-                    email: this.dataDiri.email
+                    role: this.profile.role,
+                    email: this.profile.email
                 }
             })
             .then((response) => {

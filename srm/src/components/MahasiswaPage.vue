@@ -107,11 +107,10 @@
             </b-row>
             <b-row >
                 <div style="margin:auto; color:grey;" v-if="perwalianEror != ''"><h5>{{this.perwalianEror}}</h5></div>
-                
             </b-row>
             <b-row style="margin-bottom:1rem;">
                 <b-col>
-                    <b-button block v-b-toggle.accordion-1  ><svg xmlns="http://www.w3.org/2000/svg" style="margin-right:0.5rem;" width="20" height="20" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
+                    <b-button block v-b-toggle.accordion-1><svg xmlns="http://www.w3.org/2000/svg" style="margin-right:0.5rem;" width="20" height="20" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
                         <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z"/>
                         </svg> Arsip Catatan Perwalian
                     </b-button>
@@ -119,13 +118,11 @@
                         <div style="margin-top: 1rem;width: 100%;">
                             <ul style="display: grid;grid-template-columns:repeat(5,1fr); padding:0;">
                                 <li v-show="pengumumanPerwalian[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="width: 100%; display:inline;" >
-                                    
                                     <b-button v-b-toggle="'accordion-' + item">{{ item.slice(0, 4) }}<span v-if="item.slice(4, 5) == 1">&nbsp;Gasal</span><span v-if="item.slice(4, 5) == 2">&nbsp;Genap</span></b-button>
                                 </li>
                             </ul>                                            
                         </div>
                             <div v-show="pengumumanPerwalian[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="margin-bottom: 1rem">
-                                
                                 <b-collapse :id="'accordion-' + item" role="tabpanel">
                                     <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 1">{{ item.slice(0, 4) }} Gasal</b-card-title>
                                     <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 2">{{ item.slice(0, 4) }} Genap</b-card-title>
@@ -244,14 +241,13 @@ export default {
             try {
                 await axios.get(`http://localhost:10002/mahasiswa/${this.firebaseUID.uid}/log-perwalian`)
                 .then((response) => {
-                    
                     this.pengumumanPerwalian = response.data.reverse()
                     this.pengumumanPerwalianGrouped = this.pengumumanPerwalian.groupBy((log)=>{
                         return log.kode_semester
                     })
                     this.kodeSemester = Object.keys(this.pengumumanPerwalianGrouped).reverse()
                     console.log("ini data log "+ this.pengumumanPerwalian);
-                    console.log("ini data kode  "+ this.kodeSemester);
+                    console.log(this.kodeSemester);
                     for(let i = 0; i < this.pengumumanPerwalian.length; i++){
                         this.pengumumanPerwalian[i].tanggal = new Date(this.pengumumanPerwalian[i].tanggal)
                         .toLocaleString('id-ID', {
@@ -260,11 +256,11 @@ export default {
                             month: "long",
                             day: "numeric"
                         })
-                    }   
+                    }
                 })
             } catch (error) {
-                console.log(error.response.data.message);
-                this.perwalianEror = error.response.data.message
+                console.log(error);
+                this.perwalianEror = error
             }
         },
     }

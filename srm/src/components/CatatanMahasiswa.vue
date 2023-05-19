@@ -1,6 +1,5 @@
 <template>
     <div v-if="itemMahasiswa.length !== 0" id="catatanMahasiswa">
-        {{ itemMahasiswa }}
         <body class="bv-example-row">
             <b-row>
                 <b-col>
@@ -41,7 +40,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
                                         <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
                                     </svg>
-                                    <span style="margin-left: 0.5rem;">{{ itemMahasiswa.nama_lengkap }}</span>
+                                    <span style="margin-left: 0.5rem;">{{ itemMahasiswa.nama_mahasiswa }}</span>
                                 </div>
                             </b-col>
                             <b-col>
@@ -54,7 +53,7 @@
                         <div v-if="logMahasiswa.length != 0">
                             <b-row style="margin-top: 1rem">
                                 <b-col>
-                                    <h2 v-if="logMahasiswa.length != 0">Catatan Perwalian {{ logMahasiswa[0]?.kode_semester?.slice(0, 4) }}</h2> 
+                                    <h2 v-if="logMahasiswa.length != 0">Catatan Perwalian {{ logMahasiswa[logMahasiswa.length-1]?.kode_semester?.slice(0, 4) }}</h2> 
                                     <h2 v-if="logMahasiswa.length == 0">Catatan Perwalian Kosong</h2>
                                     <b-row>
                                         <b-col style="display: flex;">
@@ -89,7 +88,7 @@
                                     </b-button>
                                     <b-collapse id="accordion-catatan" role="tabpanel">
                                         <div style="margin-top: 1rem;width: 100%;">
-                                            <ul style="display: grid;grid-template-columns:repeat(5,1fr); padding:0;">
+                                            <ul style="display: grid;grid-template-columns:repeat(3, 1fr); padding:0;">
                                                 <li v-show="logMahasiswa[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="width: 100%; display:inline;">
                                                     <b-button v-b-toggle="'accordion-' + item">{{ item.slice(0, 4) }}<span v-if="item.slice(4, 5) == 1"> Gasal</span><span v-if="item.slice(4, 5) == 2"> Genap</span></b-button>
                                                 </li>
@@ -224,10 +223,6 @@ export default {
                         return log.kode_semester
                     })
                     this.kodeSemester = Object.keys(this.logMahasiswaGrouped).reverse()
-                    await axios.get(`http://localhost:10001/admin/${this.firebaseUID.uid}/view-mahasiswa/${this.dataPerwalian.nim}`)
-                    .then((response) => {
-                        this.detailMahasiswa = response.data
-                    })
                 })
             } catch (error) {
                 this.$toast.open({
@@ -242,7 +237,6 @@ export default {
                 await axios.get(`http://localhost:10001/admin/${this.firebaseUID.uid}/view-mahasiswa/${this.dataPerwalian.nim}`)
                 .then((response) => {
                     this.detailMahasiswa = response.data
-                    console.log(this.detailMahasiswa);
                     this.nilaiGrouped = response.data.nilai.groupBy((nilai) => {
                         return nilai.kode_semester
                     })
@@ -283,7 +277,7 @@ export default {
     color: white;
     background-color: #32a3df;
 }
-.nim, .nama .email{
+.nim, .nama, .email{
     display: flex;
 }
 .delete{
