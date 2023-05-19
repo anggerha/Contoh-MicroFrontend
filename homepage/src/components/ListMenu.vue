@@ -22,8 +22,31 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
     name: 'ListMenu',
+    data() {
+        return {
+            firebaseUID: null
+        }
+    },
+    created() {
+        this.checkUser()
+    },
+    methods:{
+        async checkUser() {
+            if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
+                this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+                await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)
+                .then((response) => {
+                    if(response.data.username_telegram == '' && response.data.id_telegram == ''){
+                        this.$router.replace('/formPage')
+                    }
+                })
+            }
+        }
+    }
 }
 </script>
 

@@ -58,13 +58,13 @@ export default {
     },
     methods: {
         async getProfile() {
-            await axios(`http://localhost:10001/mahasiswa/${this.firebaseUID.uid}`)
+            await axios(`http://localhost:10001/${this.firebaseUID.uid}`)
             .then((response) => {
                 this.profile = response.data
             })
         },
         async goToListmenu() {
-            await axios(`http://localhost:10001/mahasiswa/${this.firebaseUID.uid}`)
+            await axios(`http://localhost:10001/${this.firebaseUID.uid}`)
             .then((response) => {
                 this.profile = response.data
             })
