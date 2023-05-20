@@ -18,7 +18,7 @@
                             <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman"/>
                             <p class="tanggalBerakhir">Tanggal Pengumuman Berakhir</p>
                             <b-input required placeholder="Tanggal Berakhir" type="datetime-local" v-model="periode_akhir"></b-input> 
-                            {{periode_akhir}}
+                            
                         <div style="margin-top: 1rem;">
                             <div class="button-group">
                                 <div class="button">
@@ -204,28 +204,37 @@ export default {
                 semester = 1
             }
             try {
-                await axios.post(`http://localhost:10002/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
-                nama_dosen: "ANGGER HERLAMBANG AMANDEGANI",
-                email: this.profile.email,
-                role: this.profile.role,
-                kode_semester: new Date().getFullYear()-2+semester,
-                semester: semester,
-                pengumuman: this.isiPengumuman,
-                file: this.gambar,
-                judul: this.judulPengumuman,
-                periode_akhir: moment(this.periode_akhir).locale('id').toString()
-                })
-                .then((response)=>{
-                    console.log(response)
+                if(this.isiPengumuman == ''){
                     this.$toast.open({
-                        message: 'Pesan Berhasil Terkirim',
-                        type: 'success',
+                        message: 'Pesan Gagal Terkirim, isi tidak boleh kosong',
+                        type: 'warning',
                         position: 'top'
                     });
-                    this.isiPengumuman = ''
-                    this.judulPengumuman = ''
-                    this.periode_akhir = null
-                })
+                }else{
+                    await axios.post(`http://localhost:10002/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
+                        nama_dosen: "ANGGER HERLAMBANG AMANDEGANI",
+                        email: this.profile.email,
+                        role: this.profile.role,
+                        kode_semester: new Date().getFullYear()-2+semester,
+                        semester: semester,
+                        pengumuman: this.isiPengumuman,
+                        file: this.gambar,
+                        judul: this.judulPengumuman,
+                        periode_akhir: moment(this.periode_akhir).locale('id').toString()
+                        })
+                        .then((response)=>{
+                            console.log(response)
+                            this.$toast.open({
+                                message: 'Pesan Berhasil Terkirim',
+                                type: 'success',
+                                position: 'top'
+                            });
+                            this.isiPengumuman = ''
+                            this.judulPengumuman = ''
+                            this.periode_akhir = null
+                        })
+                }
+                
             } catch (error) {
                 console.log(error.response.data.message);
             }

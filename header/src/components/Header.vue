@@ -1,11 +1,21 @@
 <template>
-    <div class="container">
+    <div >
         <b-navbar class="navbar" type="light" variant="faded">
             <b-navbar-brand>
-                <div class="center" @click="goHome">
-                    <img style="max-width:150px;" src="../assets/fti-ukdw.png" class="d-inline-block align-top" alt="FTI UKDW">
-                    <h1 id="judulHeader">Informatika</h1>
-                </div>
+                <!-- <div class="center" @click="goHome"> -->
+                    <!-- <img style="max-width:150px;" src="../assets/fti-ukdw.png" class="d-inline-block align-top" alt="FTI UKDW">
+                    <h1 id="judulHeader">Informatika</h1> -->
+                    <div class="sidenav" id="mySidenav">
+                        <a href="javascript:void(0)" class="closebtn" @click="closeNav">&times;</a>
+                        <a href="" @click="goHome" >Home</a>
+                        <a href="" @click="goToSrm">SRM</a>
+                    </div>
+                    <div style="display:flex;">
+                        <span style="font-size:30px;cursor:pointer" @click="openNav"> &#9776; Informatika</span>
+                    
+                    </div>
+                    
+                <!-- </div> -->
             </b-navbar-brand>
             <b-dropdown class="ml-auto" variant="link" toggle-class="text-decoration-none" no-caret>
                 <template #button-content>
@@ -32,6 +42,7 @@ export default {
     },
     created() {
         this.profilPicture = JSON.parse(sessionStorage.getItem('firebase-uid'))
+       
     },
     methods: {
         signOut() {
@@ -48,6 +59,16 @@ export default {
         },
         goHome() {
             this.$router.replace('/listMenu').then(() => { this.$router.go() }).catch(()=>{})
+        },
+        openNav() {
+            document.getElementById("mySidenav").style.width = "250px";
+        },
+
+        closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+        },
+        goToSrm(){
+            this.$router.replace('/srm')
         }
     }
 }
@@ -79,5 +100,47 @@ hr{
     #judulHeader{
         visibility: hidden;
     }
+}
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: white;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #32a3df;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+.sidenav a.active {
+  background-color: #04AA6D;
+  color: white;
 }
 </style>

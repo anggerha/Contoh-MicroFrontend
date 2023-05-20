@@ -73,7 +73,7 @@
                                                     <b-card-text>
                                                         {{ data.pembahasan }}
                                                     </b-card-text>
-                                                <b-card-text class="small text-muted">Dikirim pada tanggal {{ data.tanggal }}</b-card-text>
+                                                <b-card-text class="small text-muted">Dikirim pada tanggal {{ data.tanggal}}</b-card-text>
                                             </b-card>
                                         </div>
                                     </div>

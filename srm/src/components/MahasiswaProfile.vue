@@ -115,33 +115,43 @@ export default {
         //     }
         // },
         async kirimPersonal(){
-            await axios.post(`http://localhost:10002/dosen/${this.firebaseUID.uid}/new-log`, {
-                nama_dosen: this.profile.nama,
-                nik: this.profile.nik,
-                nama_mahasiswa: this.dataPerwalian.nama_mahasiswa,
-                nim: this.dataPerwalian.nim,
-                kode_semester: this.dataPerwalian.kode_semester,
-                judul: this.judulPengumuman,
-                role: this.profile.role,
-                pembahasan: this.isiPengumuman,
-                file: ''
-            },
-            {
-                params: {
-                    role: this.profile.role,
-                    email: this.profile.email
-                }
-            })
-            .then((response) => {
-                console.log(response);
+            if(this.isiPengumuman == ''){
                 this.$toast.open({
-                    message: 'Pesan Berhasil Terkirim',
-                    type: 'success',
+                    message: 'Pesan Gagal Terkirim, isi tidak boleh kosong',
+                    type: 'warning',
                     position: 'top'
                 });
-                this.isiPengumuman = ''
-                this.judulPengumuman = ''
-            })
+            }else{
+                await axios.post(`http://localhost:10002/dosen/${this.firebaseUID.uid}/new-log`, {
+                    nama_dosen: this.profile.nama,
+                    nik: this.profile.nik,
+                    nama_mahasiswa: this.dataPerwalian.nama_mahasiswa,
+                    nim: this.dataPerwalian.nim,
+                    kode_semester: this.dataPerwalian.kode_semester,
+                    judul: this.judulPengumuman,
+                    role: this.profile.role,
+                    pembahasan: this.isiPengumuman,
+                    file: ''
+                    },
+                    {
+                        params: {
+                            role: this.profile.role,
+                            email: this.profile.email
+                        }
+                    })
+                    .then((response) => {
+                        console.log(response);
+                        this.$toast.open({
+                            message: 'Pesan Berhasil Terkirim',
+                            type: 'success',
+                            position: 'top'
+                        });
+                        this.isiPengumuman = ''
+                        this.judulPengumuman = ''
+                    }
+                )
+            }
+            
         },
         hapusKomponen(){
             this.$emit('clicked',true)
