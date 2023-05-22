@@ -27,7 +27,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-vcard-fill" viewBox="0 0 16 16">
                                         <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm9 1.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4a.5.5 0 0 0-.5.5ZM9 8a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4A.5.5 0 0 0 9 8Zm1 2.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 0-1h-3a.5.5 0 0 0-.5.5Zm-1 2C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1 1 0 0 0 2 13h6.96c.026-.163.04-.33.04-.5ZM7 6a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/>
                                     </svg>
-                                    <span style="margin-left: 0.5rem;">{{ itemMahasiswa.nim }}</span>
+                                    <span style="margin-left: 0.5rem;">{{ dataPerwalian.nim }}</span>
                                  </div>
                             </b-col>
                             <b-col>
@@ -40,14 +40,24 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
                                         <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
                                     </svg>
-                                    <span style="margin-left: 0.5rem;">{{ itemMahasiswa.nama_mahasiswa }}</span>
+                                    <span v-if="itemMahasiswa[1] == 'dosen'" style="margin-left: 0.5rem;">{{ dataPerwalian.nama_mahasiswa }}</span>
+                                    <span v-if="itemMahasiswa[1] == 'admin'" style="margin-left: 0.5rem;">{{ dataPerwalian.nama_lengkap }}</span>
                                 </div>
                             </b-col>
                             <b-col>
                                 <p>IPS :</p>
                             </b-col>
                         </b-row>
-
+                        <b-row v-if="itemMahasiswa[1] == 'admin'">
+                                <b-col>
+                                    <div class="email">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-envelope-fill" viewBox="0 0 16 16">
+                                            <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z"/>
+                                        </svg>
+                                        <span  style="margin-left: 0.5rem;">{{ dataPerwalian.email }}</span>
+                                    </div>
+                                </b-col>
+                            </b-row>
 <!-- LOG MAHASISWA -->
 
                         <div v-if="logMahasiswa.length != 0">
@@ -116,47 +126,44 @@
 <!-- DETAIL MAHASISWA -->
 
                         <div v-if="detailMahasiswa.length != 0">
-                            <b-row>
-                                <b-col>
-                                    <div class="email">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-envelope-fill" viewBox="0 0 16 16">
-                                            <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z"/>
-                                        </svg>
-                                        <span style="margin-left: 0.5rem;">{{ detailMahasiswa.biodata.email }}</span>
-                                    </div>
-                                </b-col>
-                            </b-row>
+                            
                             <b-row style="margin-top: 1rem;">
                                 <b-col>
-                                    <b-button class="button" block v-b-toggle.accordion-nilai variant="info" >Nilai Mahasiswa</b-button>
+                                    <b-button class="button" block v-b-toggle.accordion-nilai variant="info">Nilai Mahasiswa</b-button>
                                     <b-collapse id="accordion-nilai" role="tabpanel">
                                         <div style="margin-top: 1rem; width: 100%;">
-                                            <ul style="display: grid; grid-template-columns:repeat(5, 1fr); padding:0;">
-                                                <li v-for="item in kodeSemesterNilai" :key="item" style="display:inline;">
-                                                    <b-button style="margin-bottom: 1rem; min-width: 8rem;" v-b-toggle="'accordion-' + item">{{ item.slice(0, 4) }}<span v-if="item.slice(4, 5) == 1"> Gasal</span><span v-if="item.slice(4, 5) == 2"> Genap</span></b-button>
+                                            <ul style="display: grid; grid-template-columns:repeat(auto-fit, minmax(110px,1fr); padding:0;">
+                                                <li v-for="item in kodeSemesterNilai" :key="item" style="display:inline; padding: 10px; ">
+                                                    
+                                                    <b-button class="tombolNilai" v-if="item.slice(4, 5) == 1" style="margin-bottom: 1rem; display:flex; width:6.5rem; " v-b-toggle="'accordion-' + item"><div style="float:left;">{{ item.slice(0, 4) }}</div> &nbsp;<div style="float:right;">Gasal</div> </b-button>
+                                                    <b-button class="tombolNilai" v-if="item.slice(4, 5) == 2" style="margin-bottom: 1rem; display:flex; width:6.5rem; " v-b-toggle="'accordion-' + item"><div style="float:left;">{{ item.slice(0, 4) }}</div> &nbsp;<div style="float:right;">Genap</div> </b-button>
                                                 </li>
                                             </ul>                                            
                                         </div>
                                         <div v-for="item in kodeSemesterNilai" :key="item" style="margin-bottom: 1rem">
                                             <b-collapse :id="'accordion-' + item" role="tabpanel">
-                                                <!-- <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 1">{{ item.slice(0, 4) }}/{{ parseInt(item.slice(0, 4)) + 1 }} Gasal</b-card-title>
-                                                <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 2">{{ item.slice(0, 4) }}/{{ parseInt(item.slice(0, 4)) + 1 }} Genap</b-card-title> -->
-                                                <b-card>
-                                                    <b-card-text v-for="nilai in nilaiGrouped[item]" :key="nilai._id">
-                                                        <h3>{{ nilai.nama_matakuliah }}</h3>
-                                                        <b-card-text class="small text-muted">
-                                                            <b-row>
-                                                                <p style="margin-left:1rem;">Tahun Ajaran: {{ nilai.kode_semester.slice(0, 4) }}/{{ parseInt(nilai.kode_semester.slice(0, 4)) + 1 }} |</p>
-                                                                <p v-if="nilai.semester == 1">&nbsp;Semester Gasal</p>
-                                                                <p v-if="nilai.semester == 2">&nbsp;Semester Genap</p>
-                                                            </b-row>
-                                                        </b-card-text>
-                                                        <p>Nilai: {{ nilai.nilai }}</p>
-                                                        <p>Bobot Nilai: {{ nilai.bobot_nilai }}</p>
-                                                        <hr>
-                                                    </b-card-text>
-                                                </b-card>
+                                                <b-row>
+                                                    <div style="margin: auto; display:flex; ">
+                                                       <h5 class="judulNilai">Tahun Ajaran {{item.slice(0,4)}}/{{parseInt(item.slice(0,4))+1}}</h5>&nbsp;
+                                                       <h5 class="judulNilai" v-if="item.slice(4,5)==1">Semester Gasal</h5>
+                                                       <h5 class="judulNilai" v-if="item.slice(4,5)==2">Semester Genap</h5>
+                                                    </div>
+                                                </b-row>
+                                                
+                                                <div class="row">
+                                                    <div v-for="nilai in nilaiGrouped[item]" :key="nilai._id" class="col-md-6 col-6 my-1">
+                                                        <b-card style="height:100%; ">
+
+                                                            <b-card-text>
+                                                                <p style=" font-size:calc(80% + 0.5vw);">{{nilai.nama_matakuliah}}</p>
+                                                                <span class="badge badge-pill badge-info"> Nilai: {{ nilai.nilai}}</span>
+                                                            </b-card-text>
+                                                        </b-card>
+                                                    </div>
+                                                </div>
+                                                <br>
                                             </b-collapse>
+                                          
                                         </div>
                                     </b-collapse>
                                 </b-col>
@@ -191,7 +198,9 @@ export default {
         }
     },
     created(){
-        this.dataPerwalian = this.itemMahasiswa
+        this.dataPerwalian = this.itemMahasiswa[0]
+    
+        console.log(this.dataPerwalian);
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
         }
@@ -200,15 +209,17 @@ export default {
         // eslint-disable-next-line no-unused-vars
         async dataPerwalian(newValue, oldValue) {
             await axios.get(`http://localhost:10001/${this.firebaseUID.uid}/accessPass`)
-            .then((response) => {
+            .then(async(response) => {
                 if(response.data.access == 'denied'){
                     if(this.itemMahasiswa.length !== 0){
                         this.isAdmin = false
-                        this.getLogMahasiswa()
+                       await this.getLogMahasiswa()
+                       await this.getDetailMahasiswaDosen()
                     }
                 } else if (response.data.access == 'granted'){
                     this.isAdmin = true
-                    this.getDetailMahasiswa()
+                    await this.getDetailMahasiswa()
+                    
                 }
             })
         }
@@ -230,6 +241,22 @@ export default {
                     type: 'warning',
                     position: 'top'
                 });
+            }
+        },
+        async getDetailMahasiswaDosen() {
+            try {
+                await axios.get(`http://localhost:10001/dosen/${this.firebaseUID.uid}/view-mahasiswa/${this.dataPerwalian.nim}`)
+                .then((response) => {
+                    this.detailMahasiswa = response.data
+                    this.nilaiGrouped = response.data.nilai.groupBy((nilai) => {
+                        return nilai.kode_semester
+                    })
+                    this.kodeSemesterNilai = Object.keys(this.nilaiGrouped).reverse()
+                    console.log('Nilai Grouped');
+                    console.log(this.nilaiGrouped);
+                })
+            } catch (error) {
+                console.log(error);
             }
         },
         async getDetailMahasiswa() {
@@ -297,5 +324,12 @@ export default {
     border-radius: 1rem; 
     color: white; 
     background-color:#38e54d;
+}
+.judulNilai{
+    font-size:calc(80% + 0.7vw);
+}
+.tombolNilai:active{
+    background-color: #32a3df;
+    color: white;
 }
 </style>

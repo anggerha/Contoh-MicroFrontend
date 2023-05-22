@@ -1,45 +1,32 @@
 <template>
-    <vsa-list class="vsaList">
-                <vsa-item class="vsaItem" v-for="item in listBerita" :key="item._id">
-                    <vsa-heading class="heading">
-                            <b-row>
-                                <b-col> <h5 id="judulPengumuman">{{ item.judul }}</h5></b-col>
-                            </b-row>
-                            <b-row>
-                                <b-col>
-                                    <h6 id="tanggalPengumuman">{{ item.tanggal }}  WIB</h6>
-                                </b-col>
-                            </b-row> 
-                    </vsa-heading>
-                    <vsa-content >
-                        <span id="pengumuman" v-html="item.pengumuman"></span>
-                        <div v-if="item.file != null">
-                           <span><a :href="item.file" target="_blank">Download File Disini</a></span>
-                          
-                        </div>
-                        <div style="margin-top: 2rem;">
-                            <span id="pengumuman" >periode pengumuman berakhir: {{item.periode_akhir}}</span>
-                        </div>
-                    </vsa-content>
-                </vsa-item>
-            </vsa-list>
+    <div style="width:100%">
+        <h5 style="font-size:calc(80% + 0.7vw); width:100%; text-align:center;" >Berita Informatika</h5>
+        <ul style="display: grid; grid-template-columns:repeat(auto-fit, minmax(500px,1fr); padding:0;">
+            <li v-for="item in listBerita" :key="item._id" style="display:inline; padding: 10px; ">
+                <div class="shadow p-0 mb-3 bg-white rounded">
+                    <div class="card-body">
+                        <p style=" font-size:calc(80% + 0.5vw);font-weight:bold;">{{item.judul_berita}}</p>
+                    <div v-html="item.isi_berita"></div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        {{item.tanggal}}
+                    </div>
+                </div>
+                
+            </li>
+        </ul>
+    </div>
 </template>
 
 <script>
 
 import axios from 'axios'
-import {
-  VsaList,
-  VsaItem,
-  VsaHeading,
-  VsaContent,
-  
-} from 'vue-simple-accordion';
-import 'vue-simple-accordion/dist/vue-simple-accordion.css';
+
 //import moment from 'moment';
 
 export default {
-    name: 'BeritaPage',
+    name: 'ListBerita',
+    compatConfig: { MODE: 3 },
     data(){
         return {
             text: 'Pengumuman',
@@ -48,13 +35,7 @@ export default {
             listBerita: [],
         }
     },
-    components:{
-        VsaList,
-        VsaItem,
-        VsaHeading,
-        VsaContent,
-       
-    },
+    
     created() {
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             this.getProfile()
@@ -62,8 +43,9 @@ export default {
     },
     methods:{
         async getBerita(){
-            await axios.get(`http://localhost:10003/admin/${this.firebaseUID.uid}/berita/published`).then((response)=>{
+            await axios.get(`http://localhost:10003/news`).then((response)=>{
                 this.listBerita = response.data
+                console.log(this.listBerita);
             })
         },
         async getProfile() {

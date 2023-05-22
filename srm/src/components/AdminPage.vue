@@ -83,7 +83,7 @@
                                     </div> -->
                                     <div class="button">
                                         <a href="#catatanMahasiswa">
-                                        <b-button block @click="sendDataCatatan(item)" style="margin: .2rem; border: 1px solid #32a3df;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
+                                        <b-button block @click="sendDataCatatan(item,'admin')" style="margin: .2rem; border: 1px solid #32a3df;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
                                                 <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
                                             </svg>
@@ -113,6 +113,7 @@ export default {
     components: { MahasiswaProfile,VueTrix, CatatanMahasiswa },
     data() {
       return {
+        fromPage:'admin',
         user: [],
         isRemoveCatatan: false,
         isRemoveProfile: false,
@@ -173,9 +174,10 @@ export default {
             this.isRemoveProfile = false
             // console.log(this.item);
         },
-        sendDataCatatan(itemMahasiswa) {
-            this.itemMahasiswa = itemMahasiswa
+        sendDataCatatan(itemMahasiswa,fromPage) {
+            this.itemMahasiswa = [itemMahasiswa,fromPage]
             this.isRemoveCatatan = false
+                  
             //console.log(this.itemMahasiswa);
         },
         hapusTool(){
@@ -186,41 +188,42 @@ export default {
             this.isiPengumuman = ''
         },
         async kirimTele(){
-            var semester = ''
-            if(new Date().getMonth() <= 6){
-                semester = 2
-            }else if(new Date().getMonth() >= 7 && new Date().getMonth() <= 12){
-                semester = 1
-            }
+            
+            // if(new Date().getMonth() <= 6){
+            //     semester = 2
+            // }else if(new Date().getMonth() >= 7 && new Date().getMonth() <= 12){
+            //     semester = 1
+            // }
             try {
-                await axios.post(`http://localhost:10002/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
-                nama_dosen: "Testing Channel",
-                email: this.profile.email,
-                role: this.profile.role,
-                kode_semester: new Date().getFullYear()-2+semester,
-                semester: semester,
-                pengumuman: this.isiPengumuman,
-                file: this.gambar,
-                judul: this.judulPengumuman,
-                periode_akhir: moment(this.periode_akhir).locale('id').toString()
-                }, 
-                {
-                    params: {
-                        role: this.dataDiri.role,
-                        email: this.dataDiri.email
-                    }
-                })
-                .then((response)=>{
-                    console.log(response)
+                if(this.isiPengumuman == ''){
                     this.$toast.open({
-                        message: 'Pesan Berhasil Terkirim',
-                        type: 'success',
+                        message: 'Pesan Gagal Terkirim, Isi Berita Tidak Boleh Kosong',
+                        type: 'warning',
                         position: 'top'
                     });
-                    this.isiPengumuman = ''
-                    this.judulPengumuman = ''
-                    this.periode_akhir = null
-                })
+                }else{
+                    await axios.post(`http://localhost:10003/admin/${this.firebaseUID.uid}/new-berita`, {
+                        nama: "Admin Angger Lucu",
+                        isi_berita: this.isiPengumuman,
+                        file: this.gambar,
+                        judul_berita: this.judulPengumuman,
+                        status:"PUBLISHED",
+                        periode_akhir: moment(this.periode_akhir).locale('id').toString()
+                        }, 
+                        )
+                        .then((response)=>{
+                            console.log(response)
+                            this.$toast.open({
+                                message: 'Pesan Berhasil Terkirim',
+                                type: 'success',
+                                position: 'top'
+                            });
+                            this.isiPengumuman = ''
+                            this.judulPengumuman = ''
+                            this.periode_akhir = null
+                        })
+                }
+                
             } catch (error) {
                 console.log(error.response.data.message);
             }
