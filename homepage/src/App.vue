@@ -3,17 +3,12 @@
 </template>
 
 <script>
+// import axios from 'axios'
 
 export default {
-  name: 'App',
-  created() {
-    if(!sessionStorage.getItem('firebase-token') && !sessionStorage.getItem('firebase-uid')){
-      this.$router.replace('/Login').then(() => { this.$router.go() })
-    }
-  }
+  name: 'App'
 }
 </script>
 
 <style>
-
 </style>

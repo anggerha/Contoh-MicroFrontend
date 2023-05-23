@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import axios from 'axios'
 import ListBerita from './ListBerita.vue'
+import axios from 'axios'
 
 export default {
     name: 'ListMenu',
@@ -17,36 +17,25 @@ export default {
         }
     },
     created() {
-        this.checkUser()
+        if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
+            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+            this.check()
+        }
     },
-    methods:{
-        async checkUser() {
-            if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
-                this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
-                await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)
-                .then((response) => {
-                    if(response.data.username_telegram == '' && response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
-                        this.$router.replace('/formPage')
-                    }
-                })
-            }
-        },
-        openNav() {
-            document.getElementById("mySidenav").style.width = "250px";
-        },
-
-        closeNav() {
-            document.getElementById("mySidenav").style.width = "0";
+    methods: {
+        async check() {
+            await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)
+            .then((response) => {
+                if(response.data.username_telegram == '' && response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
+                    this.$router.replace('/formPage')
+                }
+            })
         }
     }
 }
 </script>
 
 <style scoped>
-    /* .container{
-        margin: auto;
-        margin-top: 5%;
-    } */
     button{
         margin: 2%;
     }

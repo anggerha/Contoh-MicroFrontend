@@ -1,8 +1,8 @@
 <template>
-    <div class="container">
-      <div class="card shadow p-9 bg-white rounded w-50 mx-auto">
+    <div class="d-flex justify-content-center h-100 align-items-center" >
+      <div class="card shadow p-9 bg-white rounded mx-auto my-5">
         <img class="mx-auto" src="../assets/fti-ukdw.png" alt="">
-        <button type="button" class="btn btn-primary btn-lg btn-block" @click="signInSSO">Sign in With Google</button>
+        <button style="" type="button" class="btn btn-primary btn-lg btn-block mx-auto" @click="signInSSO">Sign in With Google</button>
       </div>
     </div>
 </template>
@@ -14,9 +14,23 @@ import axios from "axios"
 
 export default {
     name: 'LoginPage',
-    created(){
+    data() {
+      return {
+        firebaseUID: null
+      }
+    },
+    created() {
       if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
-        this.$router.replace("/listmenu").then(() => { })
+        this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+        // await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)
+        // .then((response) => {
+        //     if(response.data.username_telegram == '' && response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
+        //       this.$router.replace('/formPage')
+        //     } else {
+        //       this.$router.replace("/listmenu").then(() => { })
+        //     }
+        // })
+        // this.$router.replace("/listmenu").then(() => { })
       }
     },
     methods: {
@@ -42,12 +56,12 @@ export default {
                               if(response.status == 200) {
                                 if(response.data.role == 'MAHASISWA'){
                                   if(response.data.username_telegram !== null && response.data.username_telegram !== '' && response.data.id_telegram !== null && response.data.id_telegram !== ''){
-                                    this.$router.replace("/listmenu").then(() => { this.$router.go() })
+                                    this.$router.replace("/listmenu")
                                   } else {
-                                    this.$router.replace("/formpage").then(() => { this.$router.go() })
+                                    this.$router.replace("/formpage")
                                   }
                                 } else if (response.data.role == 'DOSEN') {
-                                  this.$router.replace("/listmenu").then(() => { this.$router.go() })
+                                  this.$router.replace("/listmenu")
                                 }
                               } 
                             })
@@ -73,6 +87,10 @@ export default {
 </script>
 
 <style scoped>
+.btn{
+  width: 20rem;
+  margin-bottom: 1rem;
+}
 /* .card{
   margin: auto;
 } */

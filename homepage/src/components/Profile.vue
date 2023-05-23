@@ -62,12 +62,23 @@ export default {
     },
     created() {
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
-            this.getMahasiswa()
+            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+            this.check()
         } else {
             this.$router.replace('/Login').then(() => { this.$router.go() })
         }
     },
     methods: {
+        async check() {
+            await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)
+            .then((response) => {
+                if(response.data.username_telegram == '' && response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
+                    this.$router.replace('/formPage')
+                } else {
+                    this.getMahasiswa()
+                }
+            })
+        },
         async getMahasiswa() {
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
             await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)

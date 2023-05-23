@@ -87,7 +87,7 @@
                             <h4 v-if="pengumumanPerwalian[0]?.kode_semester?.slice(4, 5) == 1">Semester Gasal</h4>
                             <h4 v-if="pengumumanPerwalian[0]?.kode_semester?.slice(4, 5) == 2">Semester Genap</h4>
 
-                            <p id="terbaru" v-if="pengumumanPerwalian.length != 0">Terbaru</p>
+                            <div class="badge badge-pill badge-success" id="terbaru" v-if="pengumumanPerwalian.length != 0">Terbaru</div>
                         </b-col>
                     </b-row>
                     
@@ -105,9 +105,9 @@
                     </div>
                 </b-col>
             </b-row>
-            <b-row >
+            <!-- <b-row >
                 <div style="margin:auto; color:grey;" v-if="perwalianEror != ''"><h5>{{this.perwalianEror}}</h5></div>
-            </b-row>
+            </b-row> -->
             <b-row style="margin-bottom:1rem;">
                 <b-col>
                     <b-button block v-b-toggle.accordion-1><svg xmlns="http://www.w3.org/2000/svg" style="margin-right:0.5rem;" width="20" height="20" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
@@ -177,9 +177,20 @@ export default {
         VsaContent,
        
     },
-    created() {
+    async created() {
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
-            this.getProfile()
+            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+            await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`).then((response) => {
+                if(response.data.username_telegram == '' && response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
+                    this.$router.replace('/formPage')
+                } else {
+                    this.dataDiri = response.data
+                    this.getDataPerwalian()
+                    this.getPengumuman()
+                    this.getPengumumanPerwalian()
+                    this.getDateNow()
+                }
+            })
         }
     },
     methods: {
@@ -188,17 +199,6 @@ export default {
         },
         getDateNow(){
             this.tanggalNow = moment().locale('id').format('ll')
-        },
-        async getProfile() {
-            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
-            await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)
-            .then((response) => {
-                this.dataDiri = response.data
-                this.getDataPerwalian()
-                this.getPengumuman()
-                this.getPengumumanPerwalian()
-                this.getDateNow()
-            })
         },
         async getDataPerwalian(){
             var kode_semester
@@ -246,8 +246,7 @@ export default {
                         return log.kode_semester
                     })
                     this.kodeSemester = Object.keys(this.pengumumanPerwalianGrouped).reverse()
-                    console.log("ini data log "+ this.pengumumanPerwalian);
-                    console.log(this.kodeSemester);
+                    // console.log(this.kodeSemester);
                     for(let i = 0; i < this.pengumumanPerwalian.length; i++){
                         this.pengumumanPerwalian[i].tanggal = new Date(this.pengumumanPerwalian[i].tanggal)
                         .toLocaleString('id-ID', {
@@ -343,11 +342,11 @@ h6{
     text-align: left;
 }
 #terbaru{
-    
-    padding: 0.3rem; 
-    margin-left: 0.5rem; 
-    border-radius: 1rem; 
-    color: white; 
-    background-color:#38e54d;
+    margin-left: 1rem;
+    padding-top: .5rem;
+    display: flex;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
 }
 </style>

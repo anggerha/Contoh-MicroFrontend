@@ -29,7 +29,7 @@ export default {
   methods: {
     async checkRole() {
       if(!sessionStorage.getItem('firebase-token') && !sessionStorage.getItem('firebase-uid')){
-        this.$router.replace('/Login').then(() => { this.$router.go() })
+        this.$router.replace('/login').then(() => { this.$router.go() })
       } else {
         this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
         await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)

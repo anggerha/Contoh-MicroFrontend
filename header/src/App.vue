@@ -18,7 +18,9 @@ export default {
     }
   },
   created() {
-    this.showNavBar()
+    setInterval(() => {
+      this.showNavBar()
+    })
   },
   methods: {
     showNavBar(){

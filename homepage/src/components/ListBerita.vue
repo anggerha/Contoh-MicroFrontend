@@ -1,12 +1,15 @@
 <template>
     <div style="width:100%">
-        <h5 style="font-size:calc(80% + 0.7vw); width:100%; text-align:center;" >Berita Informatika</h5>
-        <ul style="display: grid; grid-template-columns:repeat(auto-fit, minmax(500px,1fr); padding:0;">
+        <h5 style="font-size:calc(125% + 1vw); width:100%; text-align:center;" >Berita Informatika</h5>
+        <ul style="display: grid; grid-template-columns:repeat(auto-fit, minmax(400px,1fr); padding:0;">
             <li v-for="item in listBerita" :key="item._id" style="display:inline; padding: 10px; ">
                 <div class="shadow p-0 mb-3 bg-white rounded">
                     <div class="card-body">
                         <p style=" font-size:calc(80% + 0.5vw);font-weight:bold;">{{item.judul_berita}}</p>
                     <div v-html="item.isi_berita"></div>
+                    <div v-if="item.file != null">
+                        <span><a :href="item.file" target="_blank" :download="item.judul_berita">Download File Disini!</a></span>
+                    </div>
                     </div>
                     <div class="card-footer text-muted">
                         {{item.tanggal}}
@@ -35,7 +38,6 @@ export default {
             listBerita: [],
         }
     },
-    
     created() {
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             this.getProfile()

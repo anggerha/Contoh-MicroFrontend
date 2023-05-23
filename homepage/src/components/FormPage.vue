@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <h1 class="self-center text-3xl font-semibold whitespace-nowrap dark:text-white">Selamat Datang {{ profile.nama }}</h1>
+        <h1 class="self-center font-semibold whitespace-nowrap dark:text-white" style="font-size: calc(80% + 0.8vw)">SELAMAT DATANG {{ profile.nama }}</h1>
     <form>
         <div class="mb-6" v-if="profile.nim">
             <label for="nim" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nim</label>
@@ -53,10 +53,18 @@ export default {
     created() {
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
-            this.getProfile()
+            this.check()
         }
     },
     methods: {
+        async check() {
+            await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)
+            .then((response) => {
+                if(response.data.username_telegram == '' && response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
+                    this.getProfile()
+                }
+            })
+        },
         async getProfile() {
             await axios(`http://localhost:10001/${this.firebaseUID.uid}`)
             .then((response) => {
@@ -132,7 +140,7 @@ export default {
     }
 }
 h1{
-    margin: 5%;
+    padding-top: 2.5%;
     text-align: center;
 }
 </style>
