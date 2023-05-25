@@ -20,7 +20,7 @@
                     </div>
                 <!-- </div> -->
             </b-navbar-brand>
-            <div style="font-size: calc(200% + 1vw); text-align: center; width: 100%;">INFORMATIKA</div>
+            <div id="judulHeader" style="font-size: calc(200% + 1vw); text-align: center; width: 100%;">INFORMATIKA</div>
             <b-dropdown class="ml-auto" variant="link" toggle-class="text-decoration-none" no-caret>
                 <template #button-content>
                     <b-avatar class="avatar" :src="profilPicture.profilPicture" size="4rem"></b-avatar>
