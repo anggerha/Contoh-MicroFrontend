@@ -197,6 +197,7 @@ export default {
         },
         hapusPengumuman(){
             this.isiPengumuman = ''
+            this.gambar = ''
         },
         async kirimTele(){
             var semester = ''

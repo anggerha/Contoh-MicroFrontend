@@ -21,10 +21,10 @@
                             <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman" v-if="itemBerita.status != 'PUBLISHED'" :disabled-editor="false"/>
                         <div style="margin-top: 1rem;">
                             <div v-if="itemBerita.status == 'PUBLISHED'">
-                                Lampiran File: <a :href="itemBerita.file" target="_blank">File</a>
+                                <div v-if="itemBerita.file != null">Lampiran File: <a :href="itemBerita.file" target="_blank">File</a></div>
                             </div>
                             <div v-if="itemBerita.status == 'DRAFT'">
-                               <div>Lampiran File:<a :href="itemBerita.file" target="_blank">File</a></div>  
+                               <div v-if="itemBerita.file != null">Lampiran File:<a :href="itemBerita.file" target="_blank">File</a></div>  
                             </div>
                             <div v-if="itemBerita.status == 'DRAFT'">
                                 Disimpan Pada Tanggal: {{itemBerita.tanggal}}
@@ -64,14 +64,11 @@
                         </div>
                     </div>
                     <div v-if="isRemoveCatatan == false">
-                        
                         <CatatanMahasiswa :itemMahasiswa="itemMahasiswa" :key="JSON.stringify(itemMahasiswa)" @clicked=onClickChildCatatan />
                     </div>
-                    
                 </b-col>
                 <b-col>
                     <b-row>
-                       
                        <b-col style="margin:0;padding:0;">
                             <div align="center">
                                 <b-button block id="listMenuAdmin" @click="toggle" :class="[showListMahasiswa ? 'active':'']">List Mahasiswa</b-button>
@@ -135,43 +132,33 @@
                             </b-col>
                         </b-row>
                         <b-row style="margin-top: 1rem;">
-                            <b-col>
-                                <b-button>Draft</b-button>
-                            </b-col>
-                            <b-col>
-                                <b-button>Published</b-button>
-                            </b-col>
+                            <b-form-select v-model="statusBerita" :options="optionStatusBerita" @change="toggleBerita"></b-form-select>
                         </b-row>
-                        <div class="perwalian">
-                            <b-container v-for="item in daftarBerita.slice(page*10-10,page*10 )" :key="item.id" style="margin-bottom: .5rem; padding: 1rem; border: 2px solid #e5e5e5;" class="shadow p-3 rounded listMahasiswa">
-                                <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
+                        <div class="perwalian" v-if="daftarBerita.length != 0">
+                            <b-container v-for="item in daftarBerita[statusBerita].slice(page*10-10,page*10 )" :key="item.id" style="margin-bottom: .5rem; padding: 1rem; border: 2px solid #e5e5e5;" class="shadow p-3 rounded listMahasiswa">
+                                <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap;">
                                     <b-col>
                                         <b-row>
                                             <h5>{{ item.judul_berita }}&nbsp;<span v-if="item.status == 'PUBLISHED'" class="badge badge-pill badge-success" id="pillStatus">{{item.status}}</span>
                                                  <span v-if="item.status == 'DRAFT'" class="badge badge-pill badge-secondary" id="pillStatus">{{item.status}}</span>
                                                  <span v-if="item.status == 'DELETED'" class="badge badge-pill badge-danger" id="pillStatus">{{item.status}}</span></h5>
-                                            
                                         </b-row>
                                         <b-row>{{ item.tanggal }}</b-row>
                                     </b-col>
                                 </b-row>
                                     <div class="justify-content-center">
                                         <div class="button">
-                                            <!-- <a href="#detailBerita"> -->
                                             <b-button block @click="sendDataBerita(item)" style="margin: .2rem; border: 1px solid #32a3df;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
                                                     <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
                                                 </svg>
                                                     &nbsp;Lihat Detail
                                             </b-button>
-                                            <!-- </a> -->
                                         </div>
                                     </div>
                             </b-container>
                         </div>
                     </div>
-                    
-                    
                 </b-col>
             </b-row>
         </body>
@@ -204,6 +191,12 @@ export default {
         fields: [ 'NAMA_MAHASISWA', 'nim'],
         daftarPerwalian: [],
         daftarBerita:[],
+        statusBerita: null,
+        optionStatusBerita:[
+            { value: null, text: 'Pilih Status Berita', disabled: true },
+            { value: 'PUBLISHED', text: 'Published' },
+            { value: 'DRAFT', text: 'Draft' }
+        ],
         page: 1,
         jumlahPage: null,
         itemBerita: [],
@@ -239,7 +232,9 @@ export default {
         toggleBerita() {
             this.showListMahasiswa = false
             this.showListBerita = true
-            this.getAllBerita()
+            if(this.statusBerita != null && this.statusBerita != ''){
+                this.getAllBerita()
+            }
         },
         async getProfile(){
             await axios.get(`http://localhost:10001/dosen/${this.firebaseUID}`).then((response)=>{
@@ -256,7 +251,6 @@ export default {
             this.hapusTool()
            
         },
-        
         async getMahasiswa() {
             this.page = 1
             this.jumlahPage = null
@@ -267,14 +261,15 @@ export default {
             })
         },
         async getAllBerita(){
-            this.jumlahPage = null
             this.page = 1
+            this.jumlahPage = null
             await axios.get(`http://localhost:10003/admin/${this.firebaseUID.uid}/berita`)
             .then((response)=>{
-                
                 this.daftarBerita = response.data
-                this.jumlahPage = this.daftarBerita.length/10
-               
+                this.daftarBerita = this.daftarBerita.groupBy((berita) => {
+                    return berita.status
+                })
+                this.jumlahPage = this.daftarBerita[this.statusBerita].length/10
             })
         },
         sendDataBerita(item) {
@@ -339,12 +334,6 @@ export default {
             }
         },
         async kirimTele(){
-            
-            // if(new Date().getMonth() <= 6){
-            //     semester = 2
-            // }else if(new Date().getMonth() >= 7 && new Date().getMonth() <= 12){
-            //     semester = 1
-            // }
             try {
                 if(this.isiPengumuman == ''){
                     this.$toast.open({
