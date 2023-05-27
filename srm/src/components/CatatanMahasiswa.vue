@@ -31,7 +31,7 @@
                                  </div>
                             </b-col>
                             <b-col>
-                                <p>IPK :</p>
+                                <p>IPK : {{detailMahasiswa.ipk}} </p>
                             </b-col>
                         </b-row>
                         <b-row>
@@ -43,9 +43,6 @@
                                     <span v-if="itemMahasiswa[1] == 'dosen'" style="margin-left: 0.5rem;">{{ dataPerwalian.nama_mahasiswa }}</span>
                                     <span v-if="itemMahasiswa[1] == 'admin'" style="margin-left: 0.5rem;">{{ dataPerwalian.nama_lengkap }}</span>
                                 </div>
-                            </b-col>
-                            <b-col>
-                                <p>IPS :</p>
                             </b-col>
                         </b-row>
                         <b-row v-if="itemMahasiswa[1] == 'admin'">
@@ -148,7 +145,10 @@
                                                        <h5 class="judulNilai" v-if="item.slice(4,5)==2">Semester Genap</h5>
                                                     </div>
                                                 </b-row>
-                                                
+                                                <b-row style="margin:auto;">
+                                                    <h5 v-if="detailMahasiswa.ips[item] >= 2.5" class="badge badge-primary" style="font-size: calc(65% + 0.5vw)">IPS: {{detailMahasiswa.ips[item]}}</h5>
+                                                    <h5 v-if="detailMahasiswa.ips[item] < 2.5" class="badge badge-warning" style="font-size: calc(65% + 0.5vw)">IPS: {{detailMahasiswa.ips[item]}}</h5>
+                                                </b-row>
                                                 <div class="row">
                                                     <div v-for="nilai in nilaiGrouped[item]" :key="nilai._id" class="col-md-6 col-6 my-1">
                                                         <b-card style="height:100%; ">
