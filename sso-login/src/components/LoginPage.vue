@@ -55,7 +55,7 @@ export default {
                             .then( async (response) => {
                               if(response.status == 200) {
                                 if(response.data.role == 'MAHASISWA'){
-                                  if(response.data.username_telegram !== null && response.data.username_telegram !== '' && response.data.id_telegram !== null && response.data.id_telegram !== ''){
+                                  if(response.data.username_telegram !== null || response.data.username_telegram !== '' || response.data.id_telegram !== null && response.data.id_telegram !== ''){
                                     this.$router.replace("/listmenu")
                                   } else {
                                     this.$router.replace("/formpage")
