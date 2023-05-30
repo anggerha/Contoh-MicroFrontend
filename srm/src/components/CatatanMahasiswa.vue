@@ -205,7 +205,7 @@ export default {
     watch: {
         // eslint-disable-next-line no-unused-vars
         async dataPerwalian(newValue, oldValue) {
-            await axios.get(`http://localhost:10001/${this.firebaseUID.uid}/accessPass`)
+            await axios.get(`http://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}/accessPass`)
             .then(async(response) => {
                 if(response.data.access == 'denied'){
                     if(this.itemMahasiswa.length !== 0){
@@ -224,7 +224,7 @@ export default {
     methods: {
         async getLogMahasiswa() {
             try {
-                await axios.get(`http://localhost:10002/dosen/${this.firebaseUID.uid}/log-mahasiswa/${this.dataPerwalian.nim}`, )
+                await axios.get(`http://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/log-mahasiswa/${this.dataPerwalian.nim}`, )
                 .then( async (response) => {
                     this.logMahasiswa = response.data
                     this.logMahasiswaGrouped = this.logMahasiswa.groupBy((log) => {
@@ -242,7 +242,7 @@ export default {
         },
         async getDetailMahasiswaDosen() {
             try {
-                await axios.get(`http://localhost:10001/dosen/${this.firebaseUID.uid}/view-mahasiswa/${this.dataPerwalian.nim}`)
+                await axios.get(`http://userapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/view-mahasiswa/${this.dataPerwalian.nim}`)
                 .then((response) => {
                     this.detailMahasiswa = response.data
                     this.nilaiGrouped = response.data.nilai.groupBy((nilai) => {
@@ -258,7 +258,7 @@ export default {
         },
         async getDetailMahasiswa() {
             try {
-                await axios.get(`http://localhost:10001/admin/${this.firebaseUID.uid}/view-mahasiswa/${this.dataPerwalian.nim}`)
+                await axios.get(`http://userapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/view-mahasiswa/${this.dataPerwalian.nim}`)
                 .then((response) => {
                     this.detailMahasiswa = response.data
                     this.nilaiGrouped = response.data.nilai.groupBy((nilai) => {

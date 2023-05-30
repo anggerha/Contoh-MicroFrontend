@@ -45,14 +45,14 @@ export default {
     },
     methods:{
         async getBerita(){
-            await axios.get(`http://localhost:10003/news`).then((response)=>{
+            await axios.get(`http://beritaapi.fti.ukdw.ac.id/news`).then((response)=>{
                 this.listBerita = response.data
                 console.log(this.listBerita);
             })
         },
         async getProfile() {
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
-            await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)
+            await axios.get(`http://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
             .then((response) => {
                 this.dataDiri = response.data
                 this.getBerita()

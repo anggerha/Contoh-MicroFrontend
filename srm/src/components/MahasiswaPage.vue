@@ -180,7 +180,7 @@ export default {
     async created() {
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
-            await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`).then((response) => {
+            await axios.get(`http://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`).then((response) => {
                 if(response.data.username_telegram == '' && response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
                     this.$router.replace('/formPage')
                 } else {
@@ -208,7 +208,7 @@ export default {
                 kode_semester = new Date().getFullYear()-2+'1'
             }
             try {
-                await axios.get(`http://localhost:10002/mahasiswa/${this.firebaseUID.uid}/perwalian/${kode_semester}`,  {params:{
+                await axios.get(`http://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID.uid}/perwalian/${kode_semester}`,  {params:{
                     role:'MAHASISWA',
                     email: this.dataDiri.email,
                     nim: this.dataDiri.nim,
@@ -222,7 +222,7 @@ export default {
             }
         },
         async getPengumuman() {
-            await axios.get(`http://localhost:10002/mahasiswa/${this.firebaseUID.uid}/list-pengumuman`)
+            await axios.get(`http://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID.uid}/list-pengumuman`)
             .then((response) => {
                 this.pengumuman = response.data
                 for(let i = 0; i < this.pengumuman.valid.length; i++){
@@ -239,7 +239,7 @@ export default {
         },
         async getPengumumanPerwalian() {
             try {
-                await axios.get(`http://localhost:10002/mahasiswa/${this.firebaseUID.uid}/log-perwalian`)
+                await axios.get(`http://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID.uid}/log-perwalian`)
                 .then((response) => {
                     this.pengumumanPerwalian = response.data.reverse()
                     this.pengumumanPerwalianGrouped = this.pengumumanPerwalian.groupBy((log)=>{

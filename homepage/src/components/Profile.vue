@@ -70,7 +70,7 @@ export default {
     },
     methods: {
         async check() {
-            await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)
+            await axios.get(`http://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
             .then((response) => {
                 if(response.data.username_telegram == '' && response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
                     this.$router.replace('/formPage')
@@ -81,7 +81,7 @@ export default {
         },
         async getMahasiswa() {
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
-            await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)
+            await axios.get(`http://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
             .then( async (response) => {
                 if(response.status == 200){
                     this.dataDiri = response.data
@@ -94,7 +94,7 @@ export default {
         async updateData() {
             if(this.dataDiri.id_telegram !== null && this.dataDiri.id_telegram !== '' && this.dataDiri.username_telegram !== null && this.dataDiri.username_telegram !== ''){
                 if(this.dataDiri.role == 'MAHASISWA'){
-                    await axios.put(`http://localhost:10001/mahasiswa/${this.firebaseUID.uid}/update`, this.dataDiri, { params: { email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString() }})
+                    await axios.put(`http://userapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID.uid}/update`, this.dataDiri, { params: { email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString() }})
                     .then(async () => {
                         console.log(this.dataDiri);
                         this.$toast.open({
@@ -102,7 +102,7 @@ export default {
                             type: 'success',
                             position: 'top'
                         });
-                        await axios.get('http://localhost:10001/${this.firebaseUID.uid}', { params: {email: this.user.email.toString(), role: this.dataDiri.role.toString() }})
+                        await axios.get('http://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}', { params: {email: this.user.email.toString(), role: this.dataDiri.role.toString() }})
                         .then((response) => {
                             sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
                             //this.$router.replace("/listmenu").then(() => {})
@@ -110,14 +110,14 @@ export default {
                     })
                 } 
                 // else if (this.dataDiri.role == 'DOSEN') {
-                //     await axios.put(`http://localhost:10001/dosen/${this.firebaseUID.uid}/update`, this.dataDiri, { params: { nik : this.dataDiri.nik, email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString(), nama: this.dataDiri.nama }})
+                //     await axios.put(`http://userapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/update`, this.dataDiri, { params: { nik : this.dataDiri.nik, email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString(), nama: this.dataDiri.nama }})
                 //     .then(async () => {
                 //         this.$toast.open({
                 //             message: 'Data berhasil diupdate !',
                 //             type: 'success',
                 //             position: 'top'
                 //         });
-                //         await axios.get('http://localhost:10001/${this.firebaseUID.uid}', { params: { nama : this.user.displayName.toString().toUpperCase(), email: this.user.email.toString() }})
+                //         await axios.get('http://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}', { params: { nama : this.user.displayName.toString().toUpperCase(), email: this.user.email.toString() }})
                 //         .then((response) => {
                 //             sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
                 //             this.$router.replace("/listmenu").then(() => {})

@@ -90,7 +90,7 @@ export default {
     },
     methods: {
         async getProfile(){
-            await axios.get(`http://localhost:10001/dosen/${this.firebaseUID}`).then((response)=>{
+            await axios.get(`http://userapi.fti.ukdw.ac.id/dosen/${this.firebaseUID}`).then((response)=>{
                 this.profile = response.data
             })
         },
@@ -122,7 +122,7 @@ export default {
                     position: 'top'
                 });
             }else{
-                await axios.post(`http://localhost:10002/dosen/${this.firebaseUID.uid}/new-log`, {
+                await axios.post(`http://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/new-log`, {
                     nama_dosen: this.profile.nama,
                     nik: this.profile.nik,
                     nama_mahasiswa: this.dataPerwalian.nama_mahasiswa,

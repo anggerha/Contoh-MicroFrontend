@@ -32,10 +32,10 @@ export default {
         this.$router.replace('/login').then(() => { this.$router.go() })
       } else {
         this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
-        await axios.get(`http://localhost:10001/${this.firebaseUID.uid}`)
+        await axios.get(`http://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
         .then( async (response) => {
           if(response.status == 200){
-            var listAdmin = await axios.get(`http://localhost:10001/${this.firebaseUID.uid}/accessPass`)
+            var listAdmin = await axios.get(`http://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}/accessPass`)
             if(listAdmin.data.access == "granted"){
               this.role = response.data.role
               this.isAdmin = true
