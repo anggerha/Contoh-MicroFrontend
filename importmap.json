@@ -1,0 +1,9 @@
+{
+    "imports": {
+        "@app/root-config": "https://app.fti.ukdw.ac.id/app-root-config.js",
+        "@app/header": "https://header.fti.ukdw.ac.id/js/app.js",
+        "@app/sso-login": "https://sso.fti.ukdw.ac.id/js/app.js",
+        "@app/homepage": "https://home.fti.ukdw.ac.id/js/app.js",
+        "@app/srm": "https://srm.fti.ukdw.ac.id/js/app.js"
+    }
+}

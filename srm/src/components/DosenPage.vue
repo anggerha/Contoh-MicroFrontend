@@ -215,7 +215,7 @@ export default {
                     });
                 }else{
                     await axios.post(`http://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
-                        nama_dosen: "ANGGER HERLAMBANG AMANDEGANI",
+                        nama_dosen: this.profile.nama,
                         email: this.profile.email,
                         role: this.profile.role,
                         kode_semester: new Date().getFullYear()-2+semester,
