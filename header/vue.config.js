@@ -6,5 +6,8 @@ module.exports = defineConfig({
       libraryTarget: "system",
       filename: "js/[name].js",
     }
+  },
+  devServer: {
+    proxy: 'https://app.fti.ukdw.ac.id'
   }
 })
