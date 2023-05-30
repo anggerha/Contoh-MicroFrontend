@@ -76,7 +76,7 @@ export default {
             .then((response) => {
                 this.profile = response.data
             })
-            if(this.profile.id_telegram !== null && this.profile.id_telegram !== '' && this.profile.username_telegram !== null && this.profile.username_telegram !== ''){
+            if(this.profile.id_telegram !== null && this.profile.id_telegram !== ''){
                 this.state = false
                 this.$router.replace('/listMenu')
             } else {
@@ -84,7 +84,7 @@ export default {
             }
         },
         async updateData(){
-            if(this.dataDiri.id_telegram !== null && this.dataDiri.id_telegram !== '' && this.dataDiri.username_telegram !== null && this.dataDiri.username_telegram !== ''){
+            if(this.dataDiri.id_telegram !== null && this.dataDiri.id_telegram !== ''){
                 if(this.dataDiri.role == 'MAHASISWA'){
                     await axios.put(`http://userapi.fti.ukdw.ac.id/mahasiswa/update`, this.dataDiri, { params: { 
                         email: this.dataDiri.email.toString(), 
