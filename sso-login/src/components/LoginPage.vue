@@ -63,7 +63,7 @@ export default {
                                 } else if (response.data.role == 'DOSEN') {
                                   this.$router.replace("/listmenu")
                                 }
-                              } else {
+                              } else if(response.status == 404) {
                                 this.$toast.open({
                                     message: 'Login gagal!',
                                     type: 'warning',
@@ -71,7 +71,7 @@ export default {
                                 })
                               }
                             })
-                          } else {
+                          } else if(response.status == 404) {
                             this.$toast.open({
                                 message: 'Login gagal!',
                                 type: 'warning',
