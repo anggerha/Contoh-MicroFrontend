@@ -5,6 +5,12 @@ module.exports = defineConfig({
     output: {
       libraryTarget: "system",
       filename: "js/[name].js",
+    },
+    devServer: {
+      headers: {
+        "Access-Control-Allow-Origin" : "*"
+      },
+      disableHostCheck: true,
     }
   }
 })
