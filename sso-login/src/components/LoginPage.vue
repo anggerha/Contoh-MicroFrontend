@@ -22,7 +22,7 @@ export default {
     created() {
       if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
         this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
-        // await axios.get(`http://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
+        // await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
         // .then((response) => {
         //     if(response.data.username_telegram == '' && response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
         //       this.$router.replace('/formPage')
@@ -41,7 +41,7 @@ export default {
                 async (result) => {
                     if(result.additionalUserInfo.profile.hd){
                       if(result.additionalUserInfo.profile.hd == 'ti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'staff.ukdw.ac.id') {
-                        await axios.get(`http://userapi.fti.ukdw.ac.id/login/${result.user.uid}`, { params: {
+                        await axios.get(`https://userapi.fti.ukdw.ac.id/login/${result.user.uid}`, { params: {
                           email: result.user.email.toString() 
                         }})
                         .then( async (response) => {
@@ -51,7 +51,7 @@ export default {
                               profilPicture: result.additionalUserInfo.profile.picture,
                               uid: result.user.uid
                             }))
-                            await axios.get(`http://userapi.fti.ukdw.ac.id/${result.user.uid}`)
+                            await axios.get(`https://userapi.fti.ukdw.ac.id/${result.user.uid}`)
                             .then( async (response) => {
                               if(response.status == 200) {
                                 if(response.data.role == 'MAHASISWA'){

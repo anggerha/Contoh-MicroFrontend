@@ -58,7 +58,7 @@ export default {
     },
     methods: {
         async check() {
-            await axios.get(`http://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
+            await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
             .then((response) => {
                 if(response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
                     this.getProfile()
@@ -66,13 +66,13 @@ export default {
             })
         },
         async getProfile() {
-            await axios(`http://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
+            await axios(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
             .then((response) => {
                 this.profile = response.data
             })
         },
         async goToListmenu() {
-            await axios(`http://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
+            await axios(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
             .then((response) => {
                 this.profile = response.data
             })
@@ -86,7 +86,7 @@ export default {
         async updateData(){
             if(this.dataDiri.id_telegram !== null && this.dataDiri.id_telegram !== ''){
                 if(this.dataDiri.role == 'MAHASISWA'){
-                    await axios.put(`http://userapi.fti.ukdw.ac.id/mahasiswa/update`, this.dataDiri, { params: { 
+                    await axios.put(`https://userapi.fti.ukdw.ac.id/mahasiswa/update`, this.dataDiri, { params: { 
                         email: this.dataDiri.email.toString(), 
                         role: this.dataDiri.role.toString()
                     }})
@@ -96,14 +96,14 @@ export default {
                             type: 'success',
                             position: 'top'
                         });
-                        await axios.get('http://userapi.fti.ukdw.ac.id/mahasiswa/me', { params: { email: this.user.email.toString(), role: this.dataDiri.role.toString() }})
+                        await axios.get('https://userapi.fti.ukdw.ac.id/mahasiswa/me', { params: { email: this.user.email.toString(), role: this.dataDiri.role.toString() }})
                         .then((response) => {
                             sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
                             this.$router.replace("/listmenu").then(() => {})
                         })
                     })
                 } else if (this.dataDiri.role == 'DOSEN') {
-                    await axios.put(`http://userapi.fti.ukdw.ac.id/dosen/update`, this.dataDiri, { params: {
+                    await axios.put(`https://userapi.fti.ukdw.ac.id/dosen/update`, this.dataDiri, { params: {
                         email: this.dataDiri.email.toString(), 
                         role: this.dataDiri.role.toString() 
                     }})
@@ -113,7 +113,7 @@ export default {
                             type: 'success',
                             position: 'top'
                         });
-                        await axios.get('http://userapi.fti.ukdw.ac.id/dosen/me', { params: { email: this.user.email.toString(), role: this.dataDiri.role.toString() }})
+                        await axios.get('https://userapi.fti.ukdw.ac.id/dosen/me', { params: { email: this.user.email.toString(), role: this.dataDiri.role.toString() }})
                         .then((response) => {
                             sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
                             this.$router.replace("/listmenu").then(() => {})

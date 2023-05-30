@@ -237,7 +237,7 @@ export default {
             }
         },
         async getProfile(){
-            await axios.get(`http://userapi.fti.ukdw.ac.id/dosen/${this.firebaseUID}`).then((response)=>{
+            await axios.get(`https://userapi.fti.ukdw.ac.id/dosen/${this.firebaseUID}`).then((response)=>{
                 this.profile = response.data
             })
         },
@@ -254,7 +254,7 @@ export default {
         async getMahasiswa() {
             this.page = 1
             this.jumlahPage = null
-            await axios.get(`http://userapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/list-mahasiswa`)
+            await axios.get(`https://userapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/list-mahasiswa`)
             .then((response) => {
                 this.daftarPerwalian = response.data
                 this.jumlahPage = this.daftarPerwalian.length/10
@@ -263,7 +263,7 @@ export default {
         async getAllBerita(){
             this.page = 1
             this.jumlahPage = null
-            await axios.get(`http://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/berita`)
+            await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/berita`)
             .then((response)=>{
                 this.daftarBerita = response.data
                 this.daftarBerita = this.daftarBerita.groupBy((berita) => {
@@ -308,7 +308,7 @@ export default {
                         position: 'top'
                     });
                 }else{
-                    await axios.post(`http://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-berita`, {
+                    await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-berita`, {
                         nama: "Admin Angger Lucu",
                         isi_berita: this.isiPengumuman,
                         file: this.gambar,
@@ -342,7 +342,7 @@ export default {
                         position: 'top'
                     });
                 }else{
-                    await axios.post(`http://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-berita`, {
+                    await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-berita`, {
                         nama: "Admin Angger Lucu",
                         isi_berita: this.isiPengumuman,
                         file: this.gambar,

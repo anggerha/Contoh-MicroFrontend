@@ -24,7 +24,7 @@ export default {
     },
     methods: {
         async check() {
-            await axios.get(`http://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
+            await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
             .then((response) => {
                 if(response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
                     this.$router.replace('/formPage')

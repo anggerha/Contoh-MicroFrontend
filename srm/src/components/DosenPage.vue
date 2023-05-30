@@ -155,7 +155,7 @@ export default {
     },
     methods: {
         async getProfile(){
-            await axios.get(`http://userapi.fti.ukdw.ac.id/dosen/${this.firebaseUID}`).then((response)=>{
+            await axios.get(`https://userapi.fti.ukdw.ac.id/dosen/${this.firebaseUID}`).then((response)=>{
                 this.profile = response.data
             })
         },
@@ -174,7 +174,7 @@ export default {
             this.page = 1
             let kodeSems = new Date().getFullYear()-2+this.semester
             kodeSems.toString()
-            await axios.get(`http://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-perwalian/${kodeSems}`)
+            await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-perwalian/${kodeSems}`)
             .then((response) => {
                 this.daftarPerwalian = response.data
                 this.jumlahPage = this.daftarPerwalian.length/10
@@ -214,7 +214,7 @@ export default {
                         position: 'top'
                     });
                 }else{
-                    await axios.post(`http://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
+                    await axios.post(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
                         nama_dosen: this.profile.nama,
                         email: this.profile.email,
                         role: this.profile.role,
