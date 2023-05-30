@@ -63,7 +63,19 @@ export default {
                                 } else if (response.data.role == 'DOSEN') {
                                   this.$router.replace("/listmenu")
                                 }
-                              } 
+                              } else {
+                                this.$toast.open({
+                                    message: 'Login gagal!',
+                                    type: 'warning',
+                                    position: 'top'
+                                })
+                              }
+                            })
+                          } else {
+                            this.$toast.open({
+                                message: 'Login gagal!',
+                                type: 'warning',
+                                position: 'top'
                             })
                           }
                         })
