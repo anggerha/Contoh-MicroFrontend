@@ -202,9 +202,9 @@ export default {
         async kirimTele(){
             var semester = ''
             if(new Date().getMonth() <= 6){
-                semester = 2
+                semester = '2'
             }else if(new Date().getMonth() >= 7 && new Date().getMonth() <= 12){
-                semester = 1
+                semester = '1'
             }
             try {
                 if(this.isiPengumuman == ''){
