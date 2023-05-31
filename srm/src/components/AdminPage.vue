@@ -343,7 +343,7 @@ export default {
                     });
                 }else{
                     await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-berita`, {
-                        nama: "Admin Angger Lucu",
+                        nama: "Admin FTI",
                         isi_berita: this.isiPengumuman,
                         file: this.gambar,
                         judul_berita: this.judulPengumuman,
