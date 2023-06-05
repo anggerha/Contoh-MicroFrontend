@@ -1,10 +1,15 @@
 <template>
   <div id="app">
-    <DosenPage v-if="role == 'DOSEN' && isAdmin == false"/>
-    <MahasiswaPage v-if="role == 'MAHASISWA'"/>
-    <AdminPage v-if="role == 'DOSEN' && isAdmin == true"/>
+    <div v-if="role == 'DOSEN' && isAdmin == false">
+      <DosenPage/>
+    </div>
+    <div v-else-if="role == 'DOSEN' && isAdmin == true">
+      <AdminPage/>
+    </div>
+    <div v-else-if="role == 'MAHASISWA'">
+      <MahasiswaPage/>
+    </div>
   </div>
-    
 </template>
 
 <script>
@@ -15,7 +20,7 @@ import axios from 'axios'
 
 export default {
   name: 'App',
-  components: { DosenPage, MahasiswaPage, AdminPage },
+  components: { DosenPage, AdminPage, MahasiswaPage },
   data(){
     return {
       role: '',
@@ -28,25 +33,27 @@ export default {
   },
   methods: {
     async checkRole() {
-      if(!sessionStorage.getItem('firebase-token') && !sessionStorage.getItem('firebase-uid')){
-        this.$router.replace('/login').then(() => { this.$router.go() })
-      } else {
-        this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
-        await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
-        .then( async (response) => {
-          if(response.status == 200){
-            var listAdmin = await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}/accessPass`)
-            if(listAdmin.data.access == "granted"){
-              this.role = response.data.role
-              this.isAdmin = true
-            } else if (listAdmin.data.access == "denied") {
-              this.role = response.data.role
-              this.isAdmin = false
+      try {
+        if(!sessionStorage.getItem('firebase-token') && !sessionStorage.getItem('firebase-uid')){
+          this.$router.replace('/login').then(() => { this.$router.go() })
+        } else {
+          this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+          await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
+          .then( async (response) => {
+            if(response.status == 200){
+              var listAdmin = await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}/accessPass`)
+              if(listAdmin.data.access == "granted"){
+                this.role = response.data.role
+                this.isAdmin = true
+              } else if (listAdmin.data.access == "denied") {
+                this.role = response.data.role
+                this.isAdmin = false
+              }
             }
-          } else {
-            console.log(response);
-          }
-        })
+          })
+        }
+      } catch (error) {
+        console.log(error.message);
       }
     }
   }

@@ -7,13 +7,15 @@
                     <h1 id="judulHeader">Informatika</h1> -->
                     <div class="sidenav" id="mySidenav">
                         <a href="javascript:void(0)" class="closebtn" @click="closeNav">&times;</a>
-                        <a class="nav-flex" href="" @click="goHome"><svg xmlns="http://www.w3.org/2000/svg" width="45" height="40" fill="currentColor" class="bi bi-house-fill" viewBox="0 0 16 16">
-                        <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z"/>
-                        <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z"/>
-                        </svg>&nbsp;Home</a>
-                        <a class="nav-flex" href="" @click="goToSrm">
+                        <router-link class="nav-flex" to="/listMenu"><svg xmlns="http://www.w3.org/2000/svg" width="45" height="40" fill="currentColor" class="bi bi-house-fill" viewBox="0 0 16 16">
+                            <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z"/>
+                            <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z"/>
+                            </svg>
+                            &nbsp;Home
+                        </router-link>
+                        <router-link class="nav-flex" to="/srm">
                             <img style="width: 3rem;" src="../assets/fti-ukdw.png" class="d-inline-block align-top" alt="FTI UKDW">&nbsp;SRM
-                        </a>
+                        </router-link>
                     </div>
                     <div style="display:flex;">
                         <span style="font-size:30px;cursor:pointer" @click="openNav"> &#9776;</span>
@@ -59,19 +61,18 @@ export default {
         goProfile() {
             this.$router.replace('/profile')
         },
-        goHome() {
-            this.$router.replace('/listMenu').then(() => { this.$router.go() }).catch(()=>{})
-        },
+        // goHome() {
+        //     this.$router.replace('/listMenu').then(() => { this.$router.go() }).catch(()=>{})
+        // },
         openNav() {
             document.getElementById("mySidenav").style.width = "250px";
         },
-
         closeNav() {
             document.getElementById("mySidenav").style.width = "0";
         },
-        goToSrm(){
-            this.$router.replace('/srm')
-        }
+        // goToSrm(){
+        //     this.$router.replace('/srm')
+        // }
     }
 }
 </script>

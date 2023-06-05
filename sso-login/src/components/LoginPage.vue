@@ -22,22 +22,14 @@ export default {
     created() {
       if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
         this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
-        // await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
-        // .then((response) => {
-        //     if(response.data.username_telegram == '' && response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
-        //       this.$router.replace('/formPage')
-        //     } else {
-        //       this.$router.replace("/listmenu").then(() => { })
-        //     }
-        // })
-        // this.$router.replace("/listmenu").then(() => { })
+      } else {
+        this.$router.replace('login')
       }
     },
     methods: {
         async signInSSO() {
             const provider = new firebase.auth.GoogleAuthProvider();
             firebase.auth().signInWithPopup(provider).then(
-                // eslint-disable-next-line no-unused-vars
                 async (result) => {
                     if(result.additionalUserInfo.profile.hd){
                       if(result.additionalUserInfo.profile.hd == 'ti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'staff.ukdw.ac.id') {
@@ -79,19 +71,28 @@ export default {
                             })
                           }
                         })
-                      } else {
+                      } 
+                      else {
                         sessionStorage.clear()
-                        this.$router.replace("/login").then(() => { })
+                        this.$toast.open({
+                              message: 'Harap Login Menggunakan Email TI atau Staff UKDW Anda.',
+                              type: 'warning',
+                              position: 'top'
+                          })
                       }
                     } else {
                       sessionStorage.clear()
-                      this.$router.replace("/login").then(() => { })
+                      this.$toast.open({
+                          message: 'Harap Login Menggunakan Email TI atau Staff Anda.',
+                          type: 'warning',
+                          position: 'top'
+                      })
                     }
                 }
             )
             .catch((error) => {
               sessionStorage.clear()
-              console.log(error);
+              console.log(error.message);
             })
         }
     }

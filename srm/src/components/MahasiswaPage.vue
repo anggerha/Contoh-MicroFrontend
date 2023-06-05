@@ -11,74 +11,76 @@
         <h6> Email: {{ dataDiri.email }}</h6>
         <h6> Dosen Wali: {{dataPerwalian.nama_dosen}}</h6>
         <div class="accordion" role="tablist">
-            <b-row style="margin:1rem;">
-                <h1>Pengumuman</h1>
-            </b-row>
-            <!-- <b-row style="margin:1rem;">
-
-                 <h4>{{tanggalNow}}</h4>
-            </b-row> -->
-            <vsa-list class="vsaList">
-                <vsa-item class="vsaItem" v-for="item in pengumuman.valid" :key="item._id">
-                    <vsa-heading class="heading">
-                            <b-row>
-                                <b-col> <h5 id="judulPengumuman">{{ item.judul }}</h5></b-col>
-                            </b-row>
-                            <b-row>
-                                <b-col>
-                                    <h6 id="tanggalPengumuman">{{ item.tanggal }}  WIB</h6>
-                                </b-col>
-                            </b-row> 
-                    </vsa-heading>
-                    <vsa-content >
-                        <span id="pengumuman" v-html="item.pengumuman"></span>
-                        <div v-if="item.file != null">
-                           <span><a :href="item.file" target="_blank">Download File Disini</a></span>
-                          
-                        </div>
-                        <div style="margin-top: 2rem;">
-                            <span id="pengumuman" >periode pengumuman berakhir: {{item.periode_akhir}}</span>
-                        </div>
-                    </vsa-content>
-                </vsa-item>
-            </vsa-list>
-            <b-row style="margin-top: 2rem;">
-                <b-col>
-                    <b-button block v-b-toggle.collapse-2 ><svg xmlns="http://www.w3.org/2000/svg" style="margin-right:0.5rem;" width="20" height="20" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
-                        <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z"/>
-                        </svg>Arsip Pengumuman 
-                    </b-button>
-                    <b-collapse id="collapse-2">
-                        <vsa-list class="vsaList">
-                            <vsa-item class="vsaItem" v-for="item in pengumuman.archived" :key="item._id">
-                                <vsa-heading class="heading">
-                                        <b-row>
-                                            <b-col> <h5 id="judulPengumuman">{{ item.judul }}</h5></b-col>
-                                        </b-row>
-                                        <b-row>
-                                            <b-col>
-                                                <h6 id="tanggalPengumuman">{{ item.tanggal }}  WIB</h6>
-                                            </b-col>
-                                            
-                                        </b-row> 
-                                </vsa-heading>
-                                <vsa-content >
-                                    <span id="pengumuman"  v-html="item.pengumuman"></span>
+            <b-row>
+                <b-col v-if="pengumuman.length != 0">
+                    <h1>Pengumuman</h1>
+                        <div v-if="pengumuman.valid.length != 0">
+                            <b-card class="cardPengumuman" v-for="item in pengumuman.valid" :key="item._id">
+                                <b-card-title class="cardTitle">
+                                    <b-row>
+                                        <b-col> <h4 class="judulPengumuman">{{ item.judul }}</h4></b-col>
+                                    </b-row>
+                                    <b-row>
+                                        <b-col>
+                                            <span class="tanggalPengumuman small text-muted">{{ item.tanggal }}  WIB</span>
+                                        </b-col>
+                                    </b-row>
+                                    <hr>
+                                </b-card-title>
+                                <b-card-text>
+                                    <span id="pengumuman" v-html="item.pengumuman"></span>
                                     <div v-if="item.file != null">
-                                    <span id="pengumuman" ><a :href="item.file" target="_blank">Download File Disini</a></span>
-                                    
+                                        <span class="pengumuman" ><a :href="item.file" target="_blank">Download File Disini</a></span>
                                     </div>
                                     <div style="margin-top: 2rem;">
-                                        <span id="pengumuman" >periode pengumuman berakhir: {{item.periode_akhir}}</span>
+                                        <span class="pengumuman small text-muted">periode pengumuman berakhir: {{item.periode_akhir}}</span>
                                     </div>
-                                </vsa-content>
-                            </vsa-item>
-                        </vsa-list>
+                                </b-card-text>
+                            </b-card>
+                        </div>
+                </b-col>
+            </b-row>
+            <b-row style="margin-top: 2rem;">
+                <b-col v-if="pengumuman.length != 0">
+                    <b-button v-if="pengumuman.archived.length != 0"  block v-b-toggle.collapse-2 ><svg xmlns="http://www.w3.org/2000/svg" style="margin-right:0.5rem;" width="20" height="20" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
+                        <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z"/>
+                        </svg>Arsip Pengumuman
+                    </b-button>
+                    <b-button v-if="pengumuman.archived.length == 0" block v-b-toggle.collapse-2 ><svg xmlns="http://www.w3.org/2000/svg" style="margin-right:0.5rem;" width="20" height="20" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
+                        <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z"/>
+                        </svg>Arsip Pengumuman Kosong
+                    </b-button>
+                    <b-collapse id="collapse-2" v-if="pengumuman.length != 0">
+                        <div v-if="pengumuman.archived.length != 0">
+                            <b-card v-for="item in pengumuman.archived" :key="item._id">
+                                <b-card-title style="margin-left:1rem;">
+                                    <b-row>
+                                        <b-col> <h4 class="judulPengumuman">{{ item.judul }}</h4></b-col>
+                                    </b-row>
+                                    <b-row>
+                                        <b-col>
+                                            <span class="tanggalPengumuman small text-muted">{{ item.tanggal }}  WIB</span>
+                                        </b-col>
+                                    </b-row>
+                                    <hr>
+                                </b-card-title>
+                                <b-card>
+                                    <b-card-text>
+                                        <span id="pengumuman" v-html="item.pengumuman"></span>
+                                        <div v-if="item.file != null">
+                                            <span class="pengumuman" ><a :href="item.file" target="_blank">Download File Disini</a></span>
+                                        </div>
+                                        <div style="margin-top: 2rem;">
+                                            <span class="pengumuman small text-muted" >periode pengumuman berakhir: {{item.periode_akhir}}</span>
+                                        </div>
+                                    </b-card-text>
+                                </b-card>
+                            </b-card>
+                        </div>
                     </b-collapse>
                 </b-col>
             </b-row>
-            
-            <b-row style="margin-top: 1rem">
+            <b-row style="margin-top: 2rem">
                 <b-col>
                     <h2 v-if="pengumumanPerwalian.length != 0">Catatan Perwalian {{ pengumumanPerwalian[0]?.kode_semester?.slice(0, 4) }}</h2> 
                     <h2 v-if="pengumumanPerwalian.length == 0">Catatan Perwalian Kosong</h2>
@@ -86,15 +88,12 @@
                         <b-col style="display: flex;">
                             <h4 v-if="pengumumanPerwalian[0]?.kode_semester?.slice(4, 5) == 1">Semester Gasal</h4>
                             <h4 v-if="pengumumanPerwalian[0]?.kode_semester?.slice(4, 5) == 2">Semester Genap</h4>
-
                             <div class="badge badge-pill badge-success" id="terbaru" v-if="pengumumanPerwalian.length != 0">Terbaru</div>
                         </b-col>
                     </b-row>
-                    
-                    <div v-for="item in kodeSemester" :key="item">
+                    <div class="cardPerwalian" v-for="item in kodeSemester" :key="item">
                         <div v-for="data in pengumumanPerwalianGrouped[item]" :key="data._id" style="margin-bottom: 1rem">
                             <b-card v-if="pengumumanPerwalian[0].kode_semester == item">
-                                
                                 <b-card-title>{{ data.judul }}</b-card-title>
                                     <b-card-text>
                                         {{ data.pembahasan }}
@@ -145,15 +144,7 @@
 
 <script>
 import axios from 'axios'
-import {
-  VsaList,
-  VsaItem,
-  VsaHeading,
-  VsaContent,
-  
-} from 'vue-simple-accordion';
-import 'vue-simple-accordion/dist/vue-simple-accordion.css';
-import moment from 'moment';
+import moment from 'moment'
 export default {
     name: 'MahasiswaPage',
     data(){
@@ -169,13 +160,6 @@ export default {
             perwalianEror: '',
             tanggalNow: ''
         }
-    },
-    components:{
-        VsaList,
-        VsaItem,
-        VsaHeading,
-        VsaContent,
-       
     },
     async created() {
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
@@ -195,7 +179,7 @@ export default {
     },
     methods: {
         kembali() {
-            this.$router.replace('listMenu').then(this.$router.go({}))
+            this.$router.replace('listMenu')
         },
         getDateNow(){
             this.tanggalNow = moment().locale('id').format('ll')
@@ -222,20 +206,25 @@ export default {
             }
         },
         async getPengumuman() {
-            await axios.get(`https://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID.uid}/list-pengumuman`)
-            .then((response) => {
-                this.pengumuman = response.data
-                for(let i = 0; i < this.pengumuman.valid.length; i++){
-                    // this.pengumuman[i].tanggal = this.pengumuman[i].tanggal.replaceAll('.',':')
-                    this.pengumuman.valid[i].tanggal = moment(this.pengumuman.valid[i].tanggal).locale('id').format('lll')
-                    this.pengumuman.valid[i].periode_akhir = moment(this.pengumuman.valid[i].periode_akhir).locale('id').format('ll')
-                }
-                for(let i = 0; i < this.pengumuman.archived.length; i++){
-                    // this.pengumuman[i].tanggal = this.pengumuman[i].tanggal.replaceAll('.',':')
-                     this.pengumuman.archived[i].tanggal = moment(this.pengumuman.archived[i].tanggal).locale('id').format('lll')
-                    this.pengumuman.archived[i].periode_akhir = moment(this.pengumuman.archived[i].periode_akhir).locale('id').format('ll')
-                }
-            })
+            try {
+                await axios.get(`https://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID.uid}/list-pengumuman`)
+                .then((response) => {
+                    this.pengumuman = response.data
+                    for(let i = 0; i < this.pengumuman.valid.length; i++){
+                        // this.pengumuman[i].tanggal = this.pengumuman[i].tanggal.replaceAll('.',':')
+                        this.pengumuman.valid[i].tanggal = moment(this.pengumuman.valid[i].tanggal).locale('id').format('lll')
+                        this.pengumuman.valid[i].periode_akhir = moment(this.pengumuman.valid[i].periode_akhir).locale('id').format('ll')
+                    }
+                    for(let i = 0; i < this.pengumuman.archived.length; i++){
+                        // this.pengumuman[i].tanggal = this.pengumuman[i].tanggal.replaceAll('.',':')
+                        this.pengumuman.archived[i].tanggal = moment(this.pengumuman.archived[i].tanggal).locale('id').format('lll')
+                        this.pengumuman.archived[i].periode_akhir = moment(this.pengumuman.archived[i].periode_akhir).locale('id').format('ll')
+                    }
+                })
+            } catch (error) {
+                console.log(error.message);
+            }
+            
         },
         async getPengumumanPerwalian() {
             try {
@@ -246,7 +235,6 @@ export default {
                         return log.kode_semester
                     })
                     this.kodeSemester = Object.keys(this.pengumumanPerwalianGrouped).reverse()
-                    // console.log(this.kodeSemester);
                     for(let i = 0; i < this.pengumumanPerwalian.length; i++){
                         this.pengumumanPerwalian[i].tanggal = new Date(this.pengumumanPerwalian[i].tanggal)
                         .toLocaleString('id-ID', {
@@ -258,7 +246,7 @@ export default {
                     }
                 })
             } catch (error) {
-                console.log(error);
+                console.log(error.message);
                 this.perwalianEror = error
             }
         },
@@ -273,22 +261,7 @@ export default {
         max-width: 1500px;
     }
 }
-.vsa-list{
-    --vsa-max-width: 100%;
-    --vsa-min-width: 300px;
-    --vsa-text-color: rgba(55, 55, 55, 1);
-    --vsa-highlight-color: #32a3df;
-    --vsa-bg-color: rgba(255, 255, 255, 1);
-    --vsa-border-color: rgba(0, 0, 0, 0.2);
-    --vsa-border-width: 1px;
-    --vsa-border-style: solid;
-    --vsa-heading-padding: 0.5rem 0.5rem;
-    --vsa-content-padding: 1rem 1rem;
-    --vsa-default-icon-size: 1;
-    text-align: justify;
-}
 .judul{
-
     font-size: 250%;
     font-weight: bold;
     text-align: center;
@@ -332,13 +305,7 @@ h3{
     font-size:calc(100% + 1vw);
     text-align: center;
 }
-hr{
-    border: 2px #32a3df solid;
-}
 #judulPengumuman{
-    text-align: left;
-}
-h6{
     text-align: left;
 }
 #terbaru{
@@ -348,5 +315,18 @@ h6{
     justify-content: center;
     color: white;
     font-size: 1rem;
+}
+.cardPengumuman{
+    margin-top: 1rem;
+}
+.cardTitle{
+    min-width: 100%;
+    /* background-color: #32a3df; */
+}
+.cardPerwalian{
+    margin-top: 1rem;
+}
+.pengumuman {
+    
 }
 </style>

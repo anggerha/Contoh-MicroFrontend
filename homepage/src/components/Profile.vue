@@ -65,7 +65,7 @@ export default {
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
             this.check()
         } else {
-            this.$router.replace('/Login').then(() => { this.$router.go() })
+            this.$router.replace('/login').then(() => { this.$router.go() })
         }
     },
     methods: {

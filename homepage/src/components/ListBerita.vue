@@ -47,7 +47,6 @@ export default {
         async getBerita(){
             await axios.get(`https://beritaapi.fti.ukdw.ac.id/news`).then((response)=>{
                 this.listBerita = response.data
-                console.log(this.listBerita);
             })
         },
         async getProfile() {

@@ -144,9 +144,7 @@ export default {
       }
     },
     created(){
-        //this.hapusTool();
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
-            //this.user = JSON.parse(sessionStorage.getItem('user'))
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
         }
     },
@@ -155,9 +153,13 @@ export default {
     },
     methods: {
         async getProfile(){
-            await axios.get(`https://userapi.fti.ukdw.ac.id/dosen/${this.firebaseUID}`).then((response)=>{
-                this.profile = response.data
-            })
+            try {
+                await axios.get(`https://userapi.fti.ukdw.ac.id/dosen/${this.firebaseUID}`).then((response)=>{
+                    this.profile = response.data
+                })
+            } catch (error) {
+                console.log(error.message);
+            }
         },
         kembali() {
             this.$router.replace('listMenu')
@@ -174,22 +176,27 @@ export default {
             this.page = 1
             let kodeSems = new Date().getFullYear()-2+this.semester
             kodeSems.toString()
-            await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-perwalian/${kodeSems}`)
-            .then((response) => {
-                this.daftarPerwalian = response.data
-                this.jumlahPage = this.daftarPerwalian.length/10
-            })
+            try {
+                await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-perwalian/${kodeSems}`)
+                .then((response) => {
+                    this.daftarPerwalian = response.data
+                    this.jumlahPage = this.daftarPerwalian.length/10
+                })
+            } catch (error) {
+                this.$toast.open({
+                    message: 'Tidak Ada Mahasiswa Perwalian',
+                    type: 'warning',
+                    position: 'top'
+                });
+            }
         },
         sendDataProfile(item) {
             this.item = item
             this.isRemoveProfile = false
-            // console.log(this.item);
         },
         sendDataCatatan(itemMahasiswa,fromPage) {
             this.itemMahasiswa = [itemMahasiswa,fromPage]
-       
             this.isRemoveCatatan = false
-            //console.log(this.itemMahasiswa);
         },
         hapusTool(){
             const del = document.querySelector(".trix-button-group--block-tools");
@@ -237,28 +244,28 @@ export default {
                             this.periode_akhir = null
                         })
                 }
-                
             } catch (error) {
                 console.log(error.response.data.message);
             }
-            
         },
         handleAttachmentChanges(event) {
-            var file = event.attachment
-            const storageRef = firebase.storage().ref(`${file.file.name}`).put(file.file)
-            storageRef.on("state_changed", snapshot => {
-                this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
-                
-            }, error => {console.log(error.message)},
-                () => {this.uploadValue=100;  
-                    storageRef.snapshot.ref.getDownloadURL().then((url)=>{
-                        this.gambar = url
-                        const progress = document.querySelector("progress")
-                        progress.setAttribute("value","100")
-                    })
-                    
-                }
-            )
+            try {
+                var file = event.attachment
+                const storageRef = firebase.storage().ref(`${file.file.name}`).put(file.file)
+                storageRef.on("state_changed", snapshot => {
+                    this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
+                }, error => {console.log(error.message)},
+                    () => {this.uploadValue=100;  
+                        storageRef.snapshot.ref.getDownloadURL().then((url)=>{
+                            this.gambar = url
+                            const progress = document.querySelector("progress")
+                            progress.setAttribute("value","100")
+                        })
+                    }
+                )
+            } catch (error) {
+                console.log(error.message);
+            }
         }
     }
 }

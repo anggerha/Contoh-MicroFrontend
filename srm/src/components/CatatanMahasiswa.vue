@@ -196,8 +196,6 @@ export default {
     },
     created(){
         this.dataPerwalian = this.itemMahasiswa[0]
-    
-        console.log(this.dataPerwalian);
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
         }
@@ -210,8 +208,8 @@ export default {
                 if(response.data.access == 'denied'){
                     if(this.itemMahasiswa.length !== 0){
                         this.isAdmin = false
-                       await this.getLogMahasiswa()
-                       await this.getDetailMahasiswaDosen()
+                        await this.getLogMahasiswa()
+                        await this.getDetailMahasiswaDosen()
                     }
                 } else if (response.data.access == 'granted'){
                     this.isAdmin = true
@@ -249,11 +247,9 @@ export default {
                         return nilai.kode_semester
                     })
                     this.kodeSemesterNilai = Object.keys(this.nilaiGrouped).reverse()
-                    console.log('Nilai Grouped');
-                    console.log(this.nilaiGrouped);
                 })
             } catch (error) {
-                console.log(error);
+                console.log(error.message);
             }
         },
         async getDetailMahasiswa() {
@@ -265,11 +261,9 @@ export default {
                         return nilai.kode_semester
                     })
                     this.kodeSemesterNilai = Object.keys(this.nilaiGrouped).reverse()
-                    console.log('Nilai Grouped');
-                    console.log(this.nilaiGrouped);
                 })
             } catch (error) {
-                console.log(error);
+                console.log(error.message);
             }
         },
         hapusKomponen(){

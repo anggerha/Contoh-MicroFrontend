@@ -214,9 +214,9 @@ export default {
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             //this.user = JSON.parse(sessionStorage.getItem('user'))
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
-           if(this.showListMahasiswa == true){
-            this.getMahasiswa()
-           }
+            if(this.showListMahasiswa == true){
+                this.getMahasiswa()
+            }
         }
     },
     mounted() {

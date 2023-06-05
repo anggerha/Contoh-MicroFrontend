@@ -17,7 +17,7 @@ module.exports = (webpackConfigEnv, argv) => {
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
-      disableHostCheck: true,
+      // disableHostCheck: true,
       historyApiFallback: true,
     },
     plugins: [
