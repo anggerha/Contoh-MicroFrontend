@@ -10,7 +10,7 @@ module.exports = defineConfig({
       headers: {
         "Access-Control-Allow-Origin" : "*"
       },
-      disableHostCheck: true,
+      //disableHostCheck: true,
     }
   }
 })
