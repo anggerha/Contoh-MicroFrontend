@@ -49,55 +49,115 @@
                     </div>
                 </b-col>
                 <b-col>
-                    <h4 v-if="semester == null">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }}</h4>
-                    <h4 v-if="semester == 1">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }} Semester Ganjil</h4>
-                    <h4 v-if="semester == 2">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }} Semester Genap</h4>
-                    <b-form-select v-model="semester" :options="options" @change="getMahasiswaPerwalian"></b-form-select>
-                    <b-row v-if="jumlahPage !=null" style="margin-top: 1rem;">
-                        <b-col>
-                            <b-button class="page" id="prev" :disabled="page <=1" @click="page -=1">prev</b-button>
-                        </b-col>
-                        <b-col style="text-align:center; margin:auto;">
-                            {{page}}/{{Math.ceil(jumlahPage)}}
-                        </b-col>
-                        <b-col>
-                            <b-button class="page" id="next" :disabled="page >= jumlahPage" @click="page +=1">next</b-button>
-                        </b-col>
+                    <b-row>
+                       <b-col style="margin:0;padding:0;">
+                            <div align="center">
+                                <b-button block id="listMenuAdmin" @click="toggle" :class="[showListMahasiswa ? 'active':'']">List Mahasiswa</b-button>
+                            </div>
+                       </b-col>
+                       <b-col style="margin:0;padding:0;">
+                            <div  align="center" >
+                                <b-button block id="listMenuAdmin"  @click="toggleBerita" :class="[showListBerita ? 'active':'']">List Pengumuman</b-button>
+                            </div>
+                       </b-col>
                     </b-row>
 
-                    <div class="perwalian">
-                        <b-container v-for="item in daftarPerwalian.slice(page*10-10,page*10 )" :key="item.id" style="margin-bottom: .5rem; padding: 1rem; border: 2px solid #e5e5e5;" class="shadow p-3 rounded listMahasiswa">
-                            <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
-                                <b-col cols="8">
-                                    <b-row>{{ item.nim }}</b-row>
-                                    <b-row>{{ item.nama_mahasiswa }}</b-row>
-                                </b-col>
-                            </b-row>
-                                <div class="button-group justify-content-center">
-                                    <div class="button">
-                                        <a href="#catatanPerwalian">
-                                            <b-button style="margin: .2rem; border: 1px solid #32a3df;" @click="sendDataProfile(item)" class="send">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" fill="currentColor" class="bi bi-file-earmark-plus" viewBox="0 0 16 16">
-                                                    <path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5z"/>
-                                                    <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
+                    <!-- LIST MAHASISWA DOSEN -->
+                    <div v-if="showListMahasiswa">
+                        <h4 v-if="semester == null">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }}</h4>
+                        <h4 v-if="semester == 1">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }} Semester Ganjil</h4>
+                        <h4 v-if="semester == 2">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }} Semester Genap</h4>
+                        <b-form-select v-model="semester" :options="options" @change="getMahasiswaPerwalian"></b-form-select>
+                        <b-row v-if="jumlahPage !=null" style="margin-top: 1rem;">
+                            <b-col>
+                                <b-button class="page" id="prev" :disabled="page <=1" @click="page -=1">prev</b-button>
+                            </b-col>
+                            <b-col style="text-align:center; margin:auto;">
+                                {{page}}/{{Math.ceil(jumlahPage)}}
+                            </b-col>
+                            <b-col>
+                                <b-button class="page" id="next" :disabled="page >= jumlahPage" @click="page +=1">next</b-button>
+                            </b-col>
+                        </b-row>
+
+                        <div class="perwalian">
+                            <b-container v-for="item in daftarPerwalian.slice(page*10-10,page*10 )" :key="item.id" style="margin-bottom: .5rem; padding: 1rem; border: 2px solid #e5e5e5;" class="shadow p-3 rounded listMahasiswa">
+                                <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
+                                    <b-col cols="8">
+                                        <b-row>{{ item.nim }}</b-row>
+                                        <b-row>{{ item.nama_mahasiswa }}</b-row>
+                                    </b-col>
+                                </b-row>
+                                    <div class="button-group justify-content-center">
+                                        <div class="button">
+                                            <a href="#catatanPerwalian">
+                                                <b-button style="margin: .2rem; border: 1px solid #32a3df;" @click="sendDataProfile(item)" class="send">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" fill="currentColor" class="bi bi-file-earmark-plus" viewBox="0 0 16 16">
+                                                        <path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5z"/>
+                                                        <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
+                                                    </svg>
+                                                        Tambah Catatan
+                                                </b-button>
+                                            </a>
+                                        </div>
+                                        <div class="button">
+                                            <a href="#catatanMahasiswa">
+                                            <b-button @click="sendDataCatatan(item, 'dosen')" style="margin: .2rem; border: 1px solid #32a3df;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
+                                                    <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
                                                 </svg>
-                                                    Tambah Catatan
+                                                    Lihat Catatan
                                             </b-button>
-                                        </a>
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div class="button">
-                                        <a href="#catatanMahasiswa">
-                                        <b-button @click="sendDataCatatan(item, 'dosen')" style="margin: .2rem; border: 1px solid #32a3df;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
-                                                <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
-                                            </svg>
-                                                Lihat Catatan
-                                        </b-button>
-                                        </a>
-                                    </div>
-                                </div>
-                        </b-container>
+                            </b-container>
+                        </div>
                     </div>
+                    <!-- LIST PENGUMUMAN -->
+                    <div v-if="showListBerita">
+                        <h4>Daftar Berita</h4>
+                        <b-row v-if="jumlahPage !=null" style="margin-top: 1rem;">
+                            <b-col>
+                                <b-button class="page" id="prev" :disabled="page <=1" @click="page -=1">prev</b-button>
+                            </b-col>
+                            <b-col style="text-align:center; margin:auto;">
+                                {{page}}/{{Math.ceil(jumlahPage)}}
+                            </b-col>
+                            <b-col>
+                                <b-button class="page" id="next" :disabled="page >= jumlahPage" @click="page +=1">next</b-button>
+                            </b-col>
+                        </b-row>
+                        <!-- <b-row style="margin-top: 1rem;">
+                            <b-form-select v-model="statusBerita" :options="optionStatusBerita" @change="toggleBerita"></b-form-select>
+                        </b-row> -->
+                        <div class="perwalian" v-if="listPengumuman.length != 0">
+                            <b-container v-for="item in listPengumuman.slice(page*10-10,page*10 )" :key="item.id" style="margin-bottom: .5rem; padding: 1rem; border: 2px solid #e5e5e5;" class="shadow p-3 rounded listMahasiswa">
+                                <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap;">
+                                    <b-col>
+                                        <!-- <b-row>
+                                            <h5>{{ item.judul_berita }}&nbsp;<span v-if="item.status == 'PUBLISHED'" class="badge badge-pill badge-success" id="pillStatus">{{item.status}}</span>
+                                                 <span v-if="item.status == 'DRAFT'" class="badge badge-pill badge-secondary" id="pillStatus">{{item.status}}</span>
+                                                 <span v-if="item.status == 'DELETED'" class="badge badge-pill badge-danger" id="pillStatus">{{item.status}}</span></h5>
+                                        </b-row> -->
+                                        <b-row> <h5>{{ item.judul }}</h5> </b-row>
+                                        <b-row> <p class="tanggalPengumuman">{{ item.tanggal }}</p> </b-row>
+                                    </b-col>
+                                </b-row>
+                                    <div class="justify-content-center">
+                                        <div class="button">
+                                            <b-button block @click="sendDataBerita(item)" style="margin: .2rem; border: 1px solid #32a3df;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
+                                                    <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
+                                                </svg>
+                                                    &nbsp;Lihat Detail
+                                            </b-button>
+                                        </div>
+                                    </div>
+                            </b-container>
+                        </div>
+                    </div>
+
                 </b-col>
             </b-row>
         </body>
@@ -119,6 +179,8 @@ export default {
       return {
         fromPage:'dosen',
         user: [],
+        showListMahasiswa: true,
+        showListBerita: false,
         isRemoveCatatan: false,
         isRemoveProfile: false,
         firebaseUID: null,
@@ -129,6 +191,7 @@ export default {
         jumlahPage: null,
         item: [],
         itemMahasiswa: [],
+        listPengumuman: [],
         files: [],
         gambar: null,
         imageData: null,
@@ -160,6 +223,17 @@ export default {
             } catch (error) {
                 console.log(error.message);
             }
+        },
+        toggle() {
+            this.showListMahasiswa = true
+            this.showListBerita = false
+            this.getMahasiswaPerwalian()
+            
+        },
+        toggleBerita() {
+            this.showListMahasiswa = false
+            this.showListBerita = true
+            this.getAllPengumuman()
         },
         kembali() {
             this.$router.replace('listMenu')
@@ -209,14 +283,14 @@ export default {
         async kirimTele(){
             var semester = ''
             if(new Date().getMonth() <= 6){
-                semester = 2
+                semester = '2'
             }else if(new Date().getMonth() >= 7 && new Date().getMonth() <= 12){
-                semester = 1
+                semester = '1'
             }
             try {
                 if(this.isiPengumuman == ''){
                     this.$toast.open({
-                        message: 'Pesan Gagal Terkirim, isi tidak boleh kosong',
+                        message: 'Pengumuman Gagal Terkirim, isi tidak boleh kosong',
                         type: 'warning',
                         position: 'top'
                     });
@@ -235,7 +309,9 @@ export default {
                         .then((response)=>{
                             console.log(response)
                             this.$toast.open({
-                                message: 'Pesan Berhasil Terkirim',
+                                dismissible: true,
+                                duration:0,
+                                message: 'Pengumuman Berhasil Terkirim pada '+ moment().locale('id').toString() ,
                                 type: 'success',
                                 position: 'top'
                             });
@@ -247,6 +323,19 @@ export default {
             } catch (error) {
                 console.log(error.response.data.message);
             }
+        },
+        async getAllPengumuman(){
+            this.page = 1
+            this.jumlahPage = null
+            await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-pengumuman`).then((response)=>{
+                console.log(response.data);
+                this.listPengumuman = response.data
+                for(let i=0;i< this.listPengumuman.length-1;i++){
+                   this.listPengumuman[i].tanggal = moment(this.listPengumuman[i].tanggal).format('llll')
+                }
+                this.jumlahPage = this.listPengumuman.length/10
+
+            })
         },
         handleAttachmentChanges(event) {
             try {
@@ -290,6 +379,10 @@ p{
 p.tanggalBerakhir{
     font-size: large;
     margin-top:1rem;
+}
+
+p.tanggalPengumuman{
+    font-size: medium;
 }
 .form{
     display: flex;
@@ -340,6 +433,8 @@ h4{
     font-size:calc(80% + 1vw);
     text-align: center;
 }
+
+
 .perwalian{
     margin-top: 1rem;
 }
@@ -347,6 +442,7 @@ h6{
     font-size:calc(10% + 0.5vw);
 
 }
+
 span#hapus{
     display: none;
 }
@@ -363,6 +459,21 @@ span#hapus{
 button#next{
     
     float: right;
+}
+#listMenuAdmin:hover{
+    color: white !important;
+    background-color: #32a3df !important ;
+    border-color:  #32a3df !important;
+}
+#listMenuAdmin:not(:disabled):not(.disabled) {
+    color: white ;
+    background-color: #32a3df ;
+    border-color:  #32a3df;
+}
+#listMenuAdmin:not(:disabled):not(.active) {
+    border-color: #32a3df  !important;
+    background: none ;
+    color: #32a3df  ;
 }
 </style>
 
