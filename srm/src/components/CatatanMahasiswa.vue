@@ -56,7 +56,6 @@
                                 </b-col>
                             </b-row>
 <!-- LOG MAHASISWA -->
-
                         <div v-if="logMahasiswa.length != 0">
                             <b-row style="margin-top: 1rem">
                                 <b-col>
@@ -66,17 +65,15 @@
                                         <b-col style="display: flex;">
                                             <h4 v-if="logMahasiswa[0]?.kode_semester?.slice(4, 5) == 1">Semester Gasal</h4>
                                             <h4 v-if="logMahasiswa[0]?.kode_semester?.slice(4, 5) == 2">Semester Genap</h4>
-
                                             <p v-if="logMahasiswa.length != 0" id="terbaru">Terbaru</p>
                                         </b-col>
                                     </b-row>
-                                    
                                     <div v-for="item in kodeSemester" :key="item">
                                         <div v-for="data in logMahasiswaGrouped[item]" :key="data._id" style="margin-bottom: 1rem">
                                             <b-card v-if="logMahasiswa[0].kode_semester == item">
-                                                <b-row v-if="dataDiri.role == 'DOSEN'">
-                                                    <b-card-title>{{ data.judul }}</b-card-title>
-                                                </b-row>
+                                                    <b-card-title>
+                                                        {{ data.judul }}
+                                                    </b-card-title>
                                                     <b-card-text>
                                                         {{ data.pembahasan }}
                                                     </b-card-text>
@@ -96,34 +93,31 @@
                                     <b-collapse id="accordion-catatan" role="tabpanel">
                                         <div style="margin-top: 1rem;width: 100%;">
                                             <ul style="display: grid;grid-template-columns:repeat(3, 1fr); padding:0;">
-                                                <li v-show="logMahasiswa[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="width: 100%; display:inline;">
+                                                <li v-show="logMahasiswa[0].kode_semester != item" v-for="item in kodeSemester" :key="item" style="width: 100%; display:inline;">
                                                     <b-button v-b-toggle="'accordion-' + item">{{ item.slice(0, 4) }}<span v-if="item.slice(4, 5) == 1"> Gasal</span><span v-if="item.slice(4, 5) == 2"> Genap</span></b-button>
                                                 </li>
-                                            </ul>                                            
+                                            </ul>                             
                                         </div>
-                                            <div v-show="logMahasiswa[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="margin-bottom: 1rem">
-                                                <b-collapse :id="'accordion-' + item" role="tabpanel">
-                                                    <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 1">{{ item.slice(0, 4) }} Gasal</b-card-title>
-                                                    <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 2">{{ item.slice(0, 4) }} Genap</b-card-title>
-                                                    <b-card>
-                                                        <b-card-text v-for="data in logMahasiswaGrouped[item]" :key="data._id">
-                                                            <h3>{{ data.judul }}</h3>
-                                                            <b-card-text class="small text-muted">Dikirim pada tanggal {{ data.tanggal }}</b-card-text>
-                                                            <p>Catatan: <br>{{ data.pembahasan }}</p>
-                                                            <hr>
-                                                        </b-card-text>
-                                                    </b-card>
-                                                </b-collapse>
-                                            </div>
+                                        <div v-show="logMahasiswa[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="margin-bottom: 1rem">
+                                            <b-collapse :id="'accordion-' + item" role="tabpanel">
+                                                <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 1">{{ item.slice(0, 4) }} Gasal</b-card-title>
+                                                <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 2">{{ item.slice(0, 4) }} Genap</b-card-title>
+                                                <b-card>
+                                                    <b-card-text v-for="data in logMahasiswaGrouped[item]" :key="data._id">
+                                                        <h3>{{ data.judul }}</h3>
+                                                        <b-card-text class="small text-muted">Dikirim pada tanggal {{ data.tanggal }}</b-card-text>
+                                                        <p>Catatan: <br>{{ data.pembahasan }}</p>
+                                                        <hr>
+                                                    </b-card-text>
+                                                </b-card>
+                                            </b-collapse>
+                                        </div>
                                     </b-collapse>
                                 </b-col>
                             </b-row>
                         </div>
-
 <!-- DETAIL MAHASISWA -->
-
                         <div v-if="detailMahasiswa.length != 0">
-                            
                             <b-row style="margin-top: 1rem;">
                                 <b-col>
                                     <b-button class="button" block v-b-toggle.accordion-nilai variant="info">Nilai Mahasiswa</b-button>
@@ -214,7 +208,6 @@ export default {
                 } else if (response.data.access == 'granted'){
                     this.isAdmin = true
                     await this.getDetailMahasiswa()
-                    
                 }
             })
         }

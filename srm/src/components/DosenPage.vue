@@ -12,13 +12,12 @@
                 <b-col sm="8">
                     <div class="shadow-lg p-3 mb-5 bg-white rounded-4">
                         <p>Buat Pengumuman</p>
-
                             <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman"></b-input>
                             <!-- <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" v-model="isiPengumuman"></textarea> -->
                             <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman"/>
                             <p class="tanggalBerakhir">Tanggal Pengumuman Berakhir</p>
-                            <b-input required placeholder="Tanggal Berakhir" type="datetime-local" v-model="periode_akhir"></b-input> 
-                            
+                            <b-input required placeholder="Tanggal Berakhir" type="datetime-local" v-model="periode_akhir"></b-input>
+                            {{ periode_akhir }}
                         <div style="margin-top: 1rem;">
                             <div class="button-group">
                                 <div class="button">
@@ -57,12 +56,11 @@
                        </b-col>
                        <b-col style="margin:0;padding:0;">
                             <div  align="center" >
-                                <b-button block id="listMenuAdmin"  @click="toggleBerita" :class="[showListBerita ? 'active':'']">List Pengumuman</b-button>
+                                <b-button block id="listMenuAdmin"  @click="toggleBerita" :class="[showListPengumuman ? 'active':'']">List Pengumuman</b-button>
                             </div>
                        </b-col>
                     </b-row>
-
-                    <!-- LIST MAHASISWA DOSEN -->
+<!-- LIST MAHASISWA DOSEN -->
                     <div v-if="showListMahasiswa">
                         <h4 v-if="semester == null">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }}</h4>
                         <h4 v-if="semester == 1">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }} Semester Ganjil</h4>
@@ -79,7 +77,6 @@
                                 <b-button class="page" id="next" :disabled="page >= jumlahPage" @click="page +=1">next</b-button>
                             </b-col>
                         </b-row>
-
                         <div class="perwalian">
                             <b-container v-for="item in daftarPerwalian.slice(page*10-10,page*10 )" :key="item.id" style="margin-bottom: .5rem; padding: 1rem; border: 2px solid #e5e5e5;" class="shadow p-3 rounded listMahasiswa">
                                 <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
@@ -114,9 +111,9 @@
                             </b-container>
                         </div>
                     </div>
-                    <!-- LIST PENGUMUMAN -->
-                    <div v-if="showListBerita">
-                        <h4>Daftar Berita</h4>
+<!-- LIST PENGUMUMAN -->
+                    <div v-if="showListPengumuman">
+                        <h4>Daftar Pengumuman</h4>
                         <b-row v-if="jumlahPage !=null" style="margin-top: 1rem;">
                             <b-col>
                                 <b-button class="page" id="prev" :disabled="page <=1" @click="page -=1">prev</b-button>
@@ -140,8 +137,15 @@
                                                  <span v-if="item.status == 'DRAFT'" class="badge badge-pill badge-secondary" id="pillStatus">{{item.status}}</span>
                                                  <span v-if="item.status == 'DELETED'" class="badge badge-pill badge-danger" id="pillStatus">{{item.status}}</span></h5>
                                         </b-row> -->
-                                        <b-row> <h5>{{ item.judul }}</h5> </b-row>
-                                        <b-row> <p class="tanggalPengumuman">{{ item.tanggal }}</p> </b-row>
+                                        <b-row>
+                                            <h4 class="list-judul-pengumuman">{{ item.judul }}</h4>
+                                        </b-row>
+                                        <b-row>
+                                            <span v-html="item.pengumuman"></span>
+                                        </b-row>
+                                        <b-row>
+                                            <p class="tanggalPengumuman">{{ item.tanggal }}</p>
+                                        </b-row>
                                     </b-col>
                                 </b-row>
                                     <div class="justify-content-center">
@@ -149,8 +153,7 @@
                                             <b-button block @click="sendDataBerita(item)" style="margin: .2rem; border: 1px solid #32a3df;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
                                                     <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
-                                                </svg>
-                                                    &nbsp;Lihat Detail
+                                                </svg>&nbsp;Lihat Detail
                                             </b-button>
                                         </div>
                                     </div>
@@ -180,7 +183,7 @@ export default {
         fromPage:'dosen',
         user: [],
         showListMahasiswa: true,
-        showListBerita: false,
+        showListPengumuman: false,
         isRemoveCatatan: false,
         isRemoveProfile: false,
         firebaseUID: null,
@@ -226,20 +229,18 @@ export default {
         },
         toggle() {
             this.showListMahasiswa = true
-            this.showListBerita = false
+            this.showListPengumuman = false
             this.getMahasiswaPerwalian()
-            
         },
         toggleBerita() {
             this.showListMahasiswa = false
-            this.showListBerita = true
+            this.showListPengumuman = true
             this.getAllPengumuman()
         },
         kembali() {
             this.$router.replace('listMenu')
         },
         onClickChildCatatan(value){
-            console.log(value);
             this.isRemoveCatatan = value
         },
         onClickChildProfile(value){
@@ -248,6 +249,7 @@ export default {
         },
         async getMahasiswaPerwalian() {
             this.page = 1
+            this.daftarPerwalian = []
             let kodeSems = new Date().getFullYear()-2+this.semester
             kodeSems.toString()
             try {
@@ -268,6 +270,18 @@ export default {
             this.item = item
             this.isRemoveProfile = false
         },
+        sendDataBerita(item) {
+            this.itemBerita = item
+            this.periode_akhir = moment(item.tanggal).format('YYYY-MM-DDTHH:mm:ss')
+            if(item.judul){
+                this.judulPengumuman = item.judul
+                this.isiPengumuman = item.pengumuman
+            }else{
+                this.judulPengumuman = ''
+                this.isiPengumuman = item.pengumuman
+            }
+            this.isRemoveBerita = false
+        },
         sendDataCatatan(itemMahasiswa,fromPage) {
             this.itemMahasiswa = [itemMahasiswa,fromPage]
             this.isRemoveCatatan = false
@@ -281,55 +295,60 @@ export default {
             this.gambar = ''
         },
         async kirimTele(){
-            var semester = ''
-            if(new Date().getMonth() <= 6){
-                semester = '2'
-            }else if(new Date().getMonth() >= 7 && new Date().getMonth() <= 12){
-                semester = '1'
-            }
-            try {
-                if(this.isiPengumuman == ''){
-                    this.$toast.open({
-                        message: 'Pengumuman Gagal Terkirim, isi tidak boleh kosong',
-                        type: 'warning',
-                        position: 'top'
-                    });
-                }else{
-                    await axios.post(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
-                        nama_dosen: this.profile.nama,
-                        email: this.profile.email,
-                        role: this.profile.role,
-                        kode_semester: new Date().getFullYear()-2+semester,
-                        semester: semester,
-                        pengumuman: this.isiPengumuman,
-                        file: this.gambar,
-                        judul: this.judulPengumuman,
-                        periode_akhir: moment(this.periode_akhir).locale('id').toString()
-                        })
-                        .then((response)=>{
-                            console.log(response)
-                            this.$toast.open({
-                                dismissible: true,
-                                duration:0,
-                                message: 'Pengumuman Berhasil Terkirim pada '+ moment().locale('id').toString() ,
-                                type: 'success',
-                                position: 'top'
-                            });
-                            this.isiPengumuman = ''
-                            this.judulPengumuman = ''
-                            this.periode_akhir = null
-                        })
+            if(this.itemBerita){
+                console.log(this.itemBerita);
+            } else {
+                var semester = ''
+                if(new Date().getMonth() <= 6){
+                    semester = '2'
+                }else if(new Date().getMonth() >= 7 && new Date().getMonth() <= 12){
+                    semester = '1'
                 }
-            } catch (error) {
-                console.log(error.response.data.message);
+                try {
+                    if(this.isiPengumuman == ''){
+                        this.$toast.open({
+                            message: 'Pengumuman Gagal Terkirim, isi tidak boleh kosong',
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    }else{
+                        await axios.post(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
+                            nama_dosen: this.profile.nama,
+                            email: this.profile.email,
+                            role: this.profile.role,
+                            kode_semester: new Date().getFullYear()-2+semester,
+                            semester: semester,
+                            pengumuman: this.isiPengumuman,
+                            file: this.gambar,
+                            judul: this.judulPengumuman,
+                            periode_akhir: moment(this.periode_akhir).locale('id').toString()
+                            })
+                            .then((response)=>{
+                                console.log(response)
+                                this.$toast.open({
+                                    dismissible: true,
+                                    duration:0,
+                                    message: 'Pengumuman Berhasil Terkirim pada '+ moment().locale('id').toString() ,
+                                    type: 'success',
+                                    position: 'top'
+                                });
+                                this.isiPengumuman = ''
+                                this.judulPengumuman = ''
+                                this.periode_akhir = null
+                            })
+                    }
+                } catch (error) {
+                    console.log(error.response.data.message);
+                }
             }
+            
         },
         async getAllPengumuman(){
             this.page = 1
             this.jumlahPage = null
             await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-pengumuman`).then((response)=>{
                 console.log(response.data);
-                this.listPengumuman = response.data
+                this.listPengumuman = response.data.reverse()
                 for(let i=0;i< this.listPengumuman.length-1;i++){
                    this.listPengumuman[i].tanggal = moment(this.listPengumuman[i].tanggal).format('llll')
                 }
@@ -380,7 +399,6 @@ p.tanggalBerakhir{
     font-size: large;
     margin-top:1rem;
 }
-
 p.tanggalPengumuman{
     font-size: medium;
 }
@@ -433,21 +451,16 @@ h4{
     font-size:calc(80% + 1vw);
     text-align: center;
 }
-
-
 .perwalian{
     margin-top: 1rem;
 }
 h6{
     font-size:calc(10% + 0.5vw);
-
 }
-
 span#hapus{
     display: none;
 }
 .page{
-
     color: #32a3df;
     border-color: #32a3df;
     background-color: transparent;
@@ -455,9 +468,7 @@ span#hapus{
 .page[disabled]{
     pointer-events: none;
 }
-
 button#next{
-    
     float: right;
 }
 #listMenuAdmin:hover{
@@ -474,6 +485,10 @@ button#next{
     border-color: #32a3df  !important;
     background: none ;
     color: #32a3df  ;
+}
+.list-judul-pengumuman{
+    font-size:calc(80% + 1vw);
+    text-align: left;
 }
 </style>
 
