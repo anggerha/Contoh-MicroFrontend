@@ -7,36 +7,61 @@
             Kembali
         </b-button>
         <p class="judul">SRM FTI UKDW</p>
-        <h6> Nama: {{ dataDiri.nama }}</h6>
-        <h6> Email: {{ dataDiri.email }}</h6>
-        <h6> Dosen Wali: {{dataPerwalian.nama_dosen}}</h6>
+        <b-skeleton-wrapper :loading="loading">
+            <template #loading>
+                <div>
+                    <b-skeleton width="85%"></b-skeleton>
+                    <b-skeleton width="55%"></b-skeleton>
+                    <b-skeleton width="70%"></b-skeleton>
+                </div>
+            </template>
+            <h6> Nama: {{ dataDiri.nama }}</h6>
+            <h6> Email: {{ dataDiri.email }}</h6>
+            <h6> Dosen Wali: {{dataPerwalian.nama_dosen}}</h6>
+        </b-skeleton-wrapper>
+        
         <div class="accordion" role="tablist">
             <b-row>
                 <b-col v-if="pengumuman.length != 0">
                     <h1>Pengumuman</h1>
-                        <div v-if="pengumuman.valid.length != 0">
-                            <b-card class="cardPengumuman" v-for="item in pengumuman.valid" :key="item._id">
-                                <b-card-title class="cardTitle">
-                                    <b-row>
-                                        <b-col> <h4 class="judulPengumuman">{{ item.judul }}</h4></b-col>
-                                    </b-row>
-                                    <b-row>
-                                        <b-col>
-                                            <span class="tanggalPengumuman small text-muted">{{ item.tanggal }}  WIB</span>
-                                        </b-col>
-                                    </b-row>
-                                    <hr>
-                                </b-card-title>
-                                <b-card-text>
-                                    <span id="pengumuman" v-html="item.pengumuman"></span>
-                                    <div v-if="item.file != null">
-                                        <span class="pengumuman" ><a :href="item.file" target="_blank">Download File Disini</a></span>
-                                    </div>
-                                    <div style="margin-top: 2rem;">
-                                        <span class="pengumuman small text-muted">periode pengumuman berakhir: {{item.periode_akhir}}</span>
-                                    </div>
-                                </b-card-text>
-                            </b-card>
+                        <div v-if="!loadingPengumuman">
+                            <div v-if="pengumuman.valid.length != 0">
+                                <b-card class="cardPengumuman" v-for="item in pengumuman.valid" :key="item._id"
+                                    :header="item.tanggal"
+                            
+                                    header-text-variant="white"
+                                    :footer="'Tanggal pengumuman berakhir: '+ item.periode_akhir"
+                                    
+                                >
+                                    <b-card-title class="cardTitle">
+                                        <b-row>
+                                            <b-col> <h4 class="judulPengumuman">{{ item.judul }}</h4></b-col>
+                                        </b-row>
+                                        <!-- <b-row>
+                                            <b-col>
+                                                <span class="tanggalPengumuman small text-muted">{{ item.tanggal }}  WIB</span>
+                                            </b-col>
+                                        </b-row> -->
+                                        <hr>
+                                    </b-card-title>
+                                    <b-card-text>
+                                        <span id="pengumuman" v-html="item.pengumuman"></span>
+                                        <div v-if="item.file != null">
+                                            <span class="pengumuman" ><a :href="item.file" target="_blank">Download File Disini</a></span>
+                                        </div>
+                                        <!-- <div style="margin-top: 2rem;">
+                                            <span class="pengumuman small text-muted">periode pengumuman berakhir: {{item.periode_akhir}}</span>
+                                        </div> -->
+                                    </b-card-text>
+                                </b-card>
+                            </div>
+                        </div>
+                        <div v-if="loadingPengumuman">
+                            <div v-if="loading" style="text-align:center;">
+                                    <div class="loadingio-spinner-ellipsis-f9g8sm63oof"><div class="ldio-mr6hs88yhu">
+                                <div></div><div></div><div></div><div></div><div></div>
+                                </div></div>
+                            </div>
                         </div>
                 </b-col>
             </b-row>
@@ -52,29 +77,33 @@
                     </b-button>
                     <b-collapse id="collapse-2" v-if="pengumuman.length != 0">
                         <div v-if="pengumuman.archived.length != 0">
-                            <b-card v-for="item in pengumuman.archived" :key="item._id">
-                                <b-card-title style="margin-left:1rem;">
+                           <b-card class="cardPengumuman archived" v-for="item in pengumuman.archived" :key="item._id"
+                                :header="item.tanggal"
+                           
+                                header-text-variant="white"
+                                :footer="'Tanggal pengumuman berakhir: '+ item.periode_akhir"
+                                
+                            >
+                                <b-card-title class="cardTitle">
                                     <b-row>
                                         <b-col> <h4 class="judulPengumuman">{{ item.judul }}</h4></b-col>
                                     </b-row>
-                                    <b-row>
+                                    <!-- <b-row>
                                         <b-col>
                                             <span class="tanggalPengumuman small text-muted">{{ item.tanggal }}  WIB</span>
                                         </b-col>
-                                    </b-row>
+                                    </b-row> -->
                                     <hr>
                                 </b-card-title>
-                                <b-card>
-                                    <b-card-text>
-                                        <span id="pengumuman" v-html="item.pengumuman"></span>
-                                        <div v-if="item.file != null">
-                                            <span class="pengumuman" ><a :href="item.file" target="_blank">Download File Disini</a></span>
-                                        </div>
-                                        <div style="margin-top: 2rem;">
-                                            <span class="pengumuman small text-muted" >periode pengumuman berakhir: {{item.periode_akhir}}</span>
-                                        </div>
-                                    </b-card-text>
-                                </b-card>
+                                <b-card-text>
+                                    <span id="pengumuman" v-html="item.pengumuman"></span>
+                                    <div v-if="item.file != null">
+                                        <span class="pengumuman" ><a :href="item.file" target="_blank">Download File Disini</a></span>
+                                    </div>
+                                    <!-- <div style="margin-top: 2rem;">
+                                        <span class="pengumuman small text-muted">periode pengumuman berakhir: {{item.periode_akhir}}</span>
+                                    </div> -->
+                                </b-card-text>
                             </b-card>
                         </div>
                     </b-collapse>
@@ -82,24 +111,33 @@
             </b-row>
             <b-row style="margin-top: 2rem">
                 <b-col>
-                    <h2 v-if="pengumumanPerwalian.length != 0">Catatan Perwalian {{ pengumumanPerwalian[0]?.kode_semester?.slice(0, 4) }}</h2> 
-                    <h2 v-if="pengumumanPerwalian.length == 0">Catatan Perwalian Kosong</h2>
-                    <b-row>
-                        <b-col style="display: flex;">
-                            <h4 v-if="pengumumanPerwalian[0]?.kode_semester?.slice(4, 5) == 1">Semester Gasal</h4>
-                            <h4 v-if="pengumumanPerwalian[0]?.kode_semester?.slice(4, 5) == 2">Semester Genap</h4>
-                            <div class="badge badge-pill badge-success" id="terbaru" v-if="pengumumanPerwalian.length != 0">Terbaru</div>
-                        </b-col>
-                    </b-row>
-                    <div class="cardPerwalian" v-for="item in kodeSemester" :key="item">
-                        <div v-for="data in pengumumanPerwalianGrouped[item]" :key="data._id" style="margin-bottom: 1rem">
-                            <b-card v-if="pengumumanPerwalian[0].kode_semester == item">
-                                <b-card-title>{{ data.judul }}</b-card-title>
-                                    <b-card-text>
-                                        {{ data.pembahasan }}
-                                    </b-card-text>
-                                <b-card-text class="small text-muted">Dikirim pada tanggal {{ data.tanggal }}</b-card-text>
-                            </b-card>
+                    <div v-if="loadingCatatan">
+                        <div v-if="loading" style="text-align:center;">
+                                <div class="loadingio-spinner-ellipsis-f9g8sm63oof"><div class="ldio-mr6hs88yhu">
+                            <div></div><div></div><div></div><div></div><div></div>
+                            </div></div>
+                        </div>
+                    </div>
+                    <div v-if="!loadingCatatan">
+                        <h2 v-if="pengumumanPerwalian.length != 0">Catatan Perwalian {{ pengumumanPerwalian[0]?.kode_semester?.slice(0, 4) }}</h2> 
+                        <h2 v-if="pengumumanPerwalian.length == 0">Catatan Perwalian Kosong</h2>
+                        <b-row>
+                            <b-col style="display: flex;">
+                                <h4 v-if="pengumumanPerwalian[0]?.kode_semester?.slice(4, 5) == 1">Semester Gasal</h4>
+                                <h4 v-if="pengumumanPerwalian[0]?.kode_semester?.slice(4, 5) == 2">Semester Genap</h4>
+                                <div class="badge badge-pill badge-success" id="terbaru" v-if="pengumumanPerwalian.length != 0">Terbaru</div>
+                            </b-col>
+                        </b-row>
+                        <div class="cardPerwalian" v-for="item in kodeSemester" :key="item">
+                            <div v-for="data in pengumumanPerwalianGrouped[item]" :key="data._id" style="margin-bottom: 1rem">
+                                <b-card v-if="pengumumanPerwalian[0].kode_semester == item">
+                                    <b-card-title>{{ data.judul }}</b-card-title>
+                                        <b-card-text>
+                                            {{ data.pembahasan }}
+                                        </b-card-text>
+                                    <b-card-text class="small text-muted">Dikirim pada tanggal {{ data.tanggal }}</b-card-text>
+                                </b-card>
+                            </div>
                         </div>
                     </div>
                 </b-col>
@@ -149,6 +187,9 @@ export default {
     name: 'MahasiswaPage',
     data(){
         return {
+            loading: true,
+            loadingPengumuman: true,
+            loadingCatatan: true,
             text: 'Pengumuman',
             firebaseUID: null,
             dataDiri: [],
@@ -199,6 +240,7 @@ export default {
                     nama_mahasiswa: this.dataDiri.nama
                 }}).then((response)=>{
                     this.dataPerwalian = response.data[0]
+                    this.loading = false
                     // console.log("ini data perwalian= ")
                 })
             } catch (error) {
@@ -220,6 +262,7 @@ export default {
                         this.pengumuman.archived[i].tanggal = moment(this.pengumuman.archived[i].tanggal).locale('id').format('lll')
                         this.pengumuman.archived[i].periode_akhir = moment(this.pengumuman.archived[i].periode_akhir).locale('id').format('ll')
                     }
+                    this.loadingPengumuman = false
                 })
             } catch (error) {
                 console.log(error.message);
@@ -244,6 +287,7 @@ export default {
                             day: "numeric"
                         })
                     }
+                    this.loadingCatatan = false
                 })
             } catch (error) {
                 console.log(error.message);
@@ -318,6 +362,7 @@ h3{
 }
 .cardPengumuman{
     margin-top: 1rem;
+   
 }
 .cardTitle{
     min-width: 100%;
@@ -326,7 +371,92 @@ h3{
 .cardPerwalian{
     margin-top: 1rem;
 }
-.pengumuman {
-    
+
+.card-header {
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 0;
+    background-image: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(50,163,223,1) 47%, rgba(0,212,255,1) 100%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+   
 }
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.8rem;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}
+.card-header:first-child {
+    border-radius: calc(0.8rem - 1px) calc(0.8rem - 1px) 0 0;
+}
+
+.archived .card-header{
+    background-image: linear-gradient(90deg, rgba(14,14,14,1) 0%, rgba(138,121,121,1) 47%, rgba(255,255,255,1) 100%);
+}
+@keyframes ldio-mr6hs88yhu {
+   0% { transform: translate(12px,80px) scale(0); }
+  25% { transform: translate(12px,80px) scale(0); }
+  50% { transform: translate(12px,80px) scale(1); }
+  75% { transform: translate(80px,80px) scale(1); }
+ 100% { transform: translate(148px,80px) scale(1); }
+}
+@keyframes ldio-mr6hs88yhu-r {
+   0% { transform: translate(148px,80px) scale(1); }
+ 100% { transform: translate(148px,80px) scale(0); }
+}
+@keyframes ldio-mr6hs88yhu-c {
+   0% { background: #93dbe9 }
+  25% { background: #3b4368 }
+  50% { background: #5e6fa3 }
+  75% { background: #689cc5 }
+ 100% { background: #93dbe9 }
+}
+.ldio-mr6hs88yhu div {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transform: translate(80px,80px) scale(1);
+  background: #93dbe9;
+  animation: ldio-mr6hs88yhu 1s infinite cubic-bezier(0,0.5,0.5,1);
+}
+.ldio-mr6hs88yhu div:nth-child(1) {
+  background: #689cc5;
+  transform: translate(148px,80px) scale(1);
+  animation: ldio-mr6hs88yhu-r 0.25s infinite cubic-bezier(0,0.5,0.5,1), ldio-mr6hs88yhu-c 1s infinite step-start;
+}.ldio-mr6hs88yhu div:nth-child(2) {
+  animation-delay: -0.25s;
+  background: #93dbe9;
+}.ldio-mr6hs88yhu div:nth-child(3) {
+  animation-delay: -0.5s;
+  background: #689cc5;
+}.ldio-mr6hs88yhu div:nth-child(4) {
+  animation-delay: -0.75s;
+  background: #5e6fa3;
+}.ldio-mr6hs88yhu div:nth-child(5) {
+  animation-delay: -1s;
+  background: #3b4368;
+}
+.loadingio-spinner-ellipsis-f9g8sm63oof {
+  width: 200px;
+  height: 200px;
+  display: inline-block;
+  overflow: hidden;
+  background: transparent;
+}
+.ldio-mr6hs88yhu {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: translateZ(0) scale(1);
+  backface-visibility: hidden;
+  transform-origin: 0 0; /* see note above */
+}
+.ldio-mr6hs88yhu div { box-sizing: content-box; }
+/* generated by https://loading.io/ */
 </style>
