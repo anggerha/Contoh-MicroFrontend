@@ -9,7 +9,7 @@
     </div>
     <div style="width:100%" v-else>
         <h5 style="font-size:calc(125% + 1vw); width:100%; text-align:center;" >Berita Informatika</h5>
-        <ul style="display: grid; grid-template-columns:repeat(auto-fit, minmax(400px,1fr); padding:0;">
+        <ul style="display: grid; grid-template-columns:repeat(auto-fit, minmax(400px,1fr)); padding:0;">
             <li v-for="item in listBerita" :key="item._id" style="display:inline; padding: 10px; ">
                 <div class="shadow p-0 mb-3 bg-white rounded">
                     <div class="card-body">
