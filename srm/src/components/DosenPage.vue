@@ -34,7 +34,13 @@
                         <h4 v-if="semester == 1">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }} Semester Ganjil</h4>
                         <h4 v-if="semester == 2">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }} Semester Genap</h4>
                         <b-form-select v-model="semester" :options="options" @change="getMahasiswaPerwalian"></b-form-select>
-                        <b-row v-if="jumlahPage !=null" style="margin-top: 1rem;">
+                        <div v-if="loadingListMahasiswa && semester != null"  style="text-align:center;">
+                            <div class="loadingio-spinner-ellipsis-f9g8sm63oof"><div class="ldio-mr6hs88yhu">
+                            <div></div><div></div><div></div><div></div><div></div>
+                            </div></div>
+                        </div>
+                        <div v-if="!loadingListMahasiswa">
+                            <b-row v-if="jumlahPage !=null" style="margin-top: 1rem;">
                             <b-col>
                                 <b-button class="page" id="prev" :disabled="page <=1" @click="page -=1">prev</b-button>
                             </b-col>
@@ -44,15 +50,15 @@
                             <b-col>
                                 <b-button class="page" id="next" :disabled="page >= jumlahPage" @click="page +=1">next</b-button>
                             </b-col>
-                        </b-row>
-                        <div class="perwalian">
-                            <b-container v-for="item in daftarPerwalian.slice(page*10-10,page*10 )" :key="item.id" style="margin-bottom: .5rem; padding: 1rem; border: 2px solid #e5e5e5;" class="shadow p-3 rounded listMahasiswa">
-                                <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
-                                    <b-col cols="8">
-                                        <b-row>{{ item.nim }}</b-row>
-                                        <b-row>{{ item.nama_mahasiswa }}</b-row>
-                                    </b-col>
-                                </b-row>
+                            </b-row>
+                            <div class="perwalian">
+                                <b-container v-for="item in daftarPerwalian.slice(page*10-10,page*10 )" :key="item.id" style="margin-bottom: .5rem; padding: 1rem; border: 2px solid #e5e5e5;" class="shadow p-3 rounded listMahasiswa">
+                                    <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
+                                        <b-col cols="8">
+                                            <b-row>{{ item.nim }}</b-row>
+                                            <b-row>{{ item.nama_mahasiswa }}</b-row>
+                                        </b-col>
+                                    </b-row>
                                     <div class="button-group justify-content-center">
                                         <div class="button">
                                             <a href="#catatanPerwalian">
@@ -70,19 +76,21 @@
                                             <b-button @click="sendDataCatatan(item, 'dosen')" style="margin: .2rem; border: 1px solid #32a3df;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
                                                     <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
-                                                </svg>
-                                                    Lihat Catatan
-                                            </b-button>
-                                            </a>
+                                                    </svg>
+                                                        Lihat Catatan
+                                                </b-button>
+                                                </a>
+                                            </div>
                                         </div>
-                                    </div>
-                            </b-container>
+                                </b-container>
+                            </div>
                         </div>
+                        
                     </div>
 <!-- LIST PENGUMUMAN -->
                     <div v-if="showListPengumuman">
-                        <b-button block class="btn-buat-pengumuman" @click="tambahKomponenPengumuman">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                        <b-button block class="btn-buat-pengumuman" @click="tambahKomponenPengumuman" style="display:flex;justify-content:center;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                                 <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
                             </svg>&nbsp; Buat Pengumuman
@@ -132,67 +140,74 @@
                             </div>
                         </div>
                         <h4>Daftar Pengumuman</h4>
-                        <b-row v-if="jumlahPage !=null" style="margin-top: 1rem;">
-                            <b-col>
-                                <b-button class="page" id="prev" :disabled="page <=1" @click="page -=1">prev</b-button>
-                            </b-col>
-                            <b-col style="text-align:center; margin:auto;">
-                                {{page}}/{{Math.ceil(jumlahPage)}}
-                            </b-col>
-                            <b-col>
-                                <b-button class="page" id="next" :disabled="page >= jumlahPage" @click="page +=1">next</b-button>
-                            </b-col>
-                        </b-row>
-                        <div class="daftar-pengumuman" v-if="listPengumuman.length != 0">
-                            <!-- <b-container v-for="item in listPengumuman.slice(page*10-10,page*10 )" :key="item.id" class="shadow rounded listMahasiswa card-pengumuman">
-                                <div style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap;">
-                                    <div>
+                        <div v-if="loadingListPengumuman"  style="text-align:center;">
+                            <div class="loadingio-spinner-ellipsis-f9g8sm63oof"><div class="ldio-mr6hs88yhu">
+                            <div></div><div></div><div></div><div></div><div></div>
+                            </div></div>
+                        </div>
+                        <div v-if="!loadingListPengumuman">
+                            <b-row v-if="jumlahPage !=null" style="margin-top: 1rem;">
+                                <b-col>
+                                    <b-button class="page" id="prev" :disabled="page <=1" @click="page -=1">prev</b-button>
+                                </b-col>
+                                <b-col style="text-align:center; margin:auto;">
+                                    {{page}}/{{Math.ceil(jumlahPage)}}
+                                </b-col>
+                                <b-col>
+                                    <b-button class="page" id="next" :disabled="page >= jumlahPage" @click="page +=1">next</b-button>
+                                </b-col>
+                            </b-row>
+                            <div class="daftar-pengumuman" v-if="listPengumuman.length != 0">
+                                <!-- <b-container v-for="item in listPengumuman.slice(page*10-10,page*10 )" :key="item.id" class="shadow rounded listMahasiswa card-pengumuman">
+                                    <div style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap;">
                                         <div>
-                                            <h4 class="list-judul-pengumuman">{{ item.judul }}</h4>
-                                        </div>
-                                        <div>
-                                            <span v-html="item.pengumuman"></span>
-                                        </div>
-                                        <div>
-                                            <p class="tanggalPengumuman">{{ item.tanggal }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="justify-content-center">
-                                    <div class="button">
-                                        <b-button block @click="sendDataBerita(item)" style="margin: .2rem; border: 1px solid #32a3df;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
-                                                <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
-                                            </svg>&nbsp;Lihat Detail
-                                        </b-button>
-                                    </div>
-                                </div>
-                            </b-container> -->
-                            <ul style="display: grid; grid-template-columns:repeat(auto-fit, minmax(600px,1fr)); padding:0;">
-                                <li v-for="item in listPengumuman.slice(page*10-10,page*10 )" :key="item._id" style="display:inline; padding: 10px; ">
-                                    <div class="shadow p-0 mb-3 bg-white rounded">
-                                        <div class="card-body">
-                                            <p style=" font-size:calc(80% + 0.5vw);font-weight:bold;">{{item.judul}}</p>
-                                        <div v-html="item.pengumuman"></div>
-                                        <div v-if="item.file != null">
-                                            <span><a :href="item.file" target="_blank" :download="item.judul_berita">Download File Disini!</a></span>
-                                        </div>
-                                        </div>
-                                        <div class="card-footer text-muted">
-                                            {{item.tanggal}}
-                                        </div>
-                                        <div>
-                                            <div class="button">
-                                                <b-button block @click="sendDataBerita(item)" style="margin: 0.2rem; border: 1px solid #32a3df; justify-content: center;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
-                                                        <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
-                                                    </svg>&nbsp;Lihat Detail
-                                                </b-button>
+                                            <div>
+                                                <h4 class="list-judul-pengumuman">{{ item.judul }}</h4>
+                                            </div>
+                                            <div>
+                                                <span v-html="item.pengumuman"></span>
+                                            </div>
+                                            <div>
+                                                <p class="tanggalPengumuman">{{ item.tanggal }}</p>
                                             </div>
                                         </div>
                                     </div>
-                                </li>
-                            </ul>
+                                    <div class="justify-content-center">
+                                        <div class="button">
+                                            <b-button block @click="sendDataBerita(item)" style="margin: .2rem; border: 1px solid #32a3df;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
+                                                    <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
+                                                </svg>&nbsp;Lihat Detail
+                                            </b-button>
+                                        </div>
+                                    </div>
+                                </b-container> -->
+                                <ul style="display: grid; grid-template-columns:repeat(auto-fit, minmax(600px,1fr)); padding:0;">
+                                    <li v-for="item in listPengumuman.slice(page*10-10,page*10 )" :key="item._id" style="display:inline; padding: 5px; ">
+                                        <div class="shadow p-2 mb-3 bg-white rounded">
+                                            <div class="card-body">
+                                                <p style=" font-size:calc(80% + 0.5vw);font-weight:bold;border-bottom:1px solid #32a3df;">{{item.judul}}</p>
+                                            <div v-html="item.pengumuman"></div>
+                                            <div v-if="item.file != null">
+                                                <span><a :href="item.file" target="_blank" :download="item.judul_berita">Download File Disini!</a></span>
+                                            </div>
+                                            </div>
+                                            <div class="text-muted">
+                                                <b-col>
+                                                    Tanggal Berakhir: {{item.tanggal}}
+                                                </b-col> 
+                                            </div>
+                                                <div class="button">
+                                                    <b-button block @click="sendDataBerita(item)" style="margin: 0.2rem; justify-content: center;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
+                                                            <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
+                                                        </svg>&nbsp;Lihat Detail
+                                                    </b-button>
+                                                </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </b-col>
@@ -216,6 +231,8 @@ export default {
       return {
         fromPage:'dosen',
         user: [],
+        loadingListMahasiswa: true,
+        loadingListPengumuman: true,
         showListMahasiswa: true,
         showListPengumuman: false,
         isRemoveCatatan: false,
@@ -263,11 +280,15 @@ export default {
         toggle() {
             this.showListMahasiswa = true
             this.showListPengumuman = false
+            this.page = 1
+             this.jumlahPage = null
             this.getMahasiswaPerwalian()
         },
         toggleBerita() {
             this.showListMahasiswa = false
             this.showListPengumuman = true
+            this.page = 1
+            this.jumlahPage = null
             this.getAllPengumuman()
         },
         kembali() {
@@ -290,6 +311,7 @@ export default {
                 .then((response) => {
                     this.daftarPerwalian = response.data
                     this.jumlahPage = this.daftarPerwalian.length/10
+                    this.loadingListMahasiswa = false
                 })
             } catch (error) {
                 this.$toast.open({
@@ -297,6 +319,8 @@ export default {
                     type: 'warning',
                     position: 'top'
                 });
+                this.jumlahPage=null
+                this.loadingListMahasiswa = false
             }
         },
         sendDataProfile(item) {
@@ -386,7 +410,7 @@ export default {
                    this.listPengumuman[i].tanggal = moment(this.listPengumuman[i].tanggal).format('llll')
                 }
                 this.jumlahPage = this.listPengumuman.length/10
-
+                this.loadingListPengumuman = false
             })
         },
         handleAttachmentChanges(event) {
@@ -560,5 +584,66 @@ button#next{
 .field-pengumuman{
     margin: 1rem 0 0 0 ;
 }
+@keyframes ldio-mr6hs88yhu {
+   0% { transform: translate(12px,80px) scale(0); }
+  25% { transform: translate(12px,80px) scale(0); }
+  50% { transform: translate(12px,80px) scale(1); }
+  75% { transform: translate(80px,80px) scale(1); }
+ 100% { transform: translate(148px,80px) scale(1); }
+}
+@keyframes ldio-mr6hs88yhu-r {
+   0% { transform: translate(148px,80px) scale(1); }
+ 100% { transform: translate(148px,80px) scale(0); }
+}
+@keyframes ldio-mr6hs88yhu-c {
+   0% { background: #93dbe9 }
+  25% { background: #3b4368 }
+  50% { background: #5e6fa3 }
+  75% { background: #689cc5 }
+ 100% { background: #93dbe9 }
+}
+.ldio-mr6hs88yhu div {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transform: translate(80px,80px) scale(1);
+  background: #93dbe9;
+  animation: ldio-mr6hs88yhu 1s infinite cubic-bezier(0,0.5,0.5,1);
+}
+.ldio-mr6hs88yhu div:nth-child(1) {
+  background: #689cc5;
+  transform: translate(148px,80px) scale(1);
+  animation: ldio-mr6hs88yhu-r 0.25s infinite cubic-bezier(0,0.5,0.5,1), ldio-mr6hs88yhu-c 1s infinite step-start;
+}.ldio-mr6hs88yhu div:nth-child(2) {
+  animation-delay: -0.25s;
+  background: #93dbe9;
+}.ldio-mr6hs88yhu div:nth-child(3) {
+  animation-delay: -0.5s;
+  background: #689cc5;
+}.ldio-mr6hs88yhu div:nth-child(4) {
+  animation-delay: -0.75s;
+  background: #5e6fa3;
+}.ldio-mr6hs88yhu div:nth-child(5) {
+  animation-delay: -1s;
+  background: #3b4368;
+}
+.loadingio-spinner-ellipsis-f9g8sm63oof {
+  width: 200px;
+  height: 200px;
+  display: inline-block;
+  overflow: hidden;
+  background: transparent;
+}
+.ldio-mr6hs88yhu {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: translateZ(0) scale(1);
+  backface-visibility: hidden;
+  transform-origin: 0 0; /* see note above */
+}
+.ldio-mr6hs88yhu div { box-sizing: content-box; }
+/* generated by https://loading.io/ */
 </style>
 
