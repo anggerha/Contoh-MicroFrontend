@@ -28,11 +28,8 @@
                             <div v-if="pengumuman.valid.length != 0">
                                 <b-card class="cardPengumuman" v-for="item in pengumuman.valid" :key="item._id"
                                     :header="item.tanggal"
-                            
                                     header-text-variant="white"
-                                    :footer="'Tanggal pengumuman berakhir: '+ item.periode_akhir"
-                                    
-                                >
+                                    :footer="'Tanggal pengumuman berakhir: '+ item.periode_akhir">
                                     <b-card-title class="cardTitle">
                                         <b-row>
                                             <b-col> <h4 class="judulPengumuman">{{ item.judul }}</h4></b-col>

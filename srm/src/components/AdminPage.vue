@@ -13,12 +13,12 @@
                     <div class="shadow-lg p-3 mb-5 bg-white rounded-4" v-show="isShowBuatPengumuman">
                         <p  v-if="itemBerita.status != 'PUBLISHED'">Buat Berita</p>
                         <p  v-if="itemBerita.status == 'PUBLISHED'">Detail Berita</p>
-                            <span v-if="itemBerita.status == 'PUBLISHED'">Judul</span>
-                            <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.status != 'PUBLISHED'"></b-input>
-                            <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.status == 'PUBLISHED'" readonly></b-input>
-                            <!-- <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" v-model="isiPengumuman"></textarea> -->
-                            <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman" v-if="itemBerita.status == 'PUBLISHED'" :disabled-editor="true"/>
-                            <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman" v-if="itemBerita.status != 'PUBLISHED'" :disabled-editor="false"/>
+                        <span v-if="itemBerita.status == 'PUBLISHED'">Judul</span>
+                        <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.status != 'PUBLISHED'"></b-input>
+                        <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.status == 'PUBLISHED'" readonly></b-input>
+                        <!-- <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" v-model="isiPengumuman"></textarea> -->
+                        <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman" v-if="itemBerita.status == 'PUBLISHED'" :disabled-editor="true" @hook:mounted="hapusTool"/>
+                        <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman" v-if="itemBerita.status != 'PUBLISHED'" :disabled-editor="false" @hook:mounted="hapusTool"/>
                         <div style="margin-top: 1rem;">
                             <div v-if="itemBerita.status == 'PUBLISHED'">
                                 <div v-if="itemBerita.file != null">Lampiran File: <a :href="itemBerita.file" target="_blank">File</a></div>
@@ -116,7 +116,6 @@
                             </b-container>
                         </div>
                     </div>
-                    
                     <!-- LIST BERITA -->
                     <div v-if="showListBerita">
                         <h4>Daftar Berita</h4>
@@ -219,9 +218,6 @@ export default {
             }
         }
     },
-    mounted() {
-            this.hapusTool()
-    },
     methods: {
         toggle() {
             this.showListMahasiswa = true
@@ -301,7 +297,7 @@ export default {
         },
         async simpan(){
             try {
-                if(this.isiPengumuman == ''){
+                if(this.isiPengumuman == '' || this.judulPengumuman == ''){
                     this.$toast.open({
                         message: 'Pesan Gagal Terkirim, Isi Berita Tidak Boleh Kosong',
                         type: 'warning',
@@ -309,7 +305,7 @@ export default {
                     });
                 }else{
                     await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-berita`, {
-                        nama: "Admin Angger Lucu",
+                        nama: "ADMIN FTI",
                         isi_berita: this.isiPengumuman,
                         file: this.gambar,
                         judul_berita: this.judulPengumuman,

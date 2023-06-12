@@ -19,9 +19,17 @@ export default {
         firebaseUID: null
       }
     },
-    created() {
+    async created() {
       if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
         this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+        await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
+        .then((response) => {
+            if(response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
+              this.$router.replace('formpage')
+            } else {
+              this.$router.replace('listmenu')
+            }
+        })
       } else {
         this.$router.replace('login')
       }

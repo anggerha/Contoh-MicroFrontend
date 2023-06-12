@@ -2,10 +2,8 @@
 <div>
     <div v-if="loading" style="text-align:center; margin-top:15rem;">
         <div class="loadingio-spinner-ellipsis-f9g8sm63oof"><div class="ldio-mr6hs88yhu">
-<div></div><div></div><div></div><div></div><div></div>
-</div></div>
-
-
+        <div></div><div></div><div></div><div></div><div></div>
+        </div></div>
     </div>
     <div style="width:100%" v-else>
         <h5 style="font-size:calc(125% + 1vw); width:100%; text-align:center;" >Berita Informatika</h5>
