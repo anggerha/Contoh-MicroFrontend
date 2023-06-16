@@ -151,12 +151,15 @@
                             </div>
                         </div>
                         <h4>Daftar Pengumuman</h4>
-                        <div v-if="loadingListPengumuman"  style="text-align:center;">
+                        <div v-if="loadingListPengumuman && !isPengumumanError"  style="text-align:center;">
                             <div class="loadingio-spinner-ellipsis-f9g8sm63oof"><div class="ldio-mr6hs88yhu">
                             <div></div><div></div><div></div><div></div><div></div>
                             </div></div>
                         </div>
-                        <div v-if="!loadingListPengumuman">
+                        <div v-if="!loadingListPengumuman && isPengumumanError">
+                            <div style="text-align: center;">Pengumuman Masih Kosong</div> 
+                        </div>
+                        <div v-if="!loadingListPengumuman && !isPengumumanError">
                             <b-row v-if="jumlahPage !=null" style="margin-top: 1rem;">
                                 <b-col>
                                     <b-button class="page" id="prev" :disabled="page <=1" @click="page -=1">prev</b-button>
@@ -230,6 +233,7 @@ export default {
         isRemoveCatatan: false,
         isRemoveProfile: false,
         isRemovePengumuman: true,
+        isPengumumanError: false,
         firebaseUID: null,
         profile: [],
         fields: [ 'NAMA_MAHASISWA', 'nim'],
@@ -349,7 +353,7 @@ export default {
         async kirimTele(){
             if(this.itemBerita.length != 0){
                 console.log(this.periode_akhir);
-                await axios.put(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/update-pengumuman/${this.itemBerita._id}`, {
+                await axios.put(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/update-pengumuman/${this.itemBerita.id}`, {
                     periode_akhir: moment(this.periode_akhir).locale('id').toString()
                 })
                 .then((response) => {
@@ -422,14 +426,22 @@ export default {
         async getAllPengumuman(){
             this.page = 1
             this.jumlahPage = null
-            await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-pengumuman`).then((response)=>{
-                this.listPengumuman = response.data.reverse()
-                for(let i=0;i< this.listPengumuman.length-1;i++){
-                   this.listPengumuman[i].tanggal = moment(this.listPengumuman[i].tanggal).format('llll')
-                }
-                this.jumlahPage = this.listPengumuman.length/10
-                this.loadingListPengumuman = false
-            })
+            try {
+                    await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-pengumuman`).then((response)=>{
+                    this.listPengumuman = response.data.reverse()
+                    for(let i=0;i< this.listPengumuman.length-1;i++){
+                    this.listPengumuman[i].tanggal = moment(this.listPengumuman[i].tanggal).format('llll')
+                    }
+                    this.jumlahPage = this.listPengumuman.length/10
+                    this.loadingListPengumuman = false
+                    console.log(response);
+                })
+            } catch (error) {
+                console.log(error);
+                this.isPengumumanError = true;
+                this.loadingListPengumuman = false;
+            }
+            
         },
         handleAttachmentChanges(event) {
             try {
