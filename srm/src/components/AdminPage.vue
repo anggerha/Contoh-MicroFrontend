@@ -169,6 +169,12 @@
                                                     </b-row>
                                                     <b-row>
                                                         <span v-html="item.isi_berita"></span>
+                                                        
+                                                    </b-row>
+                                                    <b-row>
+                                                        <div v-if="item.file != null && item.file !=''">
+                                                            <span><a :href="item.file" target="_blank" :download="item.judul_berita">Download File Disini!</a></span>
+                                                        </div>
                                                     </b-row>
                                                     <b-row>Dibuat pada: {{ item.tanggal }}</b-row>
                                                 </b-col>
@@ -330,34 +336,46 @@ export default {
         },
         async simpan(){
             if(this.itemBerita.length != 0){
-                await axios.put(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/edit-berita/${this.itemBerita._id}`, {
-                    tanggal: moment().locale('id').toString(),
-                    nama: "Admin FTI",
-                    isi_berita: this.isiPengumuman,
-                    file: this.gambar,
-                    judul_berita: this.judulPengumuman,
-                    status:"DRAFT",
-                })
-                .then((response) => {
-                    if(response.status == 201){
-                        this.$toast.open({
-                            dismissible: true,
-                            duration:0,
-                            message: 'Perubahan Berita Berhasil Disimpan',
-                            type: 'success',
-                            position: 'top'
-                        });
-                        this.getAllBerita()
-                    } else {
-                        this.$toast.open({
-                            dismissible: true,
-                            duration:0,
-                            message: 'Berita Gagal Disimpan pada ',
+                if(this.judulPengumuman ==''){
+                    this.$toast.open({
+                            message: 'Pesan Gagal Disimpan, Judul Berita Tidak Boleh Kosong',
                             type: 'warning',
                             position: 'top'
                         });
-                    }
-                })
+                }else{
+                        await axios.put(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/edit-berita/${this.itemBerita.id}`, {
+                        //tanggal: moment().locale('id').toString(),
+                        nama: "Admin FTI",
+                        isi_berita: this.isiPengumuman,
+                        file: this.gambar,
+                        judul_berita: this.judulPengumuman,
+                        status:"DRAFT",
+                    })
+                    .then((response) => {
+                        if(response.status == 201){
+                            this.$toast.open({
+                                dismissible: true,
+                                duration:0,
+                                message: 'Perubahan Berita Berhasil Disimpan',
+                                type: 'success',
+                                position: 'top'
+                            });
+                            this.judulPengumuman = ''
+                            this.isiPengumuman = ''
+                            this.gambar = null
+                            this.isRemoveBerita = true
+                            this.getAllBerita()
+                        } else {
+                            this.$toast.open({
+                                dismissible: true,
+                                duration:0,
+                                message: 'Berita Gagal Disimpan pada ',
+                                type: 'warning',
+                                position: 'top'
+                            });
+                        }
+                    })
+                } 
             }
             else{
                 try {
@@ -412,7 +430,7 @@ export default {
                         file: this.gambar,
                         judul_berita: this.judulPengumuman,
                         status:"PUBLISHED",
-                        tanggal: moment().locale('id').toString()
+                        //tanggal: moment().locale('id').toString()
                         }, 
                         )
                         .then(()=>{
@@ -430,7 +448,7 @@ export default {
                 }
                 
             } catch (error) {
-                console.log(error.response.data.message);
+                console.log(error);
             }
             
         },

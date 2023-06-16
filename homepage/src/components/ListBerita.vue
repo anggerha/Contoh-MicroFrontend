@@ -13,7 +13,7 @@
                     <div class="card-body">
                         <p style=" font-size:calc(80% + 0.5vw);font-weight:bold;">{{item.judul_berita}}</p>
                     <div v-html="item.isi_berita"></div>
-                    <div v-if="item.file != null">
+                    <div v-if="item.file != null && item.file !=''">
                         <span><a :href="item.file" target="_blank" :download="item.judul_berita">Download File Disini!</a></span>
                     </div>
                     </div>
