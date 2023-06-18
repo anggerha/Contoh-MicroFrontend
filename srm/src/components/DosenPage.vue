@@ -124,6 +124,10 @@
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.length == 0"></b-input>
                                 <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman" v-if="itemBerita.length != 0" :disabled-editor="true" @hook:mounted="hapusTool"/>
                                 <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman" v-if="itemBerita.length == 0" @hook:mounted="hapusTool"/>
+                                <div v-show="itemBerita.file.length != 0" v-for="attachment in itemBerita.file" :key="attachment.id">
+                                    <span>Attachment: </span><br>
+                                    <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
+                                </div>
                                 <p class="tanggalBerakhir">Tanggal Pengumuman Berakhir</p>
                                 <b-input required placeholder="Tanggal Berakhir" type="datetime-local" v-model="periode_akhir"></b-input>
                                 <div style="margin-top: 1rem;">
@@ -179,8 +183,9 @@
                                                 <div class="card-body">
                                                     <p style=" font-size:calc(80% + 0.5vw);font-weight:bold;border-bottom:1px solid #32a3df;">{{item.judul}}</p>
                                                 <div v-html="item.pengumuman"></div>
-                                                <div v-if="item.file != null && item.file != ''">
-                                                    <span><a :href="item.file" target="_blank" :download="item.judul_berita">Download File Disini!</a></span>
+                                                <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
+                                                    <span>Attachment: </span><br>
+                                                    <span><a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a></span>
                                                 </div>
                                                 </div>
                                                 <div class="text-muted">
@@ -244,7 +249,6 @@ export default {
         itemMahasiswa: [],
         listPengumuman: [],
         files: [],
-        gambar: null,
         imageData: null,
         semester: null,
         options: [
@@ -295,7 +299,6 @@ export default {
             this.isRemoveCatatan = value
         },
         onClickChildProfile(value){
-            console.log(value);
             this.isRemoveProfile = value
         },
         async getMahasiswaPerwalian() {
@@ -328,6 +331,7 @@ export default {
             this.isRemovePengumuman = false
             this.itemBerita = item
             this.periode_akhir = moment(item.periode_akhir).format('YYYY-MM-DDTHH:mm:ss')
+            this.files = this.itemBerita.file
             if(item.judul){
                 this.judulPengumuman = item.judul
                 this.isiPengumuman = item.pengumuman
@@ -347,12 +351,11 @@ export default {
         },
         hapusPengumuman(){
             this.isiPengumuman = ''
-            this.gambar = ''
+            this.files = []
             this.periode_akhir = null
         },
         async kirimTele(){
             if(this.itemBerita.length != 0){
-                console.log(this.periode_akhir);
                 await axios.put(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/update-pengumuman/${this.itemBerita.id}`, {
                     periode_akhir: moment(this.periode_akhir).locale('id').toString()
                 })
@@ -399,12 +402,11 @@ export default {
                             kode_semester: new Date().getFullYear()-2+semester,
                             semester: semester,
                             pengumuman: this.isiPengumuman,
-                            file: this.gambar,
+                            file: this.files,
                             judul: this.judulPengumuman,
                             periode_akhir: moment(this.periode_akhir).locale('id').toString()
                             })
                             .then(()=>{
-                                console.log(moment(this.periode_akhir).locale('id').toString())
                                 this.$toast.open({
                                     dismissible: true,
                                     duration:0,
@@ -415,6 +417,7 @@ export default {
                                 this.isiPengumuman = ''
                                 this.judulPengumuman = ''
                                 this.periode_akhir = null
+                                this.files = []
                             })
                             this.getAllPengumuman()
                     }
@@ -434,7 +437,6 @@ export default {
                     }
                     this.jumlahPage = this.listPengumuman.length/10
                     this.loadingListPengumuman = false
-                    console.log(response);
                 })
             } catch (error) {
                 console.log(error);
@@ -449,12 +451,17 @@ export default {
                 const storageRef = firebase.storage().ref(`${file.file.name}`).put(file.file)
                 storageRef.on("state_changed", snapshot => {
                     this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
-                }, error => {console.log(error.message)},
+                    const progress = document.querySelector("progress")
+                    progress.setAttribute("value",this.uploadValue)
+                }, error => {console.log(error)},
                     () => {this.uploadValue=100;  
                         storageRef.snapshot.ref.getDownloadURL().then((url)=>{
-                            this.gambar = url
-                            const progress = document.querySelector("progress")
-                            progress.setAttribute("value","100")
+                            this.files = [{
+                                id: file.id,
+                                file_name: file.file.name,
+                                type: file.file.type,
+                                url: url
+                            }]
                         })
                     }
                 )
@@ -469,7 +476,7 @@ export default {
             this.isRemovePengumuman = false
             this.judulPengumuman = ''
             this.isiPengumuman = ''
-            this.gambar = ''
+            this.files = []
             this.periode_akhir = null
             this.itemBerita = []
         }

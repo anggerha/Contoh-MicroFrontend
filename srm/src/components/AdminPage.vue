@@ -107,8 +107,10 @@
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.status != 'PUBLISHED'"></b-input>
                                 <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman" v-if="itemBerita.status == 'PUBLISHED'" :disabled-editor="true" @hook:mounted="hapusTool"/>
                                 <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman" v-if="itemBerita.status != 'PUBLISHED'" @hook:mounted="hapusTool"/>
-                                <!-- <p class="tanggalBerakhir">Tanggal Pengumuman Berakhir</p>
-                                <b-input required placeholder="Tanggal Berakhir" type="datetime-local" v-model="periode_akhir"></b-input> -->
+                                <div v-show="itemBerita.file.length != 0" v-for="attachment in itemBerita.file" :key="attachment.id">
+                                    <span>Attachment: </span><br>
+                                    <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
+                                </div>
                                 <div class="button-group" v-if="itemBerita.status != 'PUBLISHED'">
                                     <div class="button">
                                         <b-button class="save" @click="simpan">
@@ -169,11 +171,11 @@
                                                     </b-row>
                                                     <b-row>
                                                         <span v-html="item.isi_berita"></span>
-                                                        
                                                     </b-row>
                                                     <b-row>
-                                                        <div v-if="item.file != null && item.file !=''">
-                                                            <span><a :href="item.file" target="_blank" :download="item.judul_berita">Download File Disini!</a></span>
+                                                        <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
+                                                            <span>Attachment: </span><br>
+                                                            <span><a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a></span>
                                                         </div>
                                                     </b-row>
                                                     <b-row>Dibuat pada: {{ item.tanggal }}</b-row>
@@ -241,10 +243,10 @@ export default {
         itemBerita: [],
         itemMahasiswa: [],
         files: [],
-        gambar: null,
         imageData: null,
         isiPengumuman:'',
         judulPengumuman:'',
+        // events: []
         //_akhir: null
       }
     },
@@ -308,7 +310,6 @@ export default {
         sendDataBerita(item) {
             this.isRemoveBerita = false
             this.itemBerita = item
-            console.log(this.itemBerita);
             this.periode_akhir = moment(item.periode_akhir).format('YYYY-MM-DDTHH:mm:ss')
             if(item.judul_berita){
                 this.judulPengumuman = item.judul_berita
@@ -331,23 +332,22 @@ export default {
         hapusPengumuman(){
             this.judulPengumuman = ''
             this.isiPengumuman = ''
-            this.gambar = ''
-            //this.periode_akhir = null
+            this.files = []
         },
         async simpan(){
             if(this.itemBerita.length != 0){
                 if(this.judulPengumuman ==''){
                     this.$toast.open({
-                            message: 'Pesan Gagal Disimpan, Judul Berita Tidak Boleh Kosong',
-                            type: 'warning',
-                            position: 'top'
-                        });
-                }else{
-                        await axios.put(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/edit-berita/${this.itemBerita.id}`, {
+                        message: 'Pesan Gagal Disimpan, Judul Berita Tidak Boleh Kosong',
+                        type: 'warning',
+                        position: 'top'
+                    });
+                } else {
+                    await axios.put(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/edit-berita/${this.itemBerita.id}`, {
                         //tanggal: moment().locale('id').toString(),
                         nama: "Admin FTI",
                         isi_berita: this.isiPengumuman,
-                        file: this.gambar,
+                        file: this.files,
                         judul_berita: this.judulPengumuman,
                         status:"DRAFT",
                     })
@@ -362,7 +362,7 @@ export default {
                             });
                             this.judulPengumuman = ''
                             this.isiPengumuman = ''
-                            this.gambar = null
+                            this.files = []
                             this.isRemoveBerita = true
                             this.getAllBerita()
                         } else {
@@ -385,37 +385,33 @@ export default {
                             type: 'warning',
                             position: 'top'
                         });
-                    }else{
+                    } else {
                         await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-berita`, {
                             nama: "ADMIN FTI",
                             isi_berita: this.isiPengumuman,
-                            file: this.gambar,
+                            file: this.files,
                             judul_berita: this.judulPengumuman,
                             status:"DRAFT",
                             tanggal: moment().locale('id').toString()
-                            }, 
-                            )
-                            .then(()=>{
-                                
-                                this.$toast.open({
-                                    message: 'Pesan Berhasil Disimpan',
-                                    type: 'success',
-                                    position: 'top'
-                                });
-                                this.isiPengumuman = ''
-                                this.judulPengumuman = ''
-                                this.periode_akhir = null
-                                this.getAllBerita()
-                            })
+                        })
+                        .then(()=>{
+                            this.$toast.open({
+                                message: 'Pesan Berhasil Disimpan',
+                                type: 'success',
+                                position: 'top'
+                            });
+                            this.isiPengumuman = ''
+                            this.judulPengumuman = ''
+                            this.periode_akhir = null
+                            this.getAllBerita()
+                        })
                     }
                 } catch (error) {
                     console.log(error);
                 }
             }
-            
         },
         async kirimTele(){
-            
             try {
                 if(this.isiPengumuman == ''){
                     this.$toast.open({
@@ -427,30 +423,25 @@ export default {
                     await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-berita`, {
                         nama: "Admin FTI",
                         isi_berita: this.isiPengumuman,
-                        file: this.gambar,
+                        file: this.files,
                         judul_berita: this.judulPengumuman,
                         status:"PUBLISHED",
-                        //tanggal: moment().locale('id').toString()
-                        }, 
-                        )
-                        .then(()=>{
-                            
-                            this.$toast.open({
-                                message: 'Pesan Berhasil Terkirim',
-                                type: 'success',
-                                position: 'top'
-                            });
-                            this.getAllBerita()
-                            this.isiPengumuman = ''
-                            this.judulPengumuman = ''
-                            //this.periode_akhir = null
-                        })
+                    })
+                    .then(()=>{
+                        this.$toast.open({
+                            message: 'Pesan Berhasil Terkirim',
+                            type: 'success',
+                            position: 'top'
+                        });
+                        this.getAllBerita()
+                        this.isiPengumuman = ''
+                        this.judulPengumuman = ''
+                        this.files = []
+                    })
                 }
-                
             } catch (error) {
                 console.log(error);
             }
-            
         },
         async getAllBerita(){
             this.page = 1
@@ -461,13 +452,11 @@ export default {
                 this.daftarBerita = this.daftarBerita.groupBy((berita) => {
                     return berita.status
                 })
-                console.log(this.daftarBerita[this.statusBerita])
                 if(this.daftarBerita[this.statusBerita] == null){
                     this.jumlahPage = null
                 }else{
                     this.jumlahPage = this.daftarBerita[this.statusBerita].length/10
                 }
-                
             })
         },
         handleAttachmentChanges(event) {
@@ -476,12 +465,18 @@ export default {
                 const storageRef = firebase.storage().ref(`${file.file.name}`).put(file.file)
                 storageRef.on("state_changed", snapshot => {
                     this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
+                    const progress = document.querySelector("progress")
+                    progress.setAttribute("value",this.uploadValue)
                 }, error => {console.log(error.message)},
-                    () => {this.uploadValue=100;  
+                    () => {
+                        this.uploadValue=100;  
                         storageRef.snapshot.ref.getDownloadURL().then((url)=>{
-                            this.gambar = url
-                            const progress = document.querySelector("progress")
-                            progress.setAttribute("value","100")
+                            this.files = [{
+                                id: file.id,
+                                file_name: file.file.name,
+                                type: file.file.type,
+                                url: url
+                            }]
                         })
                     }
                 )
@@ -496,8 +491,7 @@ export default {
             this.isRemoveBerita = false
             this.judulPengumuman = ''
             this.isiPengumuman = ''
-            this.gambar = ''
-            //this.periode_akhir = null
+            this.files = []
             this.itemBerita = []
         }
     }
