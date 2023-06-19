@@ -110,6 +110,8 @@
                                 <div v-show="itemBerita.file.length != 0" v-for="attachment in itemBerita.file" :key="attachment.id">
                                     <span>Attachment: </span><br>
                                     <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
+                                    <span>&nbsp;</span>
+                                    <span style=""><button class="deleteFile" @click="hapusFile">&#10005;</button></span>
                                 </div>
                                 <div class="button-group" v-if="itemBerita.status != 'PUBLISHED'">
                                     <div class="button">
@@ -165,9 +167,12 @@
                                             <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap;">
                                                 <b-col>
                                                     <b-row>
-                                                        <h5>{{ item.judul_berita }}&nbsp;<span v-if="item.status == 'PUBLISHED'" class="badge badge-pill badge-success" id="pillStatus">{{item.status}}</span>
+                                                       
+                                                            <h5>{{ item.judul_berita }}&nbsp;<span v-if="item.status == 'PUBLISHED'" class="badge badge-pill badge-success" id="pillStatus">{{item.status}}</span>
                                                             <span v-if="item.status == 'DRAFT'" class="badge badge-pill badge-secondary" id="pillStatus">{{item.status}}</span>
                                                             <span v-if="item.status == 'DELETED'" class="badge badge-pill badge-danger" id="pillStatus">{{item.status}}</span></h5>
+                                                       
+                                                        
                                                     </b-row>
                                                     <b-row>
                                                         <span v-html="item.isi_berita"></span>
@@ -182,14 +187,30 @@
                                                 </b-col>
                                             </b-row>
                                                 <div class="justify-content-center">
-                                                    <div class="button">
-                                                        <b-button block @click="sendDataBerita(item)" style="margin: .2rem; justify-content: center;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
-                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
-                                                                <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
-                                                            </svg>
-                                                                &nbsp;Lihat Detail
-                                                        </b-button>
-                                                    </div>
+                                                    <b-row>
+                                                        
+                                                        <b-col>
+                                                            <div class="button">
+                                                                <b-button block @click="sendDataBerita(item)" style="margin: .2rem; justify-content: center;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
+                                                                        <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
+                                                                    </svg>
+                                                                        &nbsp;Lihat Detail
+                                                                </b-button>
+                                                            </div>
+                                                        </b-col>
+                                                        <b-col>
+                                                                <div class="button">
+                                                                    <b-button block class="hapusPengumuman" @click="hapusBerita(item)" style="margin: .2rem; justify-content: center;">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                                                        </svg>
+                                                                        Hapus
+                                                                    </b-button>
+                                                                                                      
+                                                                </div>
+                                                        </b-col>
+                                                    </b-row>
                                                 </div>
                                         </b-container>
                                     </li>
@@ -429,7 +450,7 @@ export default {
                     })
                     .then(()=>{
                         this.$toast.open({
-                            message: 'Pesan Berhasil Terkirim',
+                            message: 'Berita Berhasil Terkirim',
                             type: 'success',
                             position: 'top'
                         });
@@ -484,6 +505,52 @@ export default {
                 console.log(error.message);
             }
         },
+        async hapusBerita(item){
+            this.$bvModal.msgBoxConfirm(`Apakah Anda Yakin Ingin Menghapus Pengumuman "${item.judul_berita}"` , {
+            title: 'Hapus Pengumuman',
+            size: 'sm',
+            buttonSize: 'sm',
+            okVariant: 'danger',
+            okTitle: 'Ya',
+            cancelTitle: 'Tidak',
+            footerClass: 'p-2',
+            hideHeaderClose: true,
+            centered: true
+            })
+            .then(async value=>{
+                if(value == 0 || value == null){
+                    this.$bvModal.close()
+                }else{
+                    try {
+                        await axios.delete(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/delete-berita/${item.id}`).then(()=>{
+                            this.$toast.open({
+                                    message: 'Berita Berhasil Dihapus',
+                                    type: 'success',
+                                    position: 'top'
+                                    });
+                                this.getAllBerita()
+                            })
+                        } catch (error) {
+                            this.$toast.open({
+                                message: 'Berita Gagal Dihapus',
+                                type: 'warning',
+                                position: 'top'
+                            });
+                        }
+                }
+                
+            })
+            .catch(err => {
+                // An error occurred
+                console.log(err);
+            })
+      
+            
+        },
+        hapusFile(){
+            this.files = []
+            this.itemBerita.file = []
+        },
         hapusKomponenPengumuman() {
             this.isRemoveBerita = true
         },
@@ -514,7 +581,11 @@ export default {
         grid-template-columns:repeat(auto-fit, minmax(500px,1fr)); 
         padding:0;
     }
+    
 }
+ul{
+        padding-inline-start: 0px !important;
+    }
 .judul{
     text-align: left;
     font-size: 250%;
@@ -534,6 +605,18 @@ p.tanggalPengumuman{
 .form{
     display: flex;
     text-align: left;
+}
+.deleteFile{
+    color: #ee1010;
+    padding: 0.2rem;
+    border: none;
+    border-radius: 10%;
+    background-color: transparent;
+}
+
+.deleteFile:hover{
+    color: white;
+    background-color: #ee1010;
 }
 .btn:hover {
     color: white !important;
@@ -584,6 +667,15 @@ p.tanggalPengumuman{
     background-color: transparent;
     color: black;
     margin: 0.25rem;
+}
+.button .hapusPengumuman{
+    color: #ee1010;
+    background-color: transparent;
+    border: none;
+}
+.button .hapusPengumuman:hover{
+    color: white;
+    background-color: #ee1010;
 }
 span{
     text-align: left;

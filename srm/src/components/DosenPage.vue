@@ -180,6 +180,11 @@
                                     <li v-for="item in listPengumuman.slice(page*10-10,page*10 )" :key="item._id" style="display:inline; padding: 5px;">
                                         <b-container class="shadow p-2 mb-3 bg-white rounded">
                                             <div>
+                                                <div>
+                                                    <b-col>
+                                                        <span v-if="item.isExpired" class="badge badge-pill badge-warning" id="pillStatus">Expired</span>
+                                                    </b-col>
+                                                </div>
                                                 <div class="card-body">
                                                     <p style=" font-size:calc(80% + 0.5vw);font-weight:bold;border-bottom:1px solid #32a3df;">{{item.judul}}</p>
                                                 <div v-html="item.pengumuman"></div>
@@ -260,6 +265,7 @@ export default {
         judulPengumuman:'',
         periode_akhir: null,
         pengumumanButton: false,
+        now: null,
         itemBerita: []
       }
     },
@@ -432,9 +438,21 @@ export default {
             try {
                     await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-pengumuman`).then((response)=>{
                     this.listPengumuman = response.data.reverse()
-                    for(let i=0;i< this.listPengumuman.length-1;i++){
+                    console.log(this.listPengumuman);
+                    for(let i=0;i< this.listPengumuman.length;i++){
                     this.listPengumuman[i].tanggal = moment(this.listPengumuman[i].tanggal).format('llll')
+                    this.listPengumuman[i].periode_akhir = moment(this.listPengumuman[i].periode_akhir).locale('id')
+                    // let tanggalBerakhir = this.listPengumuman[i].tanggal.locale(id)
+                    //     if(tanggalBerakhir.isBefore(moment().locale(id))){
+                    //         this.pengumumanExpired = true
+                    //     }else{
+                    //         this.pengumumanExpired = false
+                    //     } 
+                    this.listPengumuman[i].isExpired = this.getPengumumanExpired(this.listPengumuman[i])
+                    console.log(this.listPengumuman[i].isExpired);
+                    
                     }
+                    this.now = moment().locale('id')
                     this.jumlahPage = this.listPengumuman.length/10
                     this.loadingListPengumuman = false
                 })
@@ -444,6 +462,11 @@ export default {
                 this.loadingListPengumuman = false;
             }
             
+        },
+        getPengumumanExpired(pengumuman){
+            console.log(pengumuman);
+            return pengumuman.periode_akhir.isBefore(moment().locale('id'))
+
         },
         handleAttachmentChanges(event) {
             try {
@@ -500,6 +523,9 @@ export default {
         grid-template-columns:repeat(auto-fit, minmax(500px,1fr)); 
         padding:0;
     }
+}
+ul{
+    padding-inline-start: 0px;
 }
 .judul{
     text-align: left;
