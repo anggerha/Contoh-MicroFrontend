@@ -8,20 +8,20 @@
     <div style="width:100%" v-else>
         <h5 style="font-size:calc(125% + 1vw); width:100%; text-align:center;" >Berita Informatika</h5>
         <ul style="display: grid; grid-template-columns:repeat(auto-fit, minmax(400px,1fr)); padding:0;">
-            <li v-for="item in listBerita" :key="item._id" style="display:inline; padding: 10px; ">
+            <li v-for="item in listBerita" :key="item._id" style="display:inline; padding: 10px;">
                 <div class="shadow p-0 mb-3 bg-white rounded">
                     <div class="card-body">
                         <p style=" font-size:calc(80% + 0.5vw);font-weight:bold;">{{item.judul_berita}}</p>
                     <div v-html="item.isi_berita"></div>
-                    <div v-if="item.file != null && item.file !=''">
-                        <span><a :href="item.file" target="_blank" :download="item.judul_berita">Download File Disini!</a></span>
-                    </div>
+                    <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
+                            <span>Attachment: </span><br>
+                            <span><a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a></span>
+                        </div>
                     </div>
                     <div class="card-footer text-muted">
                         {{item.tanggal}}
                     </div>
                 </div>
-                
             </li>
         </ul>
     </div>
