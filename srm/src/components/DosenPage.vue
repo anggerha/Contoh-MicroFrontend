@@ -155,6 +155,11 @@
                             </div>
                         </div>
                         <h4>Daftar Pengumuman</h4>
+                        <div style="display: flex; margin:auto;">
+                            <div id="judulFilter">Tanggal&nbsp;Dibuat:&nbsp;</div>
+                            <b-input required placeholder="Tanggal Berakhir" type="date" v-model="filterTanggal" id="filterTanggal" @change="convertFilter(filterTanggal)"></b-input>
+                            <div><b-button @click="resetFilter">reset</b-button></div>
+                        </div>
                         <div v-if="loadingListPengumuman && !isPengumumanError"  style="text-align:center;">
                             <div class="loadingio-spinner-ellipsis-f9g8sm63oof"><div class="ldio-mr6hs88yhu">
                             <div></div><div></div><div></div><div></div><div></div>
@@ -175,18 +180,20 @@
                                     <b-button class="page" id="next" :disabled="page >= jumlahPage" @click="page +=1">next</b-button>
                                 </b-col>
                             </b-row>
-                            <div v-if="listPengumuman.length != 0">
+                            <div v-if="listPengumuman.length != 0 && !isFilterActive">
                                 <ul class="daftar-pengumuman">
                                     <li v-for="item in listPengumuman.slice(page*10-10,page*10 )" :key="item._id" style="display:inline; padding: 5px;">
                                         <b-container class="shadow p-2 mb-3 bg-white rounded">
                                             <div>
                                                 <div>
                                                     <b-col>
+                                                        <!-- <span v-if="!item.isExpired" class="badge badge-pill badge-success" id="pillStatus"></span> -->
                                                         <span v-if="item.isExpired" class="badge badge-pill badge-warning" id="pillStatus">Expired</span>
                                                     </b-col>
                                                 </div>
                                                 <div class="card-body">
-                                                    <p style=" font-size:calc(80% + 0.5vw);font-weight:bold;border-bottom:1px solid #32a3df;">{{item.judul}}</p>
+                                                    <p style=" font-size:calc(85% + 0.5vw);font-weight:bold;border-bottom:1px solid #32a3df;">{{item.judul}}</p>
+                                                      <div>{{item.tanggal.format('LLLL')}}</div>
                                                 <div v-html="item.pengumuman"></div>
                                                 <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
                                                     <span>Attachment: </span><br>
@@ -195,7 +202,47 @@
                                                 </div>
                                                 <div class="text-muted">
                                                     <b-col>
-                                                        Tanggal Berakhir: {{item.periode_akhir}}
+                                                        Tanggal Berakhir: {{item.periode_akhir.format('LLLL')}}
+                                                    </b-col> 
+                                                </div>
+                                                <div class="button">
+                                                    <a href="#form-pengumuman">
+                                                        <b-button block @click="sendDataBerita(item)" style="margin: 0.2rem; justify-content: center;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
+                                                                <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
+                                                            </svg>
+                                                            &nbsp;Lihat Detail
+                                                        </b-button>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </b-container>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div v-if="listPengumuman.length != 0 && isFilterActive">
+                                <ul class="daftar-pengumuman">
+                                    <li v-for="item in hasilFilter.slice(page*10-10,page*10 )" :key="item._id" style="display:inline; padding: 5px;">
+                                        <b-container class="shadow p-2 mb-3 bg-white rounded" >
+                                            <div>
+                                                <div>
+                                                    <b-col>
+                                                        <!-- <span v-if="!item.isExpired" class="badge badge-pill badge-success" id="pillStatus">Active</span> -->
+                                                        <span v-if="item.isExpired" class="badge badge-pill badge-warning" id="pillStatus">Expired</span>
+                                                    </b-col>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p style=" font-size:calc(85% + 0.5vw);font-weight:bold;border-bottom:1px solid #32a3df;">{{item.judul}}</p>
+                                                      <div>{{item.tanggal.format('LLLL')}}</div>
+                                                <div v-html="item.pengumuman"></div>
+                                                <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
+                                                    <span>Attachment: </span><br>
+                                                    <span><a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a></span>
+                                                </div>
+                                                </div>
+                                                <div class="text-muted">
+                                                    <b-col>
+                                                        Tanggal Berakhir: {{item.periode_akhir.format('LLLL')}}
                                                     </b-col> 
                                                 </div>
                                                 <div class="button">
@@ -240,6 +287,7 @@ export default {
         loadingListPengumuman: true,
         showListMahasiswa: true,
         showListPengumuman: false,
+        isFilterActive: false,
         isRemoveCatatan: false,
         isRemoveProfile: false,
         isRemovePengumuman: true,
@@ -253,6 +301,7 @@ export default {
         item: [],
         itemMahasiswa: [],
         listPengumuman: [],
+        hasilFilter: [],
         files: [],
         imageData: null,
         semester: null,
@@ -264,6 +313,8 @@ export default {
         isiPengumuman:'',
         judulPengumuman:'',
         periode_akhir: null,
+        filterTanggal:null,
+        isTanggalSama: null,
         pengumumanButton: false,
         now: null,
         itemBerita: []
@@ -284,12 +335,13 @@ export default {
                 console.log(error.message);
             }
         },
+       
         toggle() {
             this.showListMahasiswa = true
             this.showListPengumuman = false
             this.page = 1
              this.jumlahPage = null
-            this.getMahasiswaPerwalian()
+            //this.getMahasiswaPerwalian()
         },
         toggleBerita() {
             this.showListMahasiswa = false
@@ -438,9 +490,8 @@ export default {
             try {
                     await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-pengumuman`).then((response)=>{
                     this.listPengumuman = response.data.reverse()
-                    console.log(this.listPengumuman);
                     for(let i=0;i< this.listPengumuman.length;i++){
-                    this.listPengumuman[i].tanggal = moment(this.listPengumuman[i].tanggal).format('llll')
+                    this.listPengumuman[i].tanggal = moment(this.listPengumuman[i].tanggal).locale('id')
                     this.listPengumuman[i].periode_akhir = moment(this.listPengumuman[i].periode_akhir).locale('id')
                     // let tanggalBerakhir = this.listPengumuman[i].tanggal.locale(id)
                     //     if(tanggalBerakhir.isBefore(moment().locale(id))){
@@ -449,13 +500,51 @@ export default {
                     //         this.pengumumanExpired = false
                     //     } 
                     this.listPengumuman[i].isExpired = this.getPengumumanExpired(this.listPengumuman[i])
-                    console.log(this.listPengumuman[i].isExpired);
-                    
+                    this.listPengumuman[i].judul = i+1 +'. '+ this.listPengumuman[i].judul            
                     }
                     this.now = moment().locale('id')
                     this.jumlahPage = this.listPengumuman.length/10
                     this.loadingListPengumuman = false
+                    this.isPengumumanError = false;
                 })
+            } catch (error) {
+                console.log(error);
+                this.isPengumumanError = true;
+                this.loadingListPengumuman = false;
+            }
+        },
+        async convertFilter(tanggal){
+            this.hasilFilter = []
+            this.isFilterActive = true;
+            this.page = 1
+            this.jumlahPage = null
+            var listPengumumanFilter = []
+            try {                           
+                    listPengumumanFilter = this.listPengumuman
+                    for(let i=0;i<listPengumumanFilter.length;i++){
+                    listPengumumanFilter[i].periode_akhir = moment(listPengumumanFilter[i].periode_akhir).locale('id')
+                    listPengumumanFilter[i].tanggal = moment(listPengumumanFilter[i].tanggal).locale('id')
+                    this.filterTanggal = moment(tanggal).locale('id').toString()
+                    this.filterTanggal = moment(tanggal).locale('id')
+                    this.isTanggalSama =moment(this.filterTanggal).isSame(listPengumumanFilter[i].tanggal,'day')
+                    listPengumumanFilter[i].isTanggalSama = this.isTanggalSama
+                    listPengumumanFilter[i].isExpired = this.getPengumumanExpired(listPengumumanFilter[i])
+                    
+                        if(listPengumumanFilter[i].isTanggalSama){
+                            this.hasilFilter.push(listPengumumanFilter[i])
+                        }
+                    }
+                    this.now = moment().locale('id')
+                    this.jumlahPage = this.hasilFilter.length/10
+                    this.loadingListPengumuman = false
+                    this.filterTanggal = moment(tanggal).format('YYYY-MM-DD')
+                    
+             
+                if(this.hasilFilter.length == 0){
+                    this.isPengumumanError = true
+                }else{
+                    this.isPengumumanError = false
+                }
             } catch (error) {
                 console.log(error);
                 this.isPengumumanError = true;
@@ -463,10 +552,14 @@ export default {
             }
             
         },
+        resetFilter(){
+            this.filterTanggal = null
+            this.hasilFilter = []
+            this.isFilterActive = false
+            this.getAllPengumuman()
+        },
         getPengumumanExpired(pengumuman){
-            console.log(pengumuman);
             return pengumuman.periode_akhir.isBefore(moment().locale('id'))
-
         },
         handleAttachmentChanges(event) {
             try {
@@ -523,6 +616,13 @@ export default {
         grid-template-columns:repeat(auto-fit, minmax(500px,1fr)); 
         padding:0;
     }
+  
+    
+}
+#judulFilter{
+    width: fit-content;
+    display: inline-block;
+    margin: auto;
 }
 ul{
     padding-inline-start: 0px;
