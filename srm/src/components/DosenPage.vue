@@ -122,17 +122,23 @@
                                 </b-row>
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.length != 0" readonly></b-input>
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.length == 0"></b-input>
-                                <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman" v-if="itemBerita.length != 0" :disabled-editor="true" @hook:mounted="hapusTool"/>
-                                <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman" v-if="itemBerita.length == 0" @hook:mounted="hapusTool"/>
+                                <VueTrix @trix-attachment-add="handleAttachmentChanges" @trix-attachment-remove="hapusFile" v-model="isiPengumuman" v-if="itemBerita.length != 0" :disabled-editor="true" @hook:mounted="hapusTool"/>
+                                <VueTrix @trix-attachment-add="handleAttachmentChanges" @trix-attachment-remove="hapusFile" v-model="isiPengumuman" v-if="itemBerita.length == 0" @hook:mounted="hapusTool"/>
                                 <div v-show="itemBerita.file.length != 0" v-for="attachment in itemBerita.file" :key="attachment.id">
                                     <span>Attachment: </span><br>
                                     <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
+                                </div>
+                                <div v-show="files.length != 0" v-for="attachment in files" :key="attachment.id">
+                                    <span>Attachment: </span><br>
+                                    <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
+                                    <span>&nbsp;</span>
+                                    <span><button class="deleteFile" @click="hapusFile">&#10005;</button></span>
                                 </div>
                                 <p class="tanggalBerakhir">Tanggal Pengumuman Berakhir</p>
                                 <b-input required placeholder="Tanggal Berakhir" type="datetime-local" v-model="periode_akhir"></b-input>
                                 <div style="margin-top: 1rem;">
                                     <div class="button-group">
-                                        <div class="button">
+                                        <div v-if="itemBerita.length == 0" class="button">
                                             <b-button class="delete" @click="hapusPengumuman">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                                     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
@@ -238,6 +244,8 @@
                                                 <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
                                                     <span>Attachment: </span><br>
                                                     <span><a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a></span>
+                                                    <span>&nbsp;</span>
+                                                    <span style=""><button class="deleteFile" @click="hapusFile">&#10005;</button></span>
                                                 </div>
                                                 </div>
                                                 <div class="text-muted">
@@ -320,6 +328,11 @@ export default {
         itemBerita: []
       }
     },
+    watch: {
+        files: {
+            handler: "fileLimit"
+        }
+    },
     created(){
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
@@ -389,7 +402,6 @@ export default {
             this.isRemovePengumuman = false
             this.itemBerita = item
             this.periode_akhir = moment(item.periode_akhir).format('YYYY-MM-DDTHH:mm:ss')
-            this.files = this.itemBerita.file
             if(item.judul){
                 this.judulPengumuman = item.judul
                 this.isiPengumuman = item.pengumuman
@@ -408,6 +420,7 @@ export default {
             del.style.display = 'none'
         },
         hapusPengumuman(){
+            this.judulPengumuman = ''
             this.isiPengumuman = ''
             this.files = []
             this.periode_akhir = null
@@ -563,26 +576,42 @@ export default {
         },
         handleAttachmentChanges(event) {
             try {
-                var file = event.attachment
-                const storageRef = firebase.storage().ref(`${file.file.name}`).put(file.file)
-                storageRef.on("state_changed", snapshot => {
-                    this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
-                    const progress = document.querySelector("progress")
-                    progress.setAttribute("value",this.uploadValue)
-                }, error => {console.log(error)},
-                    () => {this.uploadValue=100;  
-                        storageRef.snapshot.ref.getDownloadURL().then((url)=>{
-                            this.files = [{
-                                id: file.id,
-                                file_name: file.file.name,
-                                type: file.file.type,
-                                url: url
-                            }]
-                        })
-                    }
-                )
+                if(this.files.length == 0){
+                    var file = event.attachment
+                    const storageRef = firebase.storage().ref(`${file.file.name}`).put(file.file)
+                    storageRef.on("state_changed", snapshot => {
+                        this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
+                        const progress = document.querySelector("progress")
+                        progress.setAttribute("value",this.uploadValue)
+                    }, error => {console.log(error)},
+                        () => {this.uploadValue=100;  
+                            storageRef.snapshot.ref.getDownloadURL().then((url)=>{
+                                this.files = [{
+                                    id: file.id,
+                                    file_name: file.file.name,
+                                    type: file.file.type,
+                                    url: url
+                                }]
+                            })
+                        }
+                    )
+                } else {
+                    this.$toast.open({
+                        message: 'Hanya Bisa Mengirim 1 File.',
+                        type: 'warning',
+                        position: 'top'
+                    });
+                }
             } catch (error) {
                 console.log(error.message);
+            }
+        },
+        fileLimit() {
+            const del = document.querySelector(".trix-button--icon-attach");
+            if(this.files.length != 0){                
+                del.style.display = 'none'
+            } else {
+                del.style.display = ''
             }
         },
         hapusKomponenPengumuman() {
@@ -595,6 +624,10 @@ export default {
             this.files = []
             this.periode_akhir = null
             this.itemBerita = []
+        },
+        hapusFile(){
+            this.files = []
+            this.itemBerita.file = []
         }
     }
 }
@@ -618,6 +651,18 @@ export default {
     }
   
     
+}
+.deleteFile{
+    color: #ee1010;
+    padding: 0.2rem;
+    border: none;
+    border-radius: 10%;
+    background-color: transparent;
+}
+
+.deleteFile:hover{
+    color: white;
+    background-color: #ee1010;
 }
 #judulFilter{
     width: fit-content;

@@ -105,13 +105,17 @@
                                 </b-row>
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.status == 'PUBLISHED'" readonly></b-input>
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.status != 'PUBLISHED'"></b-input>
-                                <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman" v-if="itemBerita.status == 'PUBLISHED'" :disabled-editor="true" @hook:mounted="hapusTool"/>
-                                <VueTrix @trix-attachment-add="handleAttachmentChanges" v-model="isiPengumuman" v-if="itemBerita.status != 'PUBLISHED'" @hook:mounted="hapusTool"/>
+                                <VueTrix @trix-attachment-add="handleAttachmentChanges" @trix-attachment-remove="hapusFile" v-model="isiPengumuman" v-if="itemBerita.status == 'PUBLISHED'" :disabled-editor="true" @hook:mounted="hapusTool"/>
+                                <VueTrix @trix-attachment-add="handleAttachmentChanges" @trix-attachment-remove="hapusFile" v-model="isiPengumuman" v-if="itemBerita.status != 'PUBLISHED'" @hook:mounted="hapusTool"/>
                                 <div v-show="itemBerita.file.length != 0" v-for="attachment in itemBerita.file" :key="attachment.id">
                                     <span>Attachment: </span><br>
                                     <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
                                     <span>&nbsp;</span>
-                                    <span style=""><button class="deleteFile" @click="hapusFile">&#10005;</button></span>
+                                    <span v-if="itemBerita.status != 'PUBLISHED'"><button class="deleteFile" @click="hapusFile">&#10005;</button></span>
+                                </div>
+                                <div v-show="files.length != 0" v-for="attachment in files" :key="attachment.id">
+                                    <span>Attachment: </span><br>
+                                    <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
                                 </div>
                                 <div class="button-group" v-if="itemBerita.status != 'PUBLISHED'">
                                     <div class="button">
@@ -188,7 +192,6 @@
                                             </b-row>
                                                 <div class="justify-content-center">
                                                     <b-row>
-                                                        
                                                         <b-col>
                                                             <div class="button">
                                                                 <b-button block @click="sendDataBerita(item)" style="margin: .2rem; justify-content: center;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
@@ -200,15 +203,14 @@
                                                             </div>
                                                         </b-col>
                                                         <b-col>
-                                                                <div class="button">
-                                                                    <b-button block class="hapusPengumuman" @click="hapusBerita(item)" style="margin: .2rem; justify-content: center;">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                                                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-                                                                        </svg>
-                                                                        Hapus
-                                                                    </b-button>
-                                                                                                      
-                                                                </div>
+                                                            <div class="button">
+                                                                <b-button block class="hapusPengumuman" @click="hapusBerita(item)" style="margin: .2rem; justify-content: center;">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                                                    </svg>
+                                                                    Hapus
+                                                                </b-button>                   
+                                                            </div>
                                                         </b-col>
                                                     </b-row>
                                                 </div>
@@ -270,6 +272,11 @@ export default {
         // events: []
         //_akhir: null
       }
+    },
+    watch: {
+        files: {
+            handler: "fileLimit"
+        }
     },
     created(){
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
@@ -482,27 +489,43 @@ export default {
         },
         handleAttachmentChanges(event) {
             try {
-                var file = event.attachment
-                const storageRef = firebase.storage().ref(`${file.file.name}`).put(file.file)
-                storageRef.on("state_changed", snapshot => {
-                    this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
-                    const progress = document.querySelector("progress")
-                    progress.setAttribute("value",this.uploadValue)
-                }, error => {console.log(error.message)},
-                    () => {
-                        this.uploadValue=100;  
-                        storageRef.snapshot.ref.getDownloadURL().then((url)=>{
-                            this.files = [{
-                                id: file.id,
-                                file_name: file.file.name,
-                                type: file.file.type,
-                                url: url
-                            }]
-                        })
-                    }
-                )
+                if(this.files.length == 0){
+                    var file = event.attachment
+                    const storageRef = firebase.storage().ref(`${file.file.name}`).put(file.file)
+                    storageRef.on("state_changed", snapshot => {
+                        this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
+                        const progress = document.querySelector("progress")
+                        progress.setAttribute("value",this.uploadValue)
+                    }, error => {console.log(error.message)},
+                        () => {
+                            this.uploadValue=100;  
+                            storageRef.snapshot.ref.getDownloadURL().then((url)=>{
+                                this.files = [{
+                                    id: file.id,
+                                    file_name: file.file.name,
+                                    type: file.file.type,
+                                    url: url
+                                }]
+                            })
+                        }
+                    )
+                } else {
+                    this.$toast.open({
+                        message: 'Hanya Bisa Mengirim 1 File.',
+                        type: 'warning',
+                        position: 'top'
+                    });
+                }
             } catch (error) {
                 console.log(error.message);
+            }
+        },
+        fileLimit() {
+            const del = document.querySelector(".trix-button--icon-attach");
+            if(this.files.length != 0){                
+                del.style.display = 'none'
+            } else {
+                del.style.display = ''
             }
         },
         async hapusBerita(item){
@@ -519,33 +542,31 @@ export default {
             })
             .then(async value=>{
                 if(value == 0 || value == null){
-                    this.$bvModal.close()
+                    this.$bvModal.hide()
                 }else{
                     try {
-                        await axios.delete(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/delete-berita/${item.id}`).then(()=>{
+                        await axios.delete(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/delete-berita/${item.id}`)
+                        .then(()=>{
                             this.$toast.open({
-                                    message: 'Berita Berhasil Dihapus',
-                                    type: 'success',
-                                    position: 'top'
-                                    });
-                                this.getAllBerita()
-                            })
-                        } catch (error) {
-                            this.$toast.open({
-                                message: 'Berita Gagal Dihapus',
-                                type: 'warning',
+                                message: 'Berita Berhasil Dihapus',
+                                type: 'success',
                                 position: 'top'
-                            });
-                        }
+                                });
+                            this.getAllBerita()
+                        })
+                    } catch (error) {
+                        this.$toast.open({
+                            message: 'Berita Gagal Dihapus',
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    }
                 }
                 
             })
             .catch(err => {
-                // An error occurred
                 console.log(err);
             })
-      
-            
         },
         hapusFile(){
             this.files = []
@@ -581,11 +602,10 @@ export default {
         grid-template-columns:repeat(auto-fit, minmax(500px,1fr)); 
         padding:0;
     }
-    
 }
 ul{
-        padding-inline-start: 0px !important;
-    }
+    padding-inline-start: 0px !important;
+}
 .judul{
     text-align: left;
     font-size: 250%;
@@ -669,6 +689,7 @@ p.tanggalPengumuman{
     margin: 0.25rem;
 }
 .button .hapusPengumuman{
+    display: flex;
     color: #ee1010;
     background-color: transparent;
     border: none;
