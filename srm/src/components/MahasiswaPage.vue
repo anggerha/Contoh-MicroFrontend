@@ -95,8 +95,9 @@
                                 </b-card-title>
                                 <b-card-text>
                                     <span id="pengumuman" v-html="item.pengumuman"></span>
-                                    <div v-if="item.file != null">
-                                        <span class="pengumuman" ><a :href="item.file" target="_blank">Download File Disini</a></span>
+                                    <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
+                                        <span>Attachment: </span><br>
+                                        <span><a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a></span>
                                     </div>
                                     <!-- <div style="margin-top: 2rem;">
                                         <span class="pengumuman small text-muted">periode pengumuman berakhir: {{item.periode_akhir}}</span>
