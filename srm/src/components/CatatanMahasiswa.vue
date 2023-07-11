@@ -121,7 +121,7 @@
                                     </b-col>
                                 </b-row>
                             </div>
-                            <div v-if="logMahasiswa.length == 0">
+                            <div v-if="logMahasiswa.length == 0 && !isAdmin">
                                 <b-row>
                                     <b-col style="margin-top: 1rem">
                                         <span class="badge badge-pill badge-warning">Catatan Perwalian Kosong</span>
