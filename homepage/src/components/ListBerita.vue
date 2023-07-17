@@ -50,6 +50,8 @@ export default {
     created() {
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             this.getProfile()
+        }else {
+            this.$router.replace("/login").then(() => { this.$router.go() })
         }
     },
     methods:{
