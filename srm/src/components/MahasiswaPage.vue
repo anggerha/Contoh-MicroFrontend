@@ -219,7 +219,7 @@ export default {
     },
     methods: {
         kembali() {
-            this.$router.replace('listMenu')
+            this.$router.replace('/listMenu')
         },
         getDateNow(){
             this.tanggalNow = moment().locale('id').format('ll')

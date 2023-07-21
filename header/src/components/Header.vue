@@ -13,7 +13,7 @@
                             </svg>
                             &nbsp;Home
                         </router-link>
-                        <router-link class="nav-flex" to="/srm">
+                        <router-link class="nav-flex" :to="route">
                             <img style="width: 3rem;" src="../assets/fti-ukdw.png" class="d-inline-block align-top" alt="FTI UKDW">&nbsp;SRM
                         </router-link>
                     </div>
@@ -36,19 +36,48 @@
 
 <script>
 import firebase from 'firebase'
+import axios from 'axios'
 
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name: 'Header',
     data() {
         return {
-            profilPicture: null
+            profilPicture: null,
+            route: ''
         }
     },
     created() {
         this.profilPicture = JSON.parse(sessionStorage.getItem('firebase-uid'))
+        this.checkRole()
     },
     methods: {
+        async checkRole() {
+            try {
+                if(!sessionStorage.getItem('firebase-token') && !sessionStorage.getItem('firebase-uid')){
+                this.$router.replace('/login').then(() => { this.$router.go() })
+                } else {
+                this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+                await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
+                .then( async (response) => {
+                    if(response.status == 200){
+                    var listAdmin = await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}/accessPass`)
+                    if(listAdmin.data.access == "granted"){
+                        this.route = '/srm/AdminPage'
+                    } else if (listAdmin.data.access == "denied") {
+                        if(response.data.role == 'DOSEN') {
+                            this.route = '/srm/DosenPage'
+                        } else {
+                            this.route = '/srm/MahasiswaPage'
+                        }
+                    }
+                    }
+                })
+                }
+            } catch (error) {
+                console.log(error.message);
+            }
+        },
         signOut() {
             firebase.auth().signOut()
                 .then(() => {

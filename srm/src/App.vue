@@ -1,60 +1,19 @@
 <template>
   <div id="app">
-    <div v-if="role == 'DOSEN' && isAdmin == false">
-      <DosenPage/>
-    </div>
-    <div v-else-if="role == 'DOSEN' && isAdmin == true">
-      <AdminPage/>
-    </div>
-    <div v-else-if="role == 'MAHASISWA'">
-      <MahasiswaPage/>
-    </div>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import DosenPage from './components/DosenPage.vue'
-import MahasiswaPage from './components/MahasiswaPage.vue'
-import AdminPage from './components/AdminPage.vue'
-import axios from 'axios'
 
 export default {
   name: 'App',
-  components: { DosenPage, AdminPage, MahasiswaPage },
+  components: {  },
   data(){
     return {
       role: '',
       firebaseUID: null,
       isAdmin: false
-    }
-  },
-  created() {
-    this.checkRole()
-  },
-  methods: {
-    async checkRole() {
-      try {
-        if(!sessionStorage.getItem('firebase-token') && !sessionStorage.getItem('firebase-uid')){
-          this.$router.replace('/login').then(() => { this.$router.go() })
-        } else {
-          this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
-          await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
-          .then( async (response) => {
-            if(response.status == 200){
-              var listAdmin = await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}/accessPass`)
-              if(listAdmin.data.access == "granted"){
-                this.role = response.data.role
-                this.isAdmin = true
-              } else if (listAdmin.data.access == "denied") {
-                this.role = response.data.role
-                this.isAdmin = false
-              }
-            }
-          })
-        }
-      } catch (error) {
-        console.log(error.message);
-      }
     }
   }
 }

@@ -6,7 +6,14 @@
             </svg>
             Kembali
         </b-button>
-        <p class="judul">ADMIN SRM FTI UKDW</p>
+        <b-row>
+            <b-col cols="12" md="6" lg="6" xl="6">
+                <p class="judul">ADMIN SRM FTI UKDW</p>
+            </b-col>
+            <b-col cols="12" md="6" lg="6" xl="6" align-self="center">
+                <b-button id="listMenuAdmin" class="float-right" @click="goToForm()">Form Data</b-button>
+            </b-col>
+        </b-row>
         <body class="bv-example-row">
             <b-row>
                 <b-col>
@@ -16,7 +23,7 @@
                     <b-row>
                         <b-col>
                             <div align="center" >
-                                <b-button block id="listMenuAdmin"  @click="toggleBerita" :class="[showListBerita ? 'active':'']">List Pengumuman</b-button>
+                                <b-button block id="listMenuAdmin" @click="toggleBerita" :class="[showListBerita ? 'active':'']">List Pengumuman</b-button>
                             </div>
                        </b-col>
                        <b-col>
@@ -284,6 +291,9 @@ export default {
         }
     },
     methods: {
+        goToForm(){
+            this.$router.replace('FormData')
+        },
         async getProfile(){
             try {
                 await axios.get(`https://userapi.fti.ukdw.ac.id/dosen/${this.firebaseUID}`).then((response)=>{
@@ -309,7 +319,7 @@ export default {
            
         },
         kembali() {
-            this.$router.replace('listMenu')
+            this.$router.replace('/listMenu')
         },
         onClickChildCatatan(value){
             this.isRemoveCatatan = value

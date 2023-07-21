@@ -4,11 +4,7 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/header',
-    name: 'Header',
-    component: () => import('../components/Header.vue')
-  }
+  
 ]
 
 const router = new VueRouter({
