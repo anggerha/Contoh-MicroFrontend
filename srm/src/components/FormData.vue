@@ -23,8 +23,13 @@
                     id="input-1"
                     v-model="form.topik_jadwal"
                     :options="optionTopik"
+                    @change="namaKegiatan"
                     required
                     ></b-form-select>
+                </b-form-group>
+
+                <b-form-group id="input-group-2" label="Nama Matakuliah" label-for="input-2">
+                    <v-select label="text" :options="dummyMatkul" v-model="form.selected" @input="namaKegiatan"></v-select>
                 </b-form-group>
 
                 <b-form-group
@@ -37,6 +42,7 @@
                     v-model="form.nama_kegiatan"
                     type="text"
                     placeholder="Nama Kegiatan"
+                    readonly
                     required
                     ></b-form-input>
                 </b-form-group>
@@ -226,6 +232,7 @@
 </template>
 
 <script>
+
 export default {
     name: 'FormData',
     data(){
@@ -235,6 +242,7 @@ export default {
                 jenis_jadwal: '',
                 topik_jadwal: '',
                 nama_kegiatan: '',
+                selected: { text: '', value: '' },
                 tanggal_mulai: '',
                 tanggal_selesai: '',
                 attachment: null,
@@ -245,7 +253,12 @@ export default {
                 { text: 'Jadwal Ujian', value: 'jadwal_ujian' },
                 { text: 'Pembayaran', value: 'pembayaran' },
             ],
-            optionTopik: []
+            optionTopik: [],
+            dummyMatkul: [
+                { text: 'Matematika Diskrit', value: 'matematika_diskrit'},
+                { text: 'Desain Evaluasi Antarmuka', value: 'desain_evaluasi_antarmuka'},
+                { text: 'Pemrograman Web Lanjut', value: 'pemrograman_web_lanjut'}
+            ],
         }
     },
     methods: {
@@ -302,6 +315,9 @@ export default {
                     { text: 'Wisuda', value: 'wisuda' }
                 ]
             }
+        },
+        namaKegiatan() {
+            this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase() + ' ' + this.form.selected.text
         }
     }
 }

@@ -10,6 +10,10 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import ToastPlugin from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
+import vSelect from 'vue-select'
+import 'vue-select/dist/vue-select.css';
+
+Vue.component('v-select', vSelect)
 
 const firebaseConfig = {
   apiKey: "AIzaSyAB2QSI1oTZhXh-xndPusKdwE4jjMjP6JU",
