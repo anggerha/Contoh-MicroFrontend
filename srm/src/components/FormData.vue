@@ -47,8 +47,6 @@
                     ></b-form-input>
                 </b-form-group>
 
-                {{ form.selected }}
-
                 <b-form-group id="input-group-5" label="Tanggal Ujian" label-for="input-5">
                     <b-form-input
                     id="input-5"
@@ -244,9 +242,9 @@ export default {
             firebaseUID: '',
             form: {
                 jenis_jadwal: null,
-                topik_jadwal: '',
+                topik_jadwal: null,
                 nama_kegiatan: '',
-                selected: { text: '', value: '' },
+                selected: { text: '', value: null},
                 tanggal_mulai: '',
                 tanggal_selesai: '',
                 attachment: null,
@@ -260,7 +258,6 @@ export default {
             ],
             optionTopik: [],
             dummyMatkul: [
-                { text: 'Pilih Mata Kuliah', value: null, disabled: true },
                 { text: 'Matematika Diskrit', value: 'matematika_diskrit'},
                 { text: 'Desain Evaluasi Antarmuka', value: 'desain_evaluasi_antarmuka'},
                 { text: 'Pemrograman Web Lanjut', value: 'pemrograman_web_lanjut'}
@@ -278,7 +275,8 @@ export default {
         },
         async submit() {
             try {
-                await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-jadwal`, this.form).then(() => {
+                await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-jadwal`, this.form).then((response) => {
+                    console.log(response);
                     this.$toast.open({
                         message: 'Form ' + this.form.nama_kegiatan + ' Berhasil Disimpan',
                         type: 'success',
@@ -287,7 +285,7 @@ export default {
                     this.form.jenis_jadwal = null,
                     this.form.topik_jadwal = '',
                     this.form.nama_kegiatan = '',
-                    this.form.selected = { text: '', value: '' },
+                    this.form.selected = { text: '', value: null},
                     this.form.tanggal_mulai = '',
                     this.form.tanggal_selesai = '',
                     this.form.attachment = null
@@ -298,21 +296,23 @@ export default {
         },
         reset() {
             this.form.jenis_jadwal = null,
-            this.form.topik_jadwal = '',
+            this.form.topik_jadwal = null,
             this.form.nama_kegiatan = '',
-            this.form.selected = { text: '', value: '' },
+            this.form.selected = { text: '', value: null},
             this.form.tanggal_mulai = '',
             this.form.tanggal_selesai = '',
             this.form.attachment = null
         },
         optionType(){
-            this.form.topik_jadwal = '',
+            this.form.topik_jadwal = null,
             this.form.nama_kegiatan = '',
+            this.form.selected = { text: '', value: null},
             this.form.tanggal_mulai = '',
             this.form.tanggal_selesai = '',
             this.form.attachment = null
             if (this.form.jenis_jadwal == 'jadwal_khusus'){
                 this.optionTopik = [
+                    { text: 'Pilih Jadwal Khusus', value: null, disabled: true },
                     { text: 'KKN', value: 'kkn' },
                     { text: 'Kuliah Umum', value: 'kuliah_umum' },
                     { text: 'Registrasi', value: 'registrasi' },
@@ -321,16 +321,19 @@ export default {
                 ]
             } else if (this.form.jenis_jadwal == 'jadwal_ujian_mata_kuliah'){
                 this.optionTopik = [
+                    { text: 'Pilih Jenis Ujian', value: null, disabled: true },
                     { text: 'UTS', value: 'uts' },
                     { text: 'UAS', value: 'uas' },
                 ]
             } else if (this.form.jenis_jadwal == 'jadwal_ujian'){
                 this.optionTopik = [
+                    { text: 'Pilih Jenis Ujian', value: null, disabled: true },
                     { text: 'UTS', value: 'uts' },
                     { text: 'UAS', value: 'uas' },
                 ]
             } else if (this.form.jenis_jadwal == 'pembayaran') {
                 this.optionTopik = [
+                    { text: 'Pilih Jenis Pembayaran', value: null, disabled: true },
                     { text: 'SPP', value: 'spp' },
                     { text: 'Pendadaran', value: 'pendadaran' },
                     { text: 'Wisuda', value: 'wisuda' }
@@ -338,15 +341,12 @@ export default {
             }
         },
         namaKegiatan() {
-            if(this.form.topik_jadwal != ''){
-                // if(this.form.selected){
-                //     this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase() + ' ' + this.form.selected.text
-                // } else {
-                //     this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase()
-                // }
-            } else {
-                let get= document.getElementsByTagName("input")
-                get.disabled = true;
+            if(this.form.topik_jadwal != '' && this.form.topik_jadwal != null && this.form.selected != null){
+                if(this.form.selected  && this.form.selected.value != null){
+                    this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase() + ' ' + this.form.selected.text
+                } else {
+                    this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase()
+                }
             }
         }
     }
