@@ -307,7 +307,7 @@ export default {
             this.showListMahasiswa = true
             this.showListBerita = false
             this.page = 1
-             this.jumlahPage = null
+            this.jumlahPage = null
             this.getMahasiswa()
         },
         toggleBerita() {

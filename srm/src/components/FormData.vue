@@ -6,10 +6,10 @@
             </svg>
             Kembali
         </b-button>
-        <b-form ref="formInput" class="form" @submit="onSubmit" @reset="onReset" v-if="show">
-            <b-form-group id="input-group-3" label="Jenis Jadwal" label-for="input-3">
+        <b-form ref="formInput" class="form">
+            <b-form-group id="input-group-1" label="Jenis Jadwal" label-for="input-1">
                 <b-form-select
-                id="input-3"
+                id="input-1"
                 v-model="form.jenis_jadwal"
                 :options="optionKlasifikasi"
                 @change="optionType"
@@ -18,9 +18,9 @@
             </b-form-group>
 <!-- Mata Kuliah -->
             <div v-if="form.jenis_jadwal == 'jadwal_ujian_mata_kuliah'">
-                <b-form-group id="input-group-1" label="Jenis Ujian" label-for="input-1">
+                <b-form-group id="input-group-2" label="Jenis Ujian" label-for="input-2">
                     <b-form-select
-                    id="input-1"
+                    id="input-2"
                     v-model="form.topik_jadwal"
                     :options="optionTopik"
                     @change="namaKegiatan"
@@ -28,17 +28,17 @@
                     ></b-form-select>
                 </b-form-group>
 
-                <b-form-group id="input-group-2" label="Nama Matakuliah" label-for="input-2">
+                <b-form-group id="input-group-3" label="Nama Matakuliah" label-for="input-3">
                     <v-select label="text" :options="dummyMatkul" v-model="form.selected" @input="namaKegiatan"></v-select>
                 </b-form-group>
 
                 <b-form-group
-                    id="input-group-1"
+                    id="input-group-4"
                     label="Nama Kegiatan"
-                    label-for="input-1"
+                    label-for="input-4"
                 >
                     <b-form-input
-                    id="input-1"
+                    id="input-4"
                     v-model="form.nama_kegiatan"
                     type="text"
                     placeholder="Nama Kegiatan"
@@ -47,9 +47,11 @@
                     ></b-form-input>
                 </b-form-group>
 
-                <b-form-group id="input-group-2" label="Tanggal Ujian" label-for="input-2">
+                {{ form.selected }}
+
+                <b-form-group id="input-group-5" label="Tanggal Ujian" label-for="input-5">
                     <b-form-input
-                    id="input-2"
+                    id="input-5"
                     v-model="form.tanggal_mulai"
                     type="datetime-local"
                     placeholder="Tanggal Ujian"
@@ -57,14 +59,14 @@
                     ></b-form-input>
                 </b-form-group>
 
-                <b-button class="btn" type="submit" variant="primary">Submit</b-button>
-                <b-button class="btn" type="reset" variant="danger">Reset</b-button>
+                <b-button class="btn" @click="submit" variant="primary">Submit</b-button>
+                <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
             </div>
 <!-- Jadwal Khusus -->
             <div v-if="form.jenis_jadwal == 'jadwal_khusus'">
-                <b-form-group id="input-group-1" label="Topik Jadwal" label-for="input-1">
+                <b-form-group id="input-group-2" label="Topik Jadwal" label-for="input-2">
                     <b-form-select
-                    id="input-1"
+                    id="input-2"
                     v-model="form.topik_jadwal"
                     :options="optionTopik"
                     required
@@ -72,12 +74,12 @@
                 </b-form-group>
 
                 <b-form-group
-                    id="input-group-1"
+                    id="input-group-3"
                     label="Nama Kegiatan"
-                    label-for="input-1"
+                    label-for="input-3"
                 >
                     <b-form-input
-                    id="input-1"
+                    id="input-3"
                     v-model="form.nama_kegiatan"
                     type="text"
                     placeholder="Nama Kegiatan"
@@ -85,9 +87,9 @@
                     ></b-form-input>
                 </b-form-group>
 
-                <b-form-group id="input-group-2" label="Tanggal Mulai" label-for="input-2">
+                <b-form-group id="input-group-4" label="Tanggal Mulai" label-for="input-4">
                     <b-form-input
-                    id="input-2"
+                    id="input-4"
                     v-model="form.tanggal_mulai"
                     type="date"
                     placeholder="Tanggal Mulai"
@@ -95,15 +97,16 @@
                     ></b-form-input>
                 </b-form-group>
 
-                <b-form-group id="input-group-3" label="Tanggal Selesai" label-for="input-3">
+                <b-form-group id="input-group-5" label="Tanggal Selesai" label-for="input-5">
                     <b-form-input
-                    id="input-3"
+                    id="input-5"
                     v-model="form.tanggal_selesai"
                     type="date"
                     placeholder="Tanggal Selesai"
                     required
                     ></b-form-input>
                 </b-form-group>
+
                 <b-form-file
                     id="file-default"
                     v-model="form.attachment"
@@ -112,14 +115,14 @@
                     drop-placeholder="Drop file here..."
                 ></b-form-file>
 
-                <b-button class="btn" type="submit" variant="primary">Submit</b-button>
-                <b-button class="btn" type="reset" variant="danger">Reset</b-button>
+                <b-button class="btn" @click="submit" variant="primary">Submit</b-button>
+                <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
             </div>
 <!-- Jadwal Ujian -->
             <div v-if="form.jenis_jadwal == 'jadwal_ujian'">
-                <b-form-group id="input-group-1" label="Topik Jadwal" label-for="input-1">
+                <b-form-group id="input-group-2" label="Topik Jadwal" label-for="input-2">
                     <b-form-select
-                    id="input-1"
+                    id="input-2"
                     v-model="form.topik_jadwal"
                     :options="optionTopik"
                     required
@@ -127,12 +130,12 @@
                 </b-form-group>
 
                 <b-form-group
-                    id="input-group-1"
+                    id="input-group-3"
                     label="Nama Kegiatan"
-                    label-for="input-1"
+                    label-for="input-3"
                 >
                     <b-form-input
-                    id="input-1"
+                    id="input-3"
                     v-model="form.nama_kegiatan"
                     type="text"
                     placeholder="Nama Kegiatan"
@@ -140,9 +143,9 @@
                     ></b-form-input>
                 </b-form-group>
 
-                <b-form-group id="input-group-2" label="Tanggal Mulai" label-for="input-2">
+                <b-form-group id="input-group-4" label="Tanggal Mulai" label-for="input-4">
                     <b-form-input
-                    id="input-2"
+                    id="input-4"
                     v-model="form.tanggal_mulai"
                     type="date"
                     placeholder="Tanggal Mulai"
@@ -150,9 +153,9 @@
                     ></b-form-input>
                 </b-form-group>
 
-                <b-form-group id="input-group-3" label="Tanggal Selesai" label-for="input-3">
+                <b-form-group id="input-group-5" label="Tanggal Selesai" label-for="input-5">
                     <b-form-input
-                    id="input-3"
+                    id="input-5"
                     v-model="form.tanggal_selesai"
                     type="date"
                     placeholder="Tanggal Selesai"
@@ -168,14 +171,14 @@
                     drop-placeholder="Drop file here..."
                 ></b-form-file>
 
-                <b-button class="btn" type="submit" variant="primary">Submit</b-button>
-                <b-button class="btn" type="reset" variant="danger">Reset</b-button>
+                <b-button class="btn" @click="submit" variant="primary">Submit</b-button>
+                <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
             </div>
 <!-- Pembayaran -->
             <div v-if="form.jenis_jadwal == 'pembayaran'">
-                <b-form-group id="input-group-1" label="Topik Pembayaran" label-for="input-1">
+                <b-form-group id="input-group-2" label="Topik Pembayaran" label-for="input-2">
                     <b-form-select
-                    id="input-1"
+                    id="input-2"
                     v-model="form.topik_jadwal"
                     :options="optionTopik"
                     required
@@ -183,12 +186,12 @@
                 </b-form-group>
 
                 <b-form-group
-                    id="input-group-1"
+                    id="input-group-3"
                     label="Nama Pembayaran"
-                    label-for="input-1"
+                    label-for="input-3"
                 >
                     <b-form-input
-                    id="input-1"
+                    id="input-3"
                     v-model="form.nama_kegiatan"
                     type="text"
                     placeholder="Nama Pembayaran"
@@ -196,9 +199,9 @@
                     ></b-form-input>
                 </b-form-group>
 
-                <b-form-group id="input-group-2" label="Tanggal Mulai" label-for="input-2">
+                <b-form-group id="input-group-4" label="Tanggal Mulai" label-for="input-4">
                     <b-form-input
-                    id="input-2"
+                    id="input-4"
                     v-model="form.tanggal_mulai"
                     type="datetime-local"
                     placeholder="Tanggal Mulai"
@@ -206,9 +209,9 @@
                     ></b-form-input>
                 </b-form-group>
 
-                <b-form-group id="input-group-3" label="Tanggal Selesai" label-for="input-3">
+                <b-form-group id="input-group-5" label="Tanggal Selesai" label-for="input-5">
                     <b-form-input
-                    id="input-3"
+                    id="input-5"
                     v-model="form.tanggal_selesai"
                     type="datetime-local"
                     placeholder="Tanggal Selesai"
@@ -224,22 +227,23 @@
                     drop-placeholder="Drop file here..."
                 ></b-form-file>
 
-                <b-button class="btn" type="submit" variant="primary">Submit</b-button>
-                <b-button class="btn" type="reset" variant="danger">Reset</b-button>
+                <b-button class="btn" @click="submit" variant="primary">Submit</b-button>
+                <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
             </div>
         </b-form>
     </div>
 </template>
 
 <script>
+import axios from 'axios';
 
 export default {
     name: 'FormData',
     data(){
         return {
-            show: true,
+            firebaseUID: '',
             form: {
-                jenis_jadwal: '',
+                jenis_jadwal: null,
                 topik_jadwal: '',
                 nama_kegiatan: '',
                 selected: { text: '', value: '' },
@@ -248,6 +252,7 @@ export default {
                 attachment: null,
             },
             optionKlasifikasi: [
+                { text: 'Pilih Jenis Jadwal', value: null, disabled: true },
                 { text: 'Jadwal Ujian Mata Kuliah', value: 'jadwal_ujian_mata_kuliah' },
                 { text: 'Jadwal Khusus', value: 'jadwal_khusus' },
                 { text: 'Jadwal Ujian', value: 'jadwal_ujian' },
@@ -255,34 +260,50 @@ export default {
             ],
             optionTopik: [],
             dummyMatkul: [
+                { text: 'Pilih Mata Kuliah', value: null, disabled: true },
                 { text: 'Matematika Diskrit', value: 'matematika_diskrit'},
                 { text: 'Desain Evaluasi Antarmuka', value: 'desain_evaluasi_antarmuka'},
                 { text: 'Pemrograman Web Lanjut', value: 'pemrograman_web_lanjut'}
             ],
         }
     },
+    created() {
+        if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
+            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+        }
+    },
     methods: {
         kembali() {
             this.$router.replace('/srm/AdminPage')
         },
-        onSubmit(event) {
-            event.preventDefault()
-            console.log(this.form);
+        async submit() {
+            try {
+                await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-jadwal`, this.form).then(() => {
+                    this.$toast.open({
+                        message: 'Form ' + this.form.nama_kegiatan + ' Berhasil Disimpan',
+                        type: 'success',
+                        position: 'top'
+                    });
+                    this.form.jenis_jadwal = null,
+                    this.form.topik_jadwal = '',
+                    this.form.nama_kegiatan = '',
+                    this.form.selected = { text: '', value: '' },
+                    this.form.tanggal_mulai = '',
+                    this.form.tanggal_selesai = '',
+                    this.form.attachment = null
+                })
+            } catch (error) {
+                console.log(error);
+            }
         },
-        onReset(event) {
-            event.preventDefault()
-            // Reset our form values
-            this.form.jenis_jadwal = '',
+        reset() {
+            this.form.jenis_jadwal = null,
             this.form.topik_jadwal = '',
             this.form.nama_kegiatan = '',
+            this.form.selected = { text: '', value: '' },
             this.form.tanggal_mulai = '',
             this.form.tanggal_selesai = '',
-            this.form.attachment = null,
-            // Trick to reset/clear native browser form validation state
-            this.show = false
-            this.$nextTick(() => {
-                this.show = true
-            })
+            this.form.attachment = null
         },
         optionType(){
             this.form.topik_jadwal = '',
@@ -317,7 +338,16 @@ export default {
             }
         },
         namaKegiatan() {
-            this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase() + ' ' + this.form.selected.text
+            if(this.form.topik_jadwal != ''){
+                // if(this.form.selected){
+                //     this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase() + ' ' + this.form.selected.text
+                // } else {
+                //     this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase()
+                // }
+            } else {
+                let get= document.getElementsByTagName("input")
+                get.disabled = true;
+            }
         }
     }
 }
