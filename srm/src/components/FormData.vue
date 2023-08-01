@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="canvas">
         <b-button class="kembali" @click="kembali">
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
@@ -29,7 +29,7 @@
                 </b-form-group>
 
                 <b-form-group id="input-group-3" label="Nama Matakuliah" label-for="input-3">
-                    <v-select label="text" :options="dummyMatkul" v-model="form.selected" @input="namaKegiatan"></v-select>
+                    <v-select label="nama_matkul" :options="listMatkul"  v-model="form.selected" @input="namaKegiatan"></v-select>
                 </b-form-group>
 
                 <b-form-group
@@ -60,6 +60,7 @@
                 <b-button class="btn" @click="submit" variant="primary">Submit</b-button>
                 <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
             </div>
+          
 <!-- Jadwal Khusus -->
             <div v-if="form.jenis_jadwal == 'jadwal_khusus'">
                 <b-form-group id="input-group-2" label="Topik Jadwal" label-for="input-2">
@@ -229,6 +230,73 @@
                 <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
             </div>
         </b-form>
+        <div>
+            
+            <b-row>
+                <b-col cols="12" md="4" lg="3" xl="3">
+                    <h5>List Jadwal Khusus</h5>
+                    <div v-for="item in listJadwalKhusus" :key="item._id" class="listCard shadow p-3 mb-5 bg-white rounded">
+                        <!-- <div class="isiList" v-if="isMobile">   
+                            <h5>{{item.nama_kegiatan}}</h5>
+                            <p>{{item.kode_semester}}</p>
+                            <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
+                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                                <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                                </svg> {{item.tanggal_mulai}} s.d {{item.tanggal_selesai}}
+                            </p>
+                        </div> -->
+                        <div class="isiList" >   
+                            <h5>{{item.nama_kegiatan}} | {{item.kode_semester}}</h5>
+                            <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
+                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                                <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                                </svg> {{item.tanggal_mulai}} s.d {{item.tanggal_selesai}}
+                            </p>
+                        </div>
+                    </div>
+                </b-col>
+                <b-col cols="12" md="4" lg="3" xl="3">
+                    <h5>List Jadwal Ujian</h5>
+                    <div v-for="item in listJadwalKhusus" :key="item._id" class="listCard shadow p-3 mb-5 bg-white rounded">
+                        <div class="isiList" >   
+                            <h5>UTS Matematika Diskrit | {{item.kode_semester}}</h5>
+                            <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
+                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                                <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                                </svg> {{item.tanggal_mulai}} s.d {{item.tanggal_selesai}}
+                            </p>
+                        </div>
+                    </div>
+                </b-col>
+                <b-col cols="12" md="4" lg="3" xl="3">
+                    <h5>List Jadwal Ujian Matakuliah</h5>
+                    <div v-for="item in listJadwalKhusus" :key="item._id" class="listCard shadow p-3 mb-5 bg-white rounded">
+                        <div class="isiList" >   
+                            <h5>{{item.nama_kegiatan}} | {{item.kode_semester}}</h5>
+                            <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
+                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                                <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                                </svg> {{item.tanggal_mulai}} s.d {{item.tanggal_selesai}}
+                            </p>
+                        </div>
+                    </div>
+                </b-col>
+                <b-col cols="12" md="4" lg="3" xl="3">
+                    <h5>List Jadwal Ujian Matakuliah</h5>
+                    <div v-for="item in listJadwalKhusus" :key="item._id" class="listCard shadow p-3 mb-5 bg-white rounded">
+                        <div class="isiList" >   
+                            <h5>{{item.nama_kegiatan}} | {{item.kode_semester}}</h5>
+                            <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
+                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                                <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                                </svg> {{item.tanggal_mulai}} s.d {{item.tanggal_selesai}}
+                            </p>
+                        </div>
+                    </div>
+                </b-col>
+            </b-row>
+            
+        </div>
     </div>
 </template>
 
@@ -244,7 +312,7 @@ export default {
                 jenis_jadwal: null,
                 topik_jadwal: null,
                 nama_kegiatan: '',
-                selected: { text: '', value: null},
+                selected: { nama_matkul: ''},
                 tanggal_mulai: '',
                 tanggal_selesai: '',
                 attachment: null,
@@ -257,21 +325,86 @@ export default {
                 { text: 'Pembayaran', value: 'pembayaran' },
             ],
             optionTopik: [],
-            dummyMatkul: [
-                { text: 'Matematika Diskrit', value: 'matematika_diskrit'},
-                { text: 'Desain Evaluasi Antarmuka', value: 'desain_evaluasi_antarmuka'},
-                { text: 'Pemrograman Web Lanjut', value: 'pemrograman_web_lanjut'}
-            ],
+            listMatkul: [],
+            listJadwalUjian: [],
+            listJadwalUjianMatkul: [],
+            listJadwalKhusus: [],
+            listJadwalPembayaran: [],
+            isMobile: false
         }
     },
     created() {
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+            this.getListMatkul()
+            this.getListJadwalKhusus()
+            this.getListJadwalPembayaran()
+            this.getListJadwalUjian()
+            this.getListJadwalUjianMatkul()
         }
+    },
+     beforeMount () {
+      if (typeof window === 'undefined') return
+
+      window.removeEventListener('resize', this.onResize, { passive: true })
+    },
+    mounted () {
+      this.onResize()
+      window.addEventListener('resize', this.onResize, { passive: true })
     },
     methods: {
         kembali() {
             this.$router.replace('/srm/AdminPage')
+        },
+        onResize () {
+            this.isMobile = window.innerWidth < 600
+        },
+        async getListMatkul(){
+            try {
+                await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/list-matkul`).then((response)=>{
+                    this.listMatkul = response.data
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getListJadwalUjian(){
+            try {
+                await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/jadwal-ujian`).then((response)=>{
+                    this.listJadwalUjian = response.data
+                    console.log(response);
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getListJadwalUjianMatkul(){
+            try {
+                await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/jadwal-ujian-matkul`).then((response)=>{
+                    this.listJadwalUjianMatkul = response.data
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getListJadwalKhusus(){
+            try {
+                await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/jadwal-khusus`).then((response)=>{
+                    this.listJadwalKhusus = response.data
+                    console.log(this.listJadwalKhusus);
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getListJadwalPembayaran(){
+            try {
+                await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/jadwal-pembayaran`).then((response)=>{
+                    this.listJadwalPembayaran = response.data
+                })
+            } catch (error) {
+                console.log(error);
+            }
         },
         async submit() {
             try {
@@ -282,13 +415,25 @@ export default {
                         type: 'success',
                         position: 'top'
                     });
+                    if(this.form.jenis_jadwal == 'jadwal_ujian_mata_kuliah'){
+                        this.getListJadwalUjianMatkul()
+                    }else if(this.form.jenis_jadwal == 'jadwal_ujian'){
+                        this.getListJadwalUjian
+                    }else if(this.form.jenis_jadwal =='jadwal_khusus'){
+                        this.getListJadwalKhusus
+                    }else if(this.form.jenis_jadwal == 'jadwal_pembayaran'){
+                        this.getListJadwalPembayaran
+                    }else{
+                        console.log(response);
+                    }
                     this.form.jenis_jadwal = null,
                     this.form.topik_jadwal = '',
                     this.form.nama_kegiatan = '',
-                    this.form.selected = { text: '', value: null},
+                    this.form.selected = { nama_matkul: ''},
                     this.form.tanggal_mulai = '',
                     this.form.tanggal_selesai = '',
                     this.form.attachment = null
+
                 })
             } catch (error) {
                 console.log(error);
@@ -298,7 +443,7 @@ export default {
             this.form.jenis_jadwal = null,
             this.form.topik_jadwal = null,
             this.form.nama_kegiatan = '',
-            this.form.selected = { text: '', value: null},
+            this.form.selected = { nama_matkul: ''},
             this.form.tanggal_mulai = '',
             this.form.tanggal_selesai = '',
             this.form.attachment = null
@@ -306,7 +451,7 @@ export default {
         optionType(){
             this.form.topik_jadwal = null,
             this.form.nama_kegiatan = '',
-            this.form.selected = { text: '', value: null},
+            this.form.selected = { nama_matkul: ''},
             this.form.tanggal_mulai = '',
             this.form.tanggal_selesai = '',
             this.form.attachment = null
@@ -342,8 +487,8 @@ export default {
         },
         namaKegiatan() {
             if(this.form.topik_jadwal != '' && this.form.topik_jadwal != null && this.form.selected != null){
-                if(this.form.selected  && this.form.selected.value != null){
-                    this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase() + ' ' + this.form.selected.text
+                if(this.form.selected ){
+                    this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase() + ' ' + this.form.selected.nama_matkul
                 } else {
                     this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase()
                 }
@@ -354,6 +499,12 @@ export default {
 </script>
 
 <style scoped>
+.canvas{
+    @media only screen and (max-width: 600px) {
+        margin: 0 1rem;
+    }
+    margin: 0 4rem;
+}
 .kembali{
     display: flex;
     border-style: none;
@@ -368,4 +519,12 @@ export default {
 .btn{
     margin-top: 1rem;
 }
+.listCard{
+    /* border: #32a3df solid 1px; */
+    margin-bottom: 0.3rem;
+}
+.isiList{
+    margin: 0.5rem;
+}
+
 </style>
