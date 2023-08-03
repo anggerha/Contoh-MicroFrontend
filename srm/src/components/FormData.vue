@@ -106,14 +106,6 @@
                     ></b-form-input>
                 </b-form-group>
 
-                <b-form-file
-                    id="file-default"
-                    v-model="form.attachment"
-                    :state="Boolean(form.attachment)"
-                    placeholder="Choose a file or drop it here..."
-                    drop-placeholder="Drop file here..."
-                ></b-form-file>
-
                 <b-button class="btn" @click="submit" variant="primary">Submit</b-button>
                 <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
             </div>
@@ -161,14 +153,6 @@
                     required
                     ></b-form-input>
                 </b-form-group>
-
-                <b-form-file
-                    id="file-default"
-                    v-model="form.attachment"
-                    :state="Boolean(form.attachment)"
-                    placeholder="Choose a file or drop it here..."
-                    drop-placeholder="Drop file here..."
-                ></b-form-file>
 
                 <b-button class="btn" @click="submit" variant="primary">Submit</b-button>
                 <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
@@ -218,24 +202,15 @@
                     ></b-form-input>
                 </b-form-group>
 
-                <b-form-file
-                    id="file-default"
-                    v-model="form.attachment"
-                    :state="Boolean(form.attachment)"
-                    placeholder="Choose a file or drop it here..."
-                    drop-placeholder="Drop file here..."
-                ></b-form-file>
-
                 <b-button class="btn" @click="submit" variant="primary">Submit</b-button>
                 <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
             </div>
         </b-form>
         <div>
-            
             <b-row>
                 <b-col cols="12" md="4" lg="3" xl="3">
-                    <h5>List Jadwal Khusus</h5>
-                    <div v-for="item in listJadwalKhusus" :key="item._id" class="listCard shadow p-3 mb-5 bg-white rounded">
+                    <h5 class="judul-kategori">List Jadwal Khusus</h5>
+                    <div v-for="item in listJadwalKhusus" :key="item._id" class="listCard shadow p-3 mb-2 bg-white rounded">
                         <!-- <div class="isiList" v-if="isMobile">   
                             <h5>{{item.nama_kegiatan}}</h5>
                             <p>{{item.kode_semester}}</p>
@@ -246,7 +221,7 @@
                             </p>
                         </div> -->
                         <div class="isiList" >   
-                            <h5>{{item.nama_kegiatan}} | {{item.kode_semester}}</h5>
+                            <h6>{{item.nama_kegiatan}}</h6>
                             <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
                                 <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
                                 <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
@@ -256,36 +231,41 @@
                     </div>
                 </b-col>
                 <b-col cols="12" md="4" lg="3" xl="3">
-                    <h5>List Jadwal Ujian</h5>
-                    <div v-for="item in listJadwalKhusus" :key="item._id" class="listCard shadow p-3 mb-5 bg-white rounded">
+                    <h5 class="judul-kategori">List Jadwal Ujian</h5>
+                    <div v-if="listJadwalUjian.length != 0">
+                        <div v-for="item in listJadwalUjian" :key="item._id" class="listCard shadow p-3 mb-2 bg-white rounded">
+                            <div class="isiList" >   
+                                <h6>{{ item.nama_kegiatan }}</h6>
+                                <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
+                                    <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                                    <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                                    </svg> {{item.tanggal_mulai}} s.d {{item.tanggal_selesai}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="listJadwalUjian.length">
+
+                    </div>
+                </b-col>
+                <b-col cols="12" md="4" lg="3" xl="3">
+                    <h5 class="judul-kategori">List Jadwal Ujian Matakuliah</h5>
+                    <div v-for="item in listJadwalUjianMatkul" :key="item._id" class="listCard shadow p-3 mb-2 bg-white rounded">
                         <div class="isiList" >   
-                            <h5>UTS Matematika Diskrit | {{item.kode_semester}}</h5>
+                            <h6>{{ item.nama_kegiatan }}</h6>
                             <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
                                 <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
                                 <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-                                </svg> {{item.tanggal_mulai}} s.d {{item.tanggal_selesai}}
+                                </svg> {{item.tanggal_mulai}}
                             </p>
                         </div>
                     </div>
                 </b-col>
                 <b-col cols="12" md="4" lg="3" xl="3">
-                    <h5>List Jadwal Ujian Matakuliah</h5>
-                    <div v-for="item in listJadwalKhusus" :key="item._id" class="listCard shadow p-3 mb-5 bg-white rounded">
+                    <h5 class="judul-kategori">List Jadwal Pembayaran</h5>
+                    <div v-for="item in listJadwalPembayaran" :key="item._id" class="listCard shadow p-3 mb-2 bg-white rounded">
                         <div class="isiList" >   
-                            <h5>{{item.nama_kegiatan}} | {{item.kode_semester}}</h5>
-                            <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
-                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
-                                <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-                                </svg> {{item.tanggal_mulai}} s.d {{item.tanggal_selesai}}
-                            </p>
-                        </div>
-                    </div>
-                </b-col>
-                <b-col cols="12" md="4" lg="3" xl="3">
-                    <h5>List Jadwal Ujian Matakuliah</h5>
-                    <div v-for="item in listJadwalKhusus" :key="item._id" class="listCard shadow p-3 mb-5 bg-white rounded">
-                        <div class="isiList" >   
-                            <h5>{{item.nama_kegiatan}} | {{item.kode_semester}}</h5>
+                            <h6>{{item.nama_kegiatan}}</h6>
                             <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
                                 <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
                                 <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
@@ -295,7 +275,6 @@
                     </div>
                 </b-col>
             </b-row>
-            
         </div>
     </div>
 </template>
@@ -342,15 +321,6 @@ export default {
             this.getListJadwalUjian()
             this.getListJadwalUjianMatkul()
         }
-    },
-     beforeMount () {
-      if (typeof window === 'undefined') return
-
-      window.removeEventListener('resize', this.onResize, { passive: true })
-    },
-    mounted () {
-      this.onResize()
-      window.addEventListener('resize', this.onResize, { passive: true })
     },
     methods: {
         kembali() {
@@ -409,7 +379,6 @@ export default {
         async submit() {
             try {
                 await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-jadwal`, this.form).then((response) => {
-                    console.log(response);
                     this.$toast.open({
                         message: 'Form ' + this.form.nama_kegiatan + ' Berhasil Disimpan',
                         type: 'success',
@@ -418,11 +387,11 @@ export default {
                     if(this.form.jenis_jadwal == 'jadwal_ujian_mata_kuliah'){
                         this.getListJadwalUjianMatkul()
                     }else if(this.form.jenis_jadwal == 'jadwal_ujian'){
-                        this.getListJadwalUjian
+                        this.getListJadwalUjian()
                     }else if(this.form.jenis_jadwal =='jadwal_khusus'){
-                        this.getListJadwalKhusus
-                    }else if(this.form.jenis_jadwal == 'jadwal_pembayaran'){
-                        this.getListJadwalPembayaran
+                        this.getListJadwalKhusus()
+                    }else if(this.form.jenis_jadwal == 'pembayaran'){
+                        this.getListJadwalPembayaran()
                     }else{
                         console.log(response);
                     }
@@ -521,10 +490,12 @@ export default {
 }
 .listCard{
     /* border: #32a3df solid 1px; */
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.1rem;
 }
 .isiList{
     margin: 0.5rem;
 }
-
+.judul-kategori {
+    text-align: center;
+}
 </style>
