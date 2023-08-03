@@ -228,7 +228,7 @@ export default {
             var kode_semester
             if(new Date().getMonth() <= 6) {
                 kode_semester = new Date().getFullYear()-2+'2'
-            } else if(new Date().getMonth() >=7 && new Date.getMonth() <=12) {
+            } else if(new Date().getMonth() >=7 && new Date().getMonth() <=12) {
                 kode_semester = new Date().getFullYear()-2+'1'
             }
             try {

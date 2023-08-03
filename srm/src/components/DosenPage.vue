@@ -41,15 +41,15 @@
                         </div>
                         <div v-if="!loadingListMahasiswa">
                             <b-row v-if="jumlahPage !=null" style="margin-top: 1rem;">
-                            <b-col>
-                                <b-button class="page" id="prev" :disabled="page <=1" @click="page -=1">prev</b-button>
-                            </b-col>
-                            <b-col style="text-align:center; margin:auto;">
-                                {{page}}/{{Math.ceil(jumlahPage)}}
-                            </b-col>
-                            <b-col>
-                                <b-button class="page" id="next" :disabled="page >= jumlahPage" @click="page +=1">next</b-button>
-                            </b-col>
+                                <b-col>
+                                    <b-button class="page" id="prev" :disabled="page <=1" @click="page -=1">prev</b-button>
+                                </b-col>
+                                <b-col style="text-align:center; margin:auto;">
+                                    {{page}}/{{Math.ceil(jumlahPage)}}
+                                </b-col>
+                                <b-col>
+                                    <b-button class="page" id="next" :disabled="page >= jumlahPage" @click="page +=1">next</b-button>
+                                </b-col>
                             </b-row>
                             <div class="perwalian">
                                 <ul class="daftar-perwalian">

@@ -156,7 +156,7 @@
                                                         <h5 v-if="detailMahasiswa.ips[item] < 2.5" class="badge badge-warning" style="font-size: calc(65% + 0.5vw)">IPS: {{detailMahasiswa.ips[item]}}</h5>
                                                     </b-row>
                                                     <div class="row">
-                                                        <div v-for="nilai in nilaiGrouped[item]" :key="nilai._id" class="col-md-6 col-6 my-1">
+                                                        <div v-for="nilai in nilaiGrouped[item]" :key="nilai._id" class="col-md-6 col-6 my-1 col-lg-4 col-xl-4">
                                                             <b-card style="height:100%; ">
                                                                 <b-card-text>
                                                                     <p style=" font-size:calc(80% + 0.5vw);">{{nilai.nama_matakuliah}}</p>
@@ -256,6 +256,7 @@ export default {
                         return nilai.kode_semester
                     })
                     this.kodeSemesterNilai = Object.keys(this.nilaiGrouped).reverse()
+                    console.log(this.detailMahasiswa);
                 })
             } catch (error) {
                 console.log(error.message);

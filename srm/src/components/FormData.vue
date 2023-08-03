@@ -6,6 +6,7 @@
             </svg>
             Kembali
         </b-button>
+        <h5>Form Data</h5>
         <b-form ref="formInput" class="form">
             <b-form-group id="input-group-1" label="Jenis Jadwal" label-for="input-1">
                 <b-form-select
@@ -210,6 +211,23 @@
             <b-row>
                 <b-col cols="12" md="4" lg="3" xl="3">
                     <h5 class="judul-kategori">List Jadwal Khusus</h5>
+                    <b-row v-if="jumlahPageJadwalKhusus !=null" class="pagination">
+                        <b-col>
+                            <b-button class="page" id="prev" :disabled="pageJadwalKhusus <=1" @click="pageJadwalKhusus -=1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                </svg>
+                            </b-button>
+                        </b-col>
+                        <b-col style="text-align:center; margin:auto;">
+                            {{pageJadwalKhusus}}/{{Math.ceil(jumlahPageJadwalKhusus)}}
+                        </b-col>
+                        <b-col>
+                            <b-button class="page" id="next" :disabled="pageJadwalKhusus >= jumlahPageJadwalKhusus" @click="pageJadwalKhusus +=1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </b-button>
+                        </b-col>
+                    </b-row>
                     <div v-for="item in listJadwalKhusus" :key="item._id" class="listCard shadow p-3 mb-2 bg-white rounded">
                         <!-- <div class="isiList" v-if="isMobile">   
                             <h5>{{item.nama_kegiatan}}</h5>
@@ -222,16 +240,36 @@
                         </div> -->
                         <div class="isiList" >   
                             <h6>{{item.nama_kegiatan}}</h6>
-                            <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
+                            <div>
+                                <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
                                 <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
                                 <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
                                 </svg> {{item.tanggal_mulai}} s.d {{item.tanggal_selesai}}
                             </p>
+                            </div>
                         </div>
                     </div>
                 </b-col>
+                <!-- list Jadwal Ujian -->
                 <b-col cols="12" md="4" lg="3" xl="3">
                     <h5 class="judul-kategori">List Jadwal Ujian</h5>
+                    <b-row v-if="jumlahPageJadwalUjian !=null" class="pagination">
+                        <b-col>
+                            <b-button class="page" id="prev" :disabled="pageJadwalUjian <=1" @click="pageJadwalUjian -=1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                </svg>
+                            </b-button>
+                        </b-col>
+                        <b-col style="text-align:center; margin:auto;">
+                            {{pageJadwalUjian}}/{{Math.ceil(jumlahPageJadwalUjian)}}
+                        </b-col>
+                        <b-col>
+                            <b-button class="page" id="next" :disabled="pageJadwalUjian >= jumlahPageJadwalUjian" @click="pageJadwalUjian +=1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </b-button>
+                        </b-col>
+                    </b-row>
                     <div v-if="listJadwalUjian.length != 0">
                         <div v-for="item in listJadwalUjian" :key="item._id" class="listCard shadow p-3 mb-2 bg-white rounded">
                             <div class="isiList" >   
@@ -248,9 +286,27 @@
 
                     </div>
                 </b-col>
+                <!-- list jadwal ujian matkul -->
                 <b-col cols="12" md="4" lg="3" xl="3">
                     <h5 class="judul-kategori">List Jadwal Ujian Matakuliah</h5>
-                    <div v-for="item in listJadwalUjianMatkul" :key="item._id" class="listCard shadow p-3 mb-2 bg-white rounded">
+                    <b-row v-if="jumlahPageJadwalUjianMatkul !=null" class="pagination">
+                        <b-col>
+                            <b-button class="page" id="prev" :disabled="pageJadwalUjianMatkul <=1" @click="pageJadwalUjianMatkul -=1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                </svg>
+                            </b-button>
+                        </b-col>
+                        <b-col style="text-align:center; margin:auto;">
+                            {{pageJadwalUjianMatkul}}/{{Math.ceil(jumlahPageJadwalUjianMatkul)}}
+                        </b-col>
+                        <b-col>
+                            <b-button class="page" id="next" :disabled="pageJadwalUjianMatkul >= jumlahPageJadwalUjianMatkul" @click="pageJadwalUjianMatkul +=1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </b-button>
+                        </b-col>
+                    </b-row>
+                    <div v-for="item in listJadwalUjianMatkul.slice(pageJadwalUjianMatkul*5-5,pageJadwalUjianMatkul*5)" :key="item._id" class="listCard shadow p-3 mb-2 bg-white rounded">
                         <div class="isiList" >   
                             <h6>{{ item.nama_kegiatan }}</h6>
                             <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
@@ -261,8 +317,26 @@
                         </div>
                     </div>
                 </b-col>
+                <!-- list jadwal pembayaran -->
                 <b-col cols="12" md="4" lg="3" xl="3">
                     <h5 class="judul-kategori">List Jadwal Pembayaran</h5>
+                    <b-row v-if="jumlahPageJadwalPembayaran !=null" class="pagination">
+                        <b-col>
+                            <b-button class="page" id="prev" :disabled="pageJadwalPembayaran <=1" @click="pageJadwalPembayaran -=1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                </svg>
+                            </b-button>
+                        </b-col>
+                        <b-col style="text-align:center; margin:auto;">
+                            {{pageJadwalPembayaran}}/{{Math.ceil(jumlahPageJadwalPembayaran)}}
+                        </b-col>
+                        <b-col>
+                            <b-button class="page" id="next" :disabled="pageJadwalPembayaran >= jumlahPageJadwalPembayaran" @click="pageJadwalPembayaran +=1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </b-button>
+                        </b-col>
+                    </b-row>
                     <div v-for="item in listJadwalPembayaran" :key="item._id" class="listCard shadow p-3 mb-2 bg-white rounded">
                         <div class="isiList" >   
                             <h6>{{item.nama_kegiatan}}</h6>
@@ -309,7 +383,15 @@ export default {
             listJadwalUjianMatkul: [],
             listJadwalKhusus: [],
             listJadwalPembayaran: [],
-            isMobile: false
+            isMobile: false,
+            jumlahPageJadwalKhusus: null,
+            pageJadwalKhusus: 1,
+            jumlahPageJadwalUjian: null,
+            pageJadwalUjian: 1,
+            jumlahPageJadwalUjianMatkul: null,
+            pageJadwalUjianMatkul: 1,
+            jumlahPageJadwalPembayaran: null,
+            pageJadwalPembayaran: 1
         }
     },
     created() {
@@ -320,6 +402,10 @@ export default {
             this.getListJadwalPembayaran()
             this.getListJadwalUjian()
             this.getListJadwalUjianMatkul()
+            
+            
+           
+           
         }
     },
     methods: {
@@ -341,8 +427,9 @@ export default {
         async getListJadwalUjian(){
             try {
                 await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/jadwal-ujian`).then((response)=>{
-                    this.listJadwalUjian = response.data
-                    console.log(response);
+                    this.listJadwalUjian = response.data.reverse()
+                    this.jumlahPageJadwalUjian = this.listJadwalUjian.length/5
+                    this.pageJadwalUjian = 1
                 })
             } catch (error) {
                 console.log(error);
@@ -351,7 +438,10 @@ export default {
         async getListJadwalUjianMatkul(){
             try {
                 await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/jadwal-ujian-matkul`).then((response)=>{
-                    this.listJadwalUjianMatkul = response.data
+                    this.listJadwalUjianMatkul = response.data.reverse()
+                    this.jumlahPageJadwalUjianMatkul = this.listJadwalUjianMatkul.length/5
+                    this.pageJadwalUjianMatkul = 1
+                    console.log(response.data);
                 })
             } catch (error) {
                 console.log(error);
@@ -360,7 +450,9 @@ export default {
         async getListJadwalKhusus(){
             try {
                 await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/jadwal-khusus`).then((response)=>{
-                    this.listJadwalKhusus = response.data
+                    this.listJadwalKhusus = response.data.reverse()
+                    this.jumlahPageJadwalKhusus = this.listJadwalKhusus.length/5
+                    this.pageJadwalKhusus = 1
                     console.log(this.listJadwalKhusus);
                 })
             } catch (error) {
@@ -370,7 +462,9 @@ export default {
         async getListJadwalPembayaran(){
             try {
                 await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/jadwal-pembayaran`).then((response)=>{
-                    this.listJadwalPembayaran = response.data
+                    this.listJadwalPembayaran = response.data.reverse()
+                    this.jumlahPageJadwalPembayaran = this.listJadwalPembayaran.length/5
+                    this.pageJadwalPembayaran = 1
                 })
             } catch (error) {
                 console.log(error);
@@ -385,6 +479,7 @@ export default {
                         position: 'top'
                     });
                     if(this.form.jenis_jadwal == 'jadwal_ujian_mata_kuliah'){
+                        console.log(response);
                         this.getListJadwalUjianMatkul()
                     }else if(this.form.jenis_jadwal == 'jadwal_ujian'){
                         this.getListJadwalUjian()
@@ -497,5 +592,37 @@ export default {
 }
 .judul-kategori {
     text-align: center;
+}
+svg{
+    display: inline-flex;
+}
+button#next{
+    float: right;
+}
+.pagination{
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.page{
+    color: #32a3df;
+    border-color: #32a3df;
+    background-color: transparent;
+}
+.page[disabled]{
+    pointer-events: none;
+    background-color: grey;
+    border-color: transparent;
+    color: white;
+}
+.page:hover{
+    color: white !important;
+    background-color: #32a3df;
+    border-color: #32a3df;
+    border: none;
+}
+.page:visited{
+    color: white !important;
+    background-color: #32a3df;
+    border: none;
 }
 </style>

@@ -55,7 +55,7 @@
                             </b-row>
                             <div class="perwalian">
                                 <ul class="daftar-mahasiswa">
-                                    <li v-for="item in daftarPerwalian.slice(page*10-10,page*10 )" :key="item.id" style="display:inline; padding: 5px;" >
+                                    <li v-for="item in daftarPerwalian.slice(page*12-12,page*12 )" :key="item.id" style="display:inline; padding: 5px;" >
                                         <b-container class="shadow p-2 mb-3 bg-white rounded">
                                             <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
                                                 <b-col cols="8">
@@ -609,7 +609,7 @@ export default {
     }
     .daftar-mahasiswa{
         display: grid; 
-        grid-template-columns:repeat(auto-fit, minmax(500px,1fr)); 
+        grid-template-columns:repeat(auto-fit, minmax(400px,1fr)); 
         padding:0;
     }
 }
@@ -725,7 +725,10 @@ h4{
     background-color: transparent;
 }
 .page[disabled]{
-    pointer-events: none;
+     pointer-events: none;
+    background-color: grey;
+    border-color: transparent;
+    color: white;
 }
 button#next{
     float: right;
