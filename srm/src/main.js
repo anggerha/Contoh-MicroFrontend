@@ -12,6 +12,7 @@ import ToastPlugin from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css';
+import "core-js/actual/array/group-by"
 
 Vue.component('v-select', vSelect)
 

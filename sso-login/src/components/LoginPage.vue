@@ -41,44 +41,54 @@ export default {
                 async (result) => {
                     if(result.additionalUserInfo.profile.hd){
                       if(result.additionalUserInfo.profile.hd == 'ti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'staff.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'fti.ukdw.ac.id') {
-                        await axios.get(`https://userapi.fti.ukdw.ac.id/login/${result.user.uid}`, { params: {
-                          email: result.user.email.toString() 
-                        }})
-                        .then( async (response) => {
-                          if(response.status == 200){
-                            sessionStorage.setItem('firebase-token', result.credential.idToken)
-                            sessionStorage.setItem('firebase-uid', JSON.stringify({
-                              profilPicture: result.additionalUserInfo.profile.picture,
-                              uid: result.user.uid
-                            }))
-                            await axios.get(`https://userapi.fti.ukdw.ac.id/${result.user.uid}`)
-                            .then( async (response) => {
-                              if(response.status == 200) {
-                                if(response.data.role == 'MAHASISWA'){
-                                  if(response.data.id_telegram !== null && response.data.id_telegram !== ''){
+                        try {
+                          await axios.get(`https://userapi.fti.ukdw.ac.id/login/${result.user.uid}`, { params: {
+                            email: result.user.email.toString() 
+                          }})
+                          .then( async (response) => {
+                            if(response.status == 200){
+                              sessionStorage.setItem('firebase-token', result.credential.idToken)
+                              sessionStorage.setItem('firebase-uid', JSON.stringify({
+                                profilPicture: result.additionalUserInfo.profile.picture,
+                                uid: result.user.uid
+                              }))
+                              await axios.get(`https://userapi.fti.ukdw.ac.id/${result.user.uid}`)
+                              .then( async (response) => {
+                                if(response.status == 200) {
+                                  if(response.data.role == 'MAHASISWA'){
+                                    if(response.data.id_telegram !== null && response.data.id_telegram !== ''){
+                                      this.$router.replace("/listmenu")
+                                    } else {
+                                      this.$router.replace("/formpage")
+                                    }
+                                  } else if (response.data.role == 'DOSEN') {
                                     this.$router.replace("/listmenu")
-                                  } else {
-                                    this.$router.replace("/formpage")
                                   }
-                                } else if (response.data.role == 'DOSEN') {
-                                  this.$router.replace("/listmenu")
+                                } else if(response.status == 404) {
+                                  this.$toast.open({
+                                      message: 'Login gagal!',
+                                      type: 'warning',
+                                      position: 'top'
+                                  })
                                 }
-                              } else if(response.status == 404) {
-                                this.$toast.open({
-                                    message: 'Login gagal!',
-                                    type: 'warning',
-                                    position: 'top'
-                                })
-                              }
-                            })
-                          } else if(response.status == 404) {
+                              })
+                            } else if(response.status == 404) {
+                              this.$toast.open({
+                                  message: 'Login gagal!',
+                                  type: 'warning',
+                                  position: 'top'
+                              })
+                            }
+                          })
+                        } catch (error) {
+                          if (error.response.status == 404) {
                             this.$toast.open({
-                                message: 'Login gagal!',
+                                message: 'Email Belum Terdaftar, Hubungi Admin!',
                                 type: 'warning',
                                 position: 'top'
                             })
                           }
-                        })
+                        }
                       } 
                       else {
                         sessionStorage.clear()

@@ -256,7 +256,6 @@ export default {
                         return nilai.kode_semester
                     })
                     this.kodeSemesterNilai = Object.keys(this.nilaiGrouped).reverse()
-                    console.log(this.detailMahasiswa);
                 })
             } catch (error) {
                 console.log(error.message);

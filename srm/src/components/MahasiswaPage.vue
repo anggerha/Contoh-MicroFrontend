@@ -27,12 +27,18 @@
                         <div v-if="!loadingPengumuman">
                             <div v-if="pengumuman.valid.length != 0">
                                 <b-card class="cardPengumuman" v-for="item in pengumuman.valid" :key="item._id"
-                                    :header="item.tanggal"
                                     header-text-variant="white"
                                     :footer="'Tanggal pengumuman berakhir: '+ item.periode_akhir">
+                                    <template #header>
+                                        <div style="display: flex; color: black;">
+                                            {{ item.tanggal }}
+                                        </div>
+                                    </template>
                                     <b-card-title class="cardTitle">
                                         <b-row>
-                                            <b-col> <h4 class="judulPengumuman">{{ item.judul }}</h4></b-col>
+                                            <b-col > 
+                                                <h4 class="judulPengumuman">{{ item.judul }}</h4>
+                                            </b-col>
                                         </b-row>
                                         <!-- <b-row>
                                             <b-col>
@@ -53,6 +59,16 @@
                                     </b-card-text>
                                 </b-card>
                             </div>
+                            <div v-if="pengumuman.valid.length == 0">
+                                <div>
+                                    <div class="desert">
+                                        <h3 style="color: darkslategray; display: flex; margin: auto;">Oopss ... Pengumuman Kosong</h3>
+                                        <div class="tumbleweed"></div>
+                                        <div class="tumbleweed"></div>
+                                        <div class="tumbleweed"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div v-if="loadingPengumuman">
                             <div v-if="loading" style="text-align:center;">
@@ -61,6 +77,9 @@
                                 </div></div>
                             </div>
                         </div>
+                </b-col>
+                <b-col v-if="pengumuman.length == 0">
+                    <h3>Pengumman Kosong</h3>
                 </b-col>
             </b-row>
             <b-row style="margin-top: 2rem;">
@@ -75,13 +94,13 @@
                     </b-button>
                     <b-collapse id="collapse-2" v-if="pengumuman.length != 0">
                         <div v-if="pengumuman.archived.length != 0">
-                           <b-card class="cardPengumuman archived" v-for="item in pengumuman.archived" :key="item._id"
-                                :header="item.tanggal"
-                           
-                                header-text-variant="white"
-                                :footer="'Tanggal pengumuman berakhir: '+ item.periode_akhir"
-                                
-                            >
+                           <b-card class="cardPengumuman archived" v-for="item in pengumuman.archived" :key="item._id" header-text-variant="white" :footer="'Tanggal pengumuman berakhir: '+ item.periode_akhir">
+                                <template #header>
+                                    <div style="display: flex; color: black;">
+                                        {{ item.tanggal }}
+                                        <div class="badge badge-pill badge-warning" id="kadaluarsa" style="color: black;">Expired</div>
+                                    </div>
+                                </template>
                                 <b-card-title class="cardTitle">
                                     <b-row>
                                         <b-col> <h4 class="judulPengumuman">{{ item.judul }}</h4></b-col>
@@ -124,7 +143,7 @@
                             <b-col style="display: flex;">
                                 <h4 v-if="pengumumanPerwalian[0]?.kode_semester?.slice(4, 5) == 1">Semester Gasal</h4>
                                 <h4 v-if="pengumumanPerwalian[0]?.kode_semester?.slice(4, 5) == 2">Semester Genap</h4>
-                                <div class="badge badge-pill badge-success" id="terbaru" v-if="pengumumanPerwalian.length != 0">Terbaru</div>
+                                <div class="badge badge-pill badge-success" id="terbaru-catatan-perwalian" v-if="pengumumanPerwalian.length != 0">Terbaru</div>
                             </b-col>
                         </b-row>
                         <div class="cardPerwalian" v-for="item in kodeSemester" :key="item">
@@ -145,7 +164,7 @@
                 <div style="margin:auto; color:grey;" v-if="perwalianEror != ''"><h5>{{this.perwalianEror}}</h5></div>
             </b-row> -->
             <b-row style="margin-bottom:1rem;">
-                <b-col>
+                <b-col v-if="pengumumanPerwalian.length != 0">
                     <b-button block v-b-toggle.accordion-1><svg xmlns="http://www.w3.org/2000/svg" style="margin-right:0.5rem;" width="20" height="20" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
                         <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z"/>
                         </svg> Arsip Catatan Perwalian
@@ -153,25 +172,25 @@
                     <b-collapse id="accordion-1" role="tabpanel">
                         <div style="margin-top: 1rem;width: 100%;">
                             <ul style="display: grid;grid-template-columns:repeat(5,1fr); padding:0;">
-                                <li v-show="pengumumanPerwalian[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="width: 100%; display:inline;" >
+                                <li v-show="pengumumanPerwalian[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="width: 100%; display:inline;">
                                     <b-button v-b-toggle="'accordion-' + item">{{ item.slice(0, 4) }}<span v-if="item.slice(4, 5) == 1">&nbsp;Gasal</span><span v-if="item.slice(4, 5) == 2">&nbsp;Genap</span></b-button>
                                 </li>
                             </ul>                                            
                         </div>
-                            <div v-show="pengumumanPerwalian[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="margin-bottom: 1rem">
-                                <b-collapse :id="'accordion-' + item" role="tabpanel">
-                                    <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 1">{{ item.slice(0, 4) }} Gasal</b-card-title>
-                                    <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 2">{{ item.slice(0, 4) }} Genap</b-card-title>
-                                    <b-card>
-                                        <b-card-text v-for="data in pengumumanPerwalianGrouped[item]" :key="data._id">
-                                            <h4 style="text-align:left;">{{ data.judul }}</h4>
-                                            <b-card-text class="small text-muted">Dikirim pada tanggal {{ data.tanggal }}</b-card-text>
-                                            <p>Catatan: <br>{{ data.pembahasan }}</p>
-                                            <hr style="border: 1px solid black;">
-                                        </b-card-text>
-                                    </b-card>
-                                </b-collapse>
-                            </div>
+                        <div v-show="pengumumanPerwalian[0].kode_semester !== item" v-for="item in kodeSemester" :key="item" style="margin-bottom: 1rem">
+                            <b-collapse :id="'accordion-' + item" role="tabpanel">
+                                <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 1">{{ item.slice(0, 4) }} Gasal</b-card-title>
+                                <b-card-title style="margin-left:1rem;" v-if="item.slice(4, 5) == 2">{{ item.slice(0, 4) }} Genap</b-card-title>
+                                <b-card>
+                                    <b-card-text v-for="data in pengumumanPerwalianGrouped[item]" :key="data._id">
+                                        <h4 style="text-align:left;">{{ data.judul }}</h4>
+                                        <b-card-text class="small text-muted">Dikirim pada tanggal {{ data.tanggal }}</b-card-text>
+                                        <p>Catatan: <br>{{ data.pembahasan }}</p>
+                                        <hr style="border: 1px solid black;">
+                                    </b-card-text>
+                                </b-card>
+                            </b-collapse>
+                        </div>
                     </b-collapse>
                 </b-col>
             </b-row>
@@ -182,6 +201,7 @@
 <script>
 import axios from 'axios'
 import moment from 'moment'
+
 export default {
     name: 'MahasiswaPage',
     data(){
@@ -218,6 +238,13 @@ export default {
         }
     },
     methods: {
+        alertPengumumanPerwalian(){
+            this.$toast.open({
+                message: 'Tidak Ada Pengumuman Perwalian !',
+                type: 'warning',
+                position: 'top'
+            });
+        },
         kembali() {
             this.$router.replace('/listMenu')
         },
@@ -304,6 +331,70 @@ export default {
         max-width: 1500px;
     }
 }
+.desert {
+    position: relative;
+    height: 8rem;
+    overflow: hidden;
+}
+
+.desert .tumbleweed {
+    position: absolute;
+    top: 0;
+    left: -5rem;
+    background: url(https://img.icons8.com/ios/1600/tumbleweed.png) no-repeat center;
+    background-size: cover;
+    width: 5rem;
+    height: 5rem;
+    animation: jumping 1.5s infinite, rolling 5s linear infinite, rotating 2s linear infinite;
+
+}
+.tumbleweed:nth-child(2) {
+    animation-delay: 2.5s;
+}
+.tumbleweed:nth-child(3) {
+    animation-delay: 4s;
+}
+
+@keyframes jumping {
+    0% {
+        top: 0rem;
+        animation-timing-function: ease-in;
+    }
+    25% {
+        top: 3rem;
+        animation-timing-function: ease-out;
+    }
+    50% {
+        top: 1rem;
+        animation-timing-function: ease-in;
+    }
+    75% {
+        top: 3rem;
+        animation-timing-function: ease-out;
+    }
+    100% {
+        top: 0rem;
+        animation-timing-function: ease-in;
+    }
+}
+
+@keyframes rolling {
+    0% {
+        left: -5rem;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+@keyframes rotating {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 .judul{
     font-size: 250%;
     font-weight: bold;
@@ -351,7 +442,14 @@ h3{
 #judulPengumuman{
     text-align: left;
 }
-#terbaru{
+#kadaluarsa{
+    margin-left: 1rem;
+    display: flex;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+}
+#terbaru-catatan-perwalian{
     margin-left: 1rem;
     padding-top: .5rem;
     display: flex;
@@ -374,7 +472,7 @@ h3{
 .card-header {
     padding: 0.75rem 1.25rem;
     margin-bottom: 0;
-    background-image: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(50,163,223,1) 47%, rgba(0,212,255,1) 100%);
+    color: black;
     border-bottom: 1px solid rgba(0, 0, 0, 0.125);
    
 }
@@ -394,9 +492,6 @@ h3{
     border-radius: calc(0.8rem - 1px) calc(0.8rem - 1px) 0 0;
 }
 
-.archived .card-header{
-    background-image: linear-gradient(90deg, rgba(14,14,14,1) 0%, rgba(138,121,121,1) 47%, rgba(255,255,255,1) 100%);
-}
 @keyframes ldio-mr6hs88yhu {
    0% { transform: translate(12px,80px) scale(0); }
   25% { transform: translate(12px,80px) scale(0); }
