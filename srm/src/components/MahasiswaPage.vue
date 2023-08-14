@@ -229,10 +229,11 @@ export default {
                     this.$router.replace('/formPage')
                 } else {
                     this.dataDiri = response.data
-                    this.getDataPerwalian()
+                    this.getLastKodeSemester()
                     this.getPengumuman()
                     this.getPengumumanPerwalian()
                     this.getDateNow()
+                    
                 }
             })
         }
@@ -251,15 +252,15 @@ export default {
         getDateNow(){
             this.tanggalNow = moment().locale('id').format('ll')
         },
-        async getDataPerwalian(){
-            var kode_semester
-            if(new Date().getMonth() <= 6) {
-                kode_semester = new Date().getFullYear()-2+'2'
-            } else if(new Date().getMonth() >=7 && new Date().getMonth() <=12) {
-                kode_semester = new Date().getFullYear()-2+'1'
-            }
+        async getLastKodeSemester() {
+            await axios.get(`https://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID.uid}/perwalian`).then((response) => {
+                var kodeSemester = response.data[0].kode_semester
+                this.getDataPerwalian(kodeSemester)
+            })
+        },
+        async getDataPerwalian(kodeSemester){
             try {
-                await axios.get(`https://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID.uid}/perwalian/${kode_semester}`,  {params:{
+                await axios.get(`https://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID.uid}/perwalian/${kodeSemester}`,  {params:{
                     role:'MAHASISWA',
                     email: this.dataDiri.email,
                     nim: this.dataDiri.nim,
@@ -267,7 +268,6 @@ export default {
                 }}).then((response)=>{
                     this.dataPerwalian = response.data[0]
                     this.loading = false
-                    // console.log("ini data perwalian= ")
                 })
             } catch (error) {
                 console.log(error.response.data.message);

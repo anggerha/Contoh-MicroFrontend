@@ -29,11 +29,28 @@
                        </b-col>
                     </b-row>
 <!-- LIST MAHASISWA DOSEN -->
-                    <div v-if="showListMahasiswa">
-                        <h4 v-if="semester == null">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }}</h4>
-                        <h4 v-if="semester == 1">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }} Semester Ganjil</h4>
-                        <h4 v-if="semester == 2">Daftar Mahasiswa Perwalian Tahun Ajaran {{ new Date().getFullYear()-2 }}/{{ new Date().getFullYear()-1 }} Semester Genap</h4>
-                        <b-form-select v-model="semester" :options="options" @change="getMahasiswaPerwalian"></b-form-select>
+                    <div v-if="showListMahasiswa" class="list-mahasiswa">
+                        <hr>
+                        <div style="margin-bottom: 2rem;" v-if="!loadingListMahasiswa">
+                            <h4 v-if="semester == null && tahunAngkatan != ''">Daftar Mahasiswa Perwalian Tahun Ajaran {{ parseInt(tahunAngkatan) }}/{{ parseInt(tahunAngkatan)+1 }}</h4>
+                            <h4 v-if="semester == null && tahunAngkatan == ''" >{{ getLastKodeSemester() }}</h4>
+                            <h4 v-if="semester == 1">Daftar Mahasiswa Perwalian Tahun Ajaran {{ parseInt(tahunAngkatan) }}/{{ parseInt(tahunAngkatan)+1 }} Semester Ganjil</h4>
+                            <h4 v-if="semester == 2">Daftar Mahasiswa Perwalian Tahun Ajaran {{ parseInt(tahunAngkatan) }}/{{ parseInt(tahunAngkatan)+1 }} Semester Genap</h4>
+                        </div>
+                        <b-row class="filter-kode-semester" align-h="end" no-gutters>
+                            <b-col cols="auto" class="p-2">
+                                <span>Filter: </span>
+                            </b-col>
+                            <b-col cols="auto" class="p-1">
+                                <b-input maxlength="4" onkeypress="return event.charCode >= 48 && event.charCode <=57" v-model="tahunAngkatan" placeholder="Tahun angkatan"></b-input>
+                            </b-col>
+                            <b-col cols="auto" class="p-1">
+                                <b-form-select v-model="semester" :options="options" @change="kodeSemesterFilter"></b-form-select>
+                            </b-col>
+                            <b-col cols="auto" class="p-1">
+                                <b-button variant="danger" @click="getLastKodeSemester">reset</b-button>
+                            </b-col>
+                        </b-row>
                         <div v-if="loadingListMahasiswa && semester != null"  style="text-align:center;">
                             <div class="loadingio-spinner-ellipsis-f9g8sm63oof"><div class="ldio-mr6hs88yhu">
                             <div></div><div></div><div></div><div></div><div></div>
@@ -52,7 +69,7 @@
                                 </b-col>
                             </b-row>
                             <div class="perwalian">
-                                <ul class="daftar-perwalian">
+                                <ul class="daftar-perwalian" v-if="daftarPerwalian.length != 0">
                                     <li v-for="item in daftarPerwalian.slice(page*10-10,page*10 )" :key="item.id" style="display:inline; padding: 5px;">
                                         <b-container class="shadow p-2 mb-3 bg-white rounded">
                                             <div>
@@ -89,9 +106,11 @@
                                         </b-container>
                                     </li>
                                 </ul>
+                                <ul style="margin: auto; text-align: center;" v-if="daftarPerwalian == 0">
+                                    <h3>Daftar Perwalian Pada Tahun {{ tahunAngkatan }} Semester <span v-if="semester == 1">Ganjil</span> <span v-if="semester == 2">Genap</span> Kosong</h3>
+                                </ul>
                             </div>
                         </div>
-                        
                     </div>
 <!-- LIST PENGUMUMAN -->
                     <div v-if="showListPengumuman">
@@ -314,7 +333,7 @@ export default {
         imageData: null,
         semester: null,
         options: [
-            { value: null, text: 'Pilih Semester Gasal atau Genap', disabled:true },
+            { value: null, text: 'Pilih Semester', disabled:true },
             { value: '1', text: 'Gasal' },
             { value: '2', text: 'Genap' },
         ],
@@ -325,7 +344,10 @@ export default {
         isTanggalSama: null,
         pengumumanButton: false,
         now: null,
-        itemBerita: []
+        itemBerita: [],
+        tahunAngkatan: '',
+
+        kodeSemesterTerbaru: ''
       }
     },
     watch: {
@@ -336,9 +358,33 @@ export default {
     created(){
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+            this.getLastKodeSemester()
         }
     },
     methods: {
+        kodeSemesterFilter() {
+            if(this.tahunAngkatan != '' && this.tahunAngkatan.length == 4){
+                this.daftarPerwalian = []
+                var kodeSemester = this.tahunAngkatan + this.semester
+                this.getMahasiswaPerwalian(kodeSemester)
+            } else {
+                if(this.tahunAngkatan.length != 4){
+                    this.$toast.open({
+                        message: 'Tahun Tidak Valid',
+                        type: 'error',
+                        position: 'top'
+                    });
+                }
+                if(this.tahunAnkatan == '') {
+                    this.$toast.open({
+                        message: 'Tahun Angkatan Tidak Boleh Kosong',
+                        type: 'error',
+                        position: 'top'
+                    });
+                }
+                
+            }
+        },
         async getProfile(){
             try {
                 await axios.get(`https://userapi.fti.ukdw.ac.id/dosen/${this.firebaseUID}`).then((response)=>{
@@ -348,13 +394,11 @@ export default {
                 console.log(error.message);
             }
         },
-       
         toggle() {
             this.showListMahasiswa = true
             this.showListPengumuman = false
             this.page = 1
              this.jumlahPage = null
-            //this.getMahasiswaPerwalian()
         },
         toggleBerita() {
             this.showListMahasiswa = false
@@ -364,7 +408,7 @@ export default {
             this.getAllPengumuman()
         },
         kembali() {
-            this.$router.replace('listMenu')
+            this.$router.replace('/listMenu')
         },
         onClickChildCatatan(value){
             this.isRemoveCatatan = value
@@ -372,13 +416,22 @@ export default {
         onClickChildProfile(value){
             this.isRemoveProfile = value
         },
-        async getMahasiswaPerwalian() {
-            this.page = 1
-            this.daftarPerwalian = []
-            let kodeSems = new Date().getFullYear()-2+this.semester
-            kodeSems.toString()
+        async getLastKodeSemester() {
+            await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-mahasiswa/`).then((response) => {
+                if(response.data.length != 0){
+                    console.log(this.kodeSemesterTerbaru.slice(4, 5));
+                    var temp = response.data.reverse()
+                    this.tahunAngkatan = temp[0].kode_semester.slice(0, 4)
+                    this.kodeSemesterTerbaru = temp[0].kode_semester
+                    var kodeSemester = temp[0].kode_semester
+                    this.getMahasiswaPerwalian(kodeSemester)
+                    this.loadingListMahasiswa = false
+                }
+            })
+        },
+        async getMahasiswaPerwalian(kodeSemester) {
             try {
-                await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-perwalian/${kodeSems}`)
+                await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-perwalian/${kodeSemester}`)
                 .then((response) => {
                     this.daftarPerwalian = response.data
                     this.jumlahPage = this.daftarPerwalian.length/10
@@ -452,12 +505,6 @@ export default {
                 })
                 
             } else {
-                var semester = ''
-                if(new Date().getMonth() <= 6){
-                    semester = '2'
-                }else if(new Date().getMonth() >= 7 && new Date().getMonth() <= 12){
-                    semester = '1'
-                }
                 try {
                     if(this.isiPengumuman == '' || this.judulPengumuman == '' || this.periode_akhir == null){
                         this.$toast.open({
@@ -470,8 +517,8 @@ export default {
                             nama_dosen: this.profile.nama,
                             email: this.profile.email,
                             role: this.profile.role,
-                            kode_semester: new Date().getFullYear()-2+semester,
-                            semester: semester,
+                            kode_semester: this.kodeSemesterTerbaru,
+                            semester: this.kodeSemesterTerbaru.slice(4, 5),
                             pengumuman: this.isiPengumuman,
                             file: this.files,
                             judul: this.judulPengumuman,
@@ -851,9 +898,11 @@ button#next{
   position: relative;
   transform: translateZ(0) scale(1);
   backface-visibility: hidden;
-  transform-origin: 0 0; /* see note above */
+  transform-origin: 0 0;
 }
 .ldio-mr6hs88yhu div { box-sizing: content-box; }
-/* generated by https://loading.io/ */
+.list-mahasiswa {
+    margin-top: 3rem;
+}
 </style>
 

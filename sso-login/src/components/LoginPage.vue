@@ -27,7 +27,7 @@ export default {
             if(response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
               this.$router.replace('formpage')
             } else {
-              this.$router.replace('listmenu')
+              this.$router.replace('/listmenu')
             }
         })
       } else {
