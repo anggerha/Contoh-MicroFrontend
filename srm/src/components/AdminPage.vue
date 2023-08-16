@@ -114,14 +114,13 @@
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.status != 'PUBLISHED'"></b-input>
                                 <VueTrix @trix-attachment-add="handleAttachmentChanges" @trix-attachment-remove="hapusFile" v-model="isiPengumuman" v-if="itemBerita.status == 'PUBLISHED'" :disabled-editor="true" @hook:mounted="hapusTool"/>
                                 <VueTrix @trix-attachment-add="handleAttachmentChanges" @trix-attachment-remove="hapusFile" v-model="isiPengumuman" v-if="itemBerita.status != 'PUBLISHED'" @hook:mounted="hapusTool"/>
+                                <span v-if="itemBerita.length != 0 || files.length != 0">Attachment: </span><br>
                                 <div v-show="itemBerita.file.length != 0" v-for="attachment in itemBerita.file" :key="attachment.id">
-                                    <span>Attachment: </span><br>
                                     <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
                                     <span>&nbsp;</span>
                                     <span v-if="itemBerita.status != 'PUBLISHED'"><button class="deleteFile" @click="hapusFile">&#10005;</button></span>
                                 </div>
                                 <div v-show="files.length != 0" v-for="attachment in files" :key="attachment.id">
-                                    <span>Attachment: </span><br>
                                     <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
                                 </div>
                                 <div class="button-group" v-if="itemBerita.status != 'PUBLISHED'">
@@ -189,8 +188,8 @@
                                                         <span v-html="item.isi_berita"></span>
                                                     </b-row>
                                                     <b-row>
+                                                        <span v-if="item.file.length != 0">Attachment: </span><br>
                                                         <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
-                                                            <span>Attachment: </span><br>
                                                             <span><a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a></span>
                                                         </div>
                                                     </b-row>
@@ -280,11 +279,11 @@ export default {
         //_akhir: null
       }
     },
-    watch: {
-        files: {
-            handler: "fileLimit"
-        }
-    },
+    // watch: {
+    //     files: {
+    //         handler: "fileLimit"
+    //     }
+    // },
     created(){
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
@@ -499,45 +498,36 @@ export default {
         },
         handleAttachmentChanges(event) {
             try {
-                if(this.files.length == 0){
-                    var file = event.attachment
-                    const storageRef = firebase.storage().ref(`${file.file.name}`).put(file.file)
-                    storageRef.on("state_changed", snapshot => {
-                        this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
-                        const progress = document.querySelector("progress")
-                        progress.setAttribute("value",this.uploadValue)
-                    }, error => {console.log(error.message)},
-                        () => {
-                            this.uploadValue=100;  
-                            storageRef.snapshot.ref.getDownloadURL().then((url)=>{
-                                this.files = [{
-                                    id: file.id,
-                                    file_name: file.file.name,
-                                    type: file.file.type,
-                                    url: url
-                                }]
-                            })
-                        }
-                    )
-                } else {
-                    this.$toast.open({
-                        message: 'Hanya Bisa Mengirim 1 File.',
-                        type: 'warning',
-                        position: 'top'
-                    });
-                }
+                var file = event.attachment
+                const storageRef = firebase.storage().ref(`${file.file.name}`).put(file.file)
+                storageRef.on("state_changed", snapshot => {
+                    this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
+                    const progress = document.querySelector("progress")
+                    progress.setAttribute("value",this.uploadValue)
+                }, error => {console.log(error.message)},
+                    () => {
+                        storageRef.snapshot.ref.getDownloadURL().then((url)=>{
+                            this.files = [{
+                                id: file.id,
+                                file_name: file.file.name,
+                                type: file.file.type,
+                                url: url
+                            }]
+                        })
+                    }
+                )
             } catch (error) {
                 console.log(error.message);
             }
         },
-        fileLimit() {
-            const del = document.querySelector(".trix-button--icon-attach");
-            if(this.files.length != 0){                
-                del.style.display = 'none'
-            } else {
-                del.style.display = ''
-            }
-        },
+        // fileLimit() {
+        //     const del = document.querySelector(".trix-button--icon-attach");
+        //     if(this.files.length != 0){                
+        //         del.style.display = 'none'
+        //     } else {
+        //         del.style.display = ''
+        //     }
+        // },
         async hapusBerita(item){
             this.$bvModal.msgBoxConfirm(`Apakah Anda Yakin Ingin Menghapus Pengumuman "${item.judul_berita}"` , {
             title: 'Hapus Pengumuman',
@@ -578,9 +568,8 @@ export default {
                 console.log(err);
             })
         },
-        hapusFile(){
-            this.files = []
-            this.itemBerita.file = []
+        hapusFile(file){
+            this.files.splice(this.files.indexOf(file), 1)
         },
         hapusKomponenPengumuman() {
             this.isRemoveBerita = true

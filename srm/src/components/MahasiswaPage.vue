@@ -49,8 +49,8 @@
                                     </b-card-title>
                                     <b-card-text>
                                         <span id="pengumuman" v-html="item.pengumuman"></span>
+                                        <span v-show="item.file.length != 0">Attachment: </span><br>
                                         <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
-                                            <span>Attachment: </span><br>
                                             <span><a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a></span>
                                         </div>
                                         <!-- <div style="margin-top: 2rem;">

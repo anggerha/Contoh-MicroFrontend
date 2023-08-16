@@ -13,8 +13,8 @@
                     <div class="card-body">
                         <p style=" font-size:calc(80% + 0.5vw);font-weight:bold;">{{item.judul_berita}}</p>
                     <div v-html="item.isi_berita"></div>
+                    <span v-if="item.file.length != 0">Attachment: </span><br>
                     <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
-                            <span>Attachment: </span><br>
                             <span><a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a></span>
                         </div>
                     </div>

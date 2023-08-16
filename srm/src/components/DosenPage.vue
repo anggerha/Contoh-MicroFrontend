@@ -143,15 +143,14 @@
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.length == 0"></b-input>
                                 <VueTrix @trix-attachment-add="handleAttachmentChanges" @trix-attachment-remove="hapusFile" v-model="isiPengumuman" v-if="itemBerita.length != 0" :disabled-editor="true" @hook:mounted="hapusTool"/>
                                 <VueTrix @trix-attachment-add="handleAttachmentChanges" @trix-attachment-remove="hapusFile" v-model="isiPengumuman" v-if="itemBerita.length == 0" @hook:mounted="hapusTool"/>
+                                <span v-if="itemBerita.length != 0 || files.length != 0">Attachment: </span><br>
                                 <div v-show="itemBerita.file.length != 0" v-for="attachment in itemBerita.file" :key="attachment.id">
-                                    <span>Attachment: </span><br>
                                     <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
                                 </div>
                                 <div v-show="files.length != 0" v-for="attachment in files" :key="attachment.id">
-                                    <span>Attachment: </span><br>
                                     <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
                                     <span>&nbsp;</span>
-                                    <span><button class="deleteFile" @click="hapusFile">&#10005;</button></span>
+                                    <span><button class="deleteFile" @click="hapusFile(attachment)">&#10005;</button></span>
                                 </div>
                                 <p class="tanggalBerakhir">Tanggal Pengumuman Berakhir</p>
                                 <b-input required placeholder="Tanggal Berakhir" type="datetime-local" v-model="periode_akhir"></b-input>
@@ -220,8 +219,8 @@
                                                     <p style=" font-size:calc(85% + 0.5vw);font-weight:bold;border-bottom:1px solid #32a3df;">{{item.judul}}</p>
                                                       <div>{{item.tanggal.format('LLLL')}}</div>
                                                 <div v-html="item.pengumuman"></div>
+                                                <span v-if="item.file.length != 0">Attachment: </span><br>
                                                 <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
-                                                    <span>Attachment: </span><br>
                                                     <span><a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a></span>
                                                 </div>
                                                 </div>
@@ -260,8 +259,8 @@
                                                     <p style=" font-size:calc(85% + 0.5vw);font-weight:bold;border-bottom:1px solid #32a3df;">{{item.judul}}</p>
                                                       <div>{{item.tanggal.format('LLLL')}}</div>
                                                 <div v-html="item.pengumuman"></div>
+                                                <span v-if="item.file.length != 0">Attachment: </span><br>
                                                 <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
-                                                    <span>Attachment: </span><br>
                                                     <span><a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a></span>
                                                     <span>&nbsp;</span>
                                                     <span style=""><button class="deleteFile" @click="hapusFile">&#10005;</button></span>
@@ -284,6 +283,7 @@
                                                 </div>
                                             </div>
                                         </b-container>
+                                        <!-- <a :href="url">{{ file_name }}</a> -->
                                     </li>
                                 </ul>
                             </div>
@@ -350,11 +350,11 @@ export default {
         kodeSemesterTerbaru: ''
       }
     },
-    watch: {
-        files: {
-            handler: "fileLimit"
-        }
-    },
+    // watch: {
+    //     files: {
+    //         handler: "fileLimit"
+    //     }
+    // },
     created(){
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
@@ -419,7 +419,6 @@ export default {
         async getLastKodeSemester() {
             await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-mahasiswa/`).then((response) => {
                 if(response.data.length != 0){
-                    console.log(this.kodeSemesterTerbaru.slice(4, 5));
                     var temp = response.data.reverse()
                     this.tahunAngkatan = temp[0].kode_semester.slice(0, 4)
                     this.kodeSemesterTerbaru = temp[0].kode_semester
@@ -525,6 +524,7 @@ export default {
                             periode_akhir: moment(this.periode_akhir).locale('id').toString()
                             })
                             .then(()=>{
+                                console.log(this.files);
                                 this.$toast.open({
                                     dismissible: true,
                                     duration:0,
@@ -623,44 +623,37 @@ export default {
         },
         handleAttachmentChanges(event) {
             try {
-                if(this.files.length == 0){
-                    var file = event.attachment
-                    const storageRef = firebase.storage().ref(`${file.file.name}`).put(file.file)
-                    storageRef.on("state_changed", snapshot => {
-                        this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
-                        const progress = document.querySelector("progress")
-                        progress.setAttribute("value",this.uploadValue)
-                    }, error => {console.log(error)},
-                        () => {this.uploadValue=100;  
-                            storageRef.snapshot.ref.getDownloadURL().then((url)=>{
-                                this.files = [{
-                                    id: file.id,
-                                    file_name: file.file.name,
-                                    type: file.file.type,
-                                    url: url
-                                }]
+                var file = event.attachment
+                const storageRef = firebase.storage().ref(`${file.file.name}`).put(file.file)
+                storageRef.on("state_changed", snapshot => {
+                    this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
+                    // console.log(this.uploadValue); 
+                    const progress = document.querySelector("progress")
+                    progress.setAttribute("value",this.uploadValue)
+                }, error => {console.log(error)},
+                    () => {
+                        storageRef.snapshot.ref.getDownloadURL().then((url)=>{
+                            this.files.push({
+                                id: file.id,
+                                file_name: file.file.name,
+                                type: file.file.type,
+                                url: url
                             })
-                        }
-                    )
-                } else {
-                    this.$toast.open({
-                        message: 'Hanya Bisa Mengirim 1 File.',
-                        type: 'warning',
-                        position: 'top'
-                    });
-                }
+                        })
+                    }
+                )
             } catch (error) {
                 console.log(error.message);
             }
         },
-        fileLimit() {
-            const del = document.querySelector(".trix-button--icon-attach");
-            if(this.files.length != 0){                
-                del.style.display = 'none'
-            } else {
-                del.style.display = ''
-            }
-        },
+        // fileLimit() {
+        //     const del = document.querySelector(".trix-button--icon-attach");
+        //     if(this.files.length != 0){                
+        //         del.style.display = 'none'
+        //     } else {
+        //         del.style.display = ''
+        //     }
+        // },
         hapusKomponenPengumuman() {
             this.isRemovePengumuman = true
         },
@@ -672,9 +665,8 @@ export default {
             this.periode_akhir = null
             this.itemBerita = []
         },
-        hapusFile(){
-            this.files = []
-            this.itemBerita.file = []
+        hapusFile(file){
+            this.files.splice(this.files.indexOf(file), 1)
         }
     }
 }
