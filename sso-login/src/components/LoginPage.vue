@@ -57,12 +57,12 @@ export default {
                                 if(response.status == 200) {
                                   if(response.data.role == 'MAHASISWA'){
                                     if(response.data.id_telegram !== null && response.data.id_telegram !== ''){
-                                      this.$router.replace("/listmenu")
+                                      this.$router.replace("/listmenu").then(() => { this.$router.go() })
                                     } else {
                                       this.$router.replace("/formpage")
                                     }
                                   } else if (response.data.role == 'DOSEN') {
-                                    this.$router.replace("/listmenu")
+                                    this.$router.replace("/listmenu").then(() => { this.$router.go() })
                                   }
                                 } else if(response.status == 404) {
                                   this.$toast.open({

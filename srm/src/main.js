@@ -13,6 +13,9 @@ import 'vue-toast-notification/dist/theme-bootstrap.css';
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css';
 import "core-js/actual/array/group-by"
+import moment from 'moment'
+
+Vue.prototype.moment = moment
 
 Vue.component('v-select', vSelect)
 

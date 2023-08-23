@@ -7,7 +7,7 @@
             Kembali
         </b-button>
         <p class="judul">SRM FTI UKDW</p>
-        <b-skeleton-wrapper :loading="loading">
+        <b-skeleton-wrapper :loading="loading" class="mt-3">
             <template #loading>
                 <div>
                     <b-skeleton width="85%"></b-skeleton>
@@ -20,18 +20,18 @@
             <h6> Dosen Wali: {{dataPerwalian.nama_dosen}}</h6>
         </b-skeleton-wrapper>
         
-        <div class="accordion" role="tablist">
+        <div class="accordion mt-3" role="tablist">
+            <h1>Pengumuman</h1>
             <b-row>
                 <b-col v-if="pengumuman.length != 0">
-                    <h1>Pengumuman</h1>
                         <div v-if="!loadingPengumuman">
                             <div v-if="pengumuman.valid.length != 0">
                                 <b-card class="cardPengumuman" v-for="item in pengumuman.valid" :key="item._id"
                                     header-text-variant="white"
-                                    :footer="'Tanggal pengumuman berakhir: '+ item.periode_akhir">
+                                    :footer="'Berakhir pada '+ item.periode_akhir">
                                     <template #header>
                                         <div style="display: flex; color: black;">
-                                            {{ item.tanggal }}
+                                            Dibuat pada {{ item.tanggal }}
                                         </div>
                                     </template>
                                     <b-card-title class="cardTitle">
@@ -79,7 +79,14 @@
                         </div>
                 </b-col>
                 <b-col v-if="pengumuman.length == 0">
-                    <h3>Pengumman Kosong</h3>
+                    <div>
+                        <div class="desert">
+                            <h3 style="color: darkslategray; display: flex; margin: auto;">Pengumuman Kosong</h3>
+                            <div class="tumbleweed"></div>
+                            <div class="tumbleweed"></div>
+                            <div class="tumbleweed"></div>
+                        </div>
+                    </div>
                 </b-col>
             </b-row>
             <b-row style="margin-top: 2rem;">
@@ -127,18 +134,18 @@
                     </b-collapse>
                 </b-col>
             </b-row>
+<!-- CATATAN PERWALIAN -->
             <b-row style="margin-top: 2rem">
                 <b-col>
-                    <div v-if="loadingCatatan">
-                        <div v-if="loading" style="text-align:center;">
+                    <div v-if="loadingCatatan && pengumumanPerwalian.length != 0">
+                        <div style="text-align:center;">
                                 <div class="loadingio-spinner-ellipsis-f9g8sm63oof"><div class="ldio-mr6hs88yhu">
                             <div></div><div></div><div></div><div></div><div></div>
                             </div></div>
                         </div>
                     </div>
-                    <div v-if="!loadingCatatan">
-                        <h2 v-if="pengumumanPerwalian.length != 0">Catatan Perwalian {{ pengumumanPerwalian[0]?.kode_semester?.slice(0, 4) }}</h2> 
-                        <h2 v-if="pengumumanPerwalian.length == 0">Catatan Perwalian Kosong</h2>
+                    <div v-else-if="!loadingCatatan && pengumumanPerwalian.length != 0">
+                        <h2>Catatan Perwalian {{ pengumumanPerwalian[0]?.kode_semester?.slice(0, 4) }}</h2> 
                         <b-row>
                             <b-col style="display: flex;">
                                 <h4 v-if="pengumumanPerwalian[0]?.kode_semester?.slice(4, 5) == 1">Semester Gasal</h4>
@@ -157,6 +164,9 @@
                                 </b-card>
                             </div>
                         </div>
+                    </div>
+                    <div v-else>
+                        <h2 style="color: darkslategray;">Catatan Perwalian Kosong</h2>
                     </div>
                 </b-col>
             </b-row>
@@ -281,12 +291,12 @@ export default {
                     for(let i = 0; i < this.pengumuman.valid.length; i++){
                         // this.pengumuman[i].tanggal = this.pengumuman[i].tanggal.replaceAll('.',':')
                         this.pengumuman.valid[i].tanggal = moment(this.pengumuman.valid[i].tanggal).locale('id').format('lll')
-                        this.pengumuman.valid[i].periode_akhir = moment(this.pengumuman.valid[i].periode_akhir).locale('id').format('ll')
+                        this.pengumuman.valid[i].periode_akhir = moment(this.pengumuman.valid[i].periode_akhir).locale('id').format('lll')
                     }
                     for(let i = 0; i < this.pengumuman.archived.length; i++){
                         // this.pengumuman[i].tanggal = this.pengumuman[i].tanggal.replaceAll('.',':')
                         this.pengumuman.archived[i].tanggal = moment(this.pengumuman.archived[i].tanggal).locale('id').format('lll')
-                        this.pengumuman.archived[i].periode_akhir = moment(this.pengumuman.archived[i].periode_akhir).locale('id').format('ll')
+                        this.pengumuman.archived[i].periode_akhir = moment(this.pengumuman.archived[i].periode_akhir).locale('id').format('lll  ')
                     }
                     this.loadingPengumuman = false
                 })
@@ -553,4 +563,5 @@ h3{
 }
 .ldio-mr6hs88yhu div { box-sizing: content-box; }
 /* generated by https://loading.io/ */
+
 </style>

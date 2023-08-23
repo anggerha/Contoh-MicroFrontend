@@ -8,7 +8,7 @@
         </b-button>
         <h5>Form Data</h5>
         <b-form ref="formInput" class="form">
-            <b-form-group id="input-group-1" label="Jenis Jadwal" label-for="input-1">
+            <b-form-group v-if="tempForm.jenis_jadwal == null || this.id == null" id="input-group-1" label="Jenis Jadwal" label-for="input-1">
                 <b-form-select
                 id="input-1"
                 v-model="form.jenis_jadwal"
@@ -17,7 +17,16 @@
                 required
                 ></b-form-select>
             </b-form-group>
-<!-- Mata Kuliah -->
+            <b-form-group v-if="tempForm.jenis_jadwal != null && this.id != null" id="input-group-1" label="Jenis Jadwal" label-for="input-1">
+                <b-form-select
+                id="input-1"
+                v-model="tempForm.jenis_jadwal"
+                :options="optionKlasifikasi"
+                disabled
+                required
+                ></b-form-select>
+            </b-form-group>
+<!-- Ujian Mata Kuliah -->
             <div v-if="form.jenis_jadwal == 'jadwal_ujian_mata_kuliah'">
                 <b-form-group id="input-group-2" label="Jenis Ujian" label-for="input-2">
                     <b-form-select
@@ -207,7 +216,7 @@
                 <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
             </div>
 <!-- Informasi Umum -->
-            <div v-if="form.jenis_jadwal == 'informasi_umum'">
+            <!-- <div v-if="form.jenis_jadwal == 'informasi_umum'">
                 <b-form-group id="input-group-2" label="Topik Informasi Umum" label-for="input-2">
                     <b-form-select
                     id="input-2"
@@ -244,7 +253,7 @@
                 ></b-form-textarea>
                 </b-form-group>
 
-                <!-- <b-form-group id="input-group-4" label="Tanggal Mulai" label-for="input-4">
+                <b-form-group id="input-group-4" label="Tanggal Mulai" label-for="input-4">
                     <b-form-input
                     id="input-4"
                     v-model="form.tanggal_mulai"
@@ -262,12 +271,86 @@
                     placeholder="Tanggal Selesai"
                     required
                     ></b-form-input>
-                </b-form-group> -->
+                </b-form-group>
 
+                <b-button class="btn" @click="submit" variant="primary">Submit</b-button>
+                <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
+            </div> -->
+<!-- Jadwal Matakuliah -->  
+            <div v-if="form.jenis_jadwal == 'jadwal_mata_kuliah'">
+                <b-form-group id="input-group-2" label="Nama Matakuliah" label-for="input-2">
+                    <v-select label="nama_matkul" :options="listMatkul" v-model="form.selected" @input="namaKegiatan"></v-select>
+                </b-form-group>
+
+                <b-form-group
+                    id="input-group-3"
+                    label="Nama Kegiatan"
+                    label-for="input-3"
+                >
+                    <b-form-input
+                    id="input-3"
+                    v-model="form.nama_kegiatan"
+                    type="text"
+                    placeholder="Nama Kegiatan"
+                    readonly
+                    required
+                    ></b-form-input>
+                </b-form-group>
+
+                <div class="sesi-hari-jam" v-for="(mingguan, k) in form.jadwal_mingguan" :key="k">
+                    <b-form-group id="input-group-4" label="Hari" label-for="input-4">
+                        <b-form-select
+                        id="input-4"
+                        v-model="mingguan.hari"
+                        :options="listHari"
+                        @change="jamSesiFunction"
+                        required
+                        ></b-form-select>
+                    </b-form-group>
+
+                    <b-form-group id="input-group-5" label="Sesi" label-for="input-5">
+                        <b-form-select
+                        id="input-5"
+                        v-model="mingguan.sesi"
+                        :options="listSesi"
+                        @change="jamSesiFunction"
+                        required
+                        ></b-form-select>
+                    </b-form-group>
+                    
+                    <b-form-group id="input-group-7" label="Jam" label-for="input-7">
+                        <b-form-input id="input-7" v-model="mingguan.jam" label="Jam Mata Kuliah" required disabled></b-form-input>
+                    </b-form-group>
+
+                    <b-form-group id="input-group-6" label="Grup" label-for="input-6">
+                        <b-form-select
+                        id="input-6"
+                        v-model="mingguan.grup"
+                        :options="listGrup"
+                        required
+                        ></b-form-select>
+                    </b-form-group>
+                    <div class="button">
+                        <b-button id="lihat-detail" block @click="add(k)" v-show="k == form.jadwal_mingguan.length-1" type="button" class="tambahField">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                            </svg>
+                        </b-button>
+                    </div>
+                    <div class="button">
+                        <b-button id="hapus-pengumuman" block @click="remove(k)" v-show="k || ( !k && form.jadwal_mingguan.length > 1)" type="button" class="hapusField">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
+                                <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+                            </svg>
+                        </b-button>
+                    </div>
+                </div>
                 <b-button class="btn" @click="submit" variant="primary">Submit</b-button>
                 <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
             </div>
         </b-form>
+<!-- LIST -->
+<!-- List Jadwal Khusus -->
         <div>
             <b-row class="list">
                 <b-col cols="12" md="4" lg="3" xl="3">
@@ -303,15 +386,27 @@
                             <h6>{{item.nama_kegiatan}}</h6>
                             <div>
                                 <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
-                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
-                                <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-                                </svg> {{item.tanggal_mulai}} s.d {{item.tanggal_selesai}}
-                            </p>
+                                    <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                                    <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                                    </svg> {{ moment(item.tanggal_mulai).locale('id').format("DD-MM-YYYY") }} s.d {{ moment(item.tanggal_selesai).locale('id').format("DD-MM-YYYY") }}
+                                </p>
                             </div>
+                            <b-row class="listJadwalButton">
+                                <b-col class="button">
+                                    <b-button block id="edit-jadwal" type="button" class="editJadwal" @click="getJadwal(item)">
+                                        Edit
+                                    </b-button>
+                                </b-col>
+                                <b-col class="button">
+                                    <b-button block id="hapus-jadwal" type="button" class="hapusJadwal" @click="hapusJadwal(item)">
+                                        Hapus
+                                    </b-button>
+                                </b-col>
+                            </b-row>
                         </div>
                     </div>
                 </b-col>
-                <!-- list Jadwal Ujian -->
+<!-- list Jadwal Ujian -->
                 <b-col cols="12" md="4" lg="3" xl="3">
                     <h5 class="judul-kategori">List Jadwal Ujian</h5>
                     <b-row v-if="jumlahPageJadwalUjian !=null" class="pagination">
@@ -338,16 +433,25 @@
                                 <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
                                     <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
                                     <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-                                    </svg> {{item.tanggal_mulai}} s.d {{item.tanggal_selesai}}
+                                    </svg> {{ moment(item.tanggal_mulai).locale('id').format("DD-MM-YYYY") }} s.d {{ moment(item.tanggal_selesai).locale('id').format("DD-MM-YYYY") }}
                                 </p>
                             </div>
+                            <b-row class="listJadwalButton">
+                                <b-col class="button">
+                                    <b-button block id="edit-jadwal" type="button" class="editJadwal" @click="getJadwal(item)">
+                                        Edit
+                                    </b-button>
+                                </b-col>
+                                <b-col class="button">
+                                    <b-button block id="hapus-jadwal" type="button" class="hapusJadwal" @click="hapusJadwal(item)">
+                                        Hapus
+                                    </b-button>
+                                </b-col>
+                            </b-row>
                         </div>
                     </div>
-                    <div v-if="listJadwalUjian.length">
-
-                    </div>
                 </b-col>
-                <!-- list jadwal ujian matkul -->
+<!-- list jadwal ujian matkul -->
                 <b-col cols="12" md="4" lg="3" xl="3">
                     <h5 class="judul-kategori">List Jadwal Ujian Matakuliah</h5>
                     <b-row v-if="jumlahPageJadwalUjianMatkul !=null" class="pagination">
@@ -373,12 +477,24 @@
                             <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
                                 <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
                                 <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-                                </svg> {{item.tanggal_mulai}}
+                                </svg> {{ moment(item.tanggal_mulai).locale('id').format("DD-MM-YYYY") }}
                             </p>
                         </div>
+                        <b-row class="listJadwalButton">
+                            <b-col class="button">
+                                <b-button block id="edit-jadwal" type="button" class="editJadwal" @click="getJadwal(item)">
+                                    Edit
+                                </b-button>
+                            </b-col>
+                            <b-col class="button">
+                                <b-button block id="hapus-jadwal" type="button" class="hapusJadwal" @click="hapusJadwal(item)">
+                                    Hapus
+                                </b-button>
+                            </b-col>
+                        </b-row>
                     </div>
                 </b-col>
-                <!-- list jadwal pembayaran -->
+<!-- list jadwal pembayaran -->
                 <b-col cols="12" md="4" lg="3" xl="3">
                     <h5 class="judul-kategori">List Jadwal Pembayaran</h5>
                     <b-row v-if="jumlahPageJadwalPembayaran !=null" class="pagination">
@@ -404,12 +520,73 @@
                             <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
                                 <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
                                 <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-                                </svg> {{item.tanggal_mulai}} s.d {{item.tanggal_selesai}}
+                                </svg> {{ moment(item.tanggal_mulai).locale('id').format("DD-MM-YYYY") }} s.d {{ moment(item.tanggal_selesai).locale('id').format("DD-MM-YYYY") }}
                             </p>
                         </div>
+                        <b-row class="listJadwalButton">
+                            <b-col class="button">
+                                <b-button block id="edit-jadwal" type="button" class="editJadwal" @click="getJadwal(item)">
+                                    Edit
+                                </b-button>
+                            </b-col>
+                            <b-col class="button">
+                                <b-button block id="hapus-jadwal" type="button" class="hapusJadwal" @click="hapusJadwal(item)">
+                                    Hapus
+                                </b-button>
+                            </b-col>
+                        </b-row>
                     </div>
                 </b-col>
-                <!-- list informasi umum -->
+<!-- list jadwal mata kuliah -->
+                <b-col cols="12" md="4" lg="3" xl="3" class="mt-5">
+                    <h5 class="judul-kategori">List Jadwal Kelas Mata Kuliah</h5>
+                    <b-row v-if="jumlahPageJadwalMataKuliah !=null" class="pagination">
+                        <b-col>
+                            <b-button class="page" id="prev" :disabled="pageJadwalMataKuliah <=1" @click="pageJadwalMataKuliah -=1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                </svg>
+                            </b-button>
+                        </b-col>
+                        <b-col style="text-align:center; margin:auto;">
+                            {{pageJadwalMataKuliah}}/{{Math.ceil(jumlahPageJadwalMataKuliah)}}
+                        </b-col>
+                        <b-col>
+                            <b-button class="page" id="next" :disabled="pageJadwalMataKuliah >= jumlahPageJadwalMataKuliah" @click="pageJadwalMataKuliah +=1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </b-button>
+                        </b-col>
+                    </b-row>
+                    <div v-for="item in listJadwalMataKuliah" :key="item._id" class="listCard shadow p-3 mb-2 bg-white rounded">
+                        <div class="isiList" >   
+                            <h6>{{item.nama_kegiatan}} - {{ item.selected.kode_matkul }}</h6>
+                            <div v-for="i in item.jadwal_mingguan" :key="i.grup" class="grup-jadwal-mingguan">
+                                <div class="jadwal-mingguan">
+                                    Grup {{ i.grup.toUpperCase() }}
+                                </div>
+                                <div class="jadwal-mingguan">
+                                    Sesi {{ i.sesi }}
+                                </div>
+                                <div class="jadwal-mingguan">
+                                    {{ i.hari.toUpperCase() }}
+                                </div>
+                            </div>
+                        </div>
+                        <b-row class="listJadwalButton">
+                            <b-col class="button">
+                                <b-button block id="edit-jadwal" type="button" class="editJadwal" @click="getJadwal(item)">
+                                    Edit
+                                </b-button>
+                            </b-col>
+                            <b-col class="button">
+                                <b-button block id="hapus-jadwal" type="button" class="hapusJadwal" @click="hapusJadwal(item)">
+                                    Hapus
+                                </b-button>
+                            </b-col>
+                        </b-row>
+                    </div>
+                </b-col>
+<!-- list informasi umum -->
                 <!-- <b-col cols="12">
                     <h5 class="judul-kategori">List Informasi Umum</h5>
                     <b-row v-if="jumlahPageJadwalPembayaran !=null" class="pagination">
@@ -447,12 +624,13 @@
 
 <script>
 import axios from 'axios';
-import moment from 'moment';
+// import moment from 'moment';
 
 export default {
     name: 'FormData',
     data(){
         return {
+            id: null,
             firebaseUID: '',
             form: {
                 jenis_jadwal: null,
@@ -462,16 +640,69 @@ export default {
                 tanggal_mulai: '',
                 tanggal_selesai: '',
                 attachment: null,
-                // pertanyaan: '',
-                // jawaban: ''
+                jadwal_mingguan: [
+                    {
+                        hari: null,
+                        sesi: null,
+                        jam: null,
+                        grup: null
+                    }
+                ]
+            },
+            tempForm: {
+                jenis_jadwal: null,
+                topik_jadwal: null,
+                nama_kegiatan: '',
+                selected: { nama_matkul: ''},
+                tanggal_mulai: '',
+                tanggal_selesai: '',
+                attachment: null,
+                jadwal_mingguan: [
+                    {
+                        hari: null,
+                        sesi: null,
+                        jam: null,
+                        grup: null
+                    }
+                ]
             },
             optionKlasifikasi: [
                 { text: 'Pilih Jenis Jadwal', value: null, disabled: true },
-                { text: 'Jadwal Ujian Mata Kuliah', value: 'jadwal_ujian_mata_kuliah' },
                 { text: 'Jadwal Khusus', value: 'jadwal_khusus' },
                 { text: 'Jadwal Ujian', value: 'jadwal_ujian' },
+                { text: 'Jadwal Ujian Mata Kuliah', value: 'jadwal_ujian_mata_kuliah' },
                 { text: 'Pembayaran', value: 'pembayaran' },
+                { text: 'Jadwal Mata Kuliah', value: 'jadwal_mata_kuliah' }
                 // { text: 'Informasi Umum', value: 'informasi_umum' }
+            ],
+            listSesi: [
+                { text: 'Pilih Sesi', value: null, disabled: true },
+                { text: '1', value: 1},
+                { text: '2', value: 2},
+                { text: '3', value: 3},
+                { text: '4', value: 4},
+            ],
+            listHari: [
+                { text: 'Pilih Hari', value: null, disabled: true },
+                { text: 'Senin', value: 'senin'},
+                { text: 'Selasa', value: 'selasa'},
+                { text: 'Rabu', value: 'rabu'},
+                { text: 'Kamis', value: 'kamis'},
+                { text: 'Jumat', value: 'jumat'},
+            ],
+            listGrup: [
+                { text: 'Pilih Grup', value: null, disabled: true },
+                { text: 'A', value: 'a'},
+                { text: 'B', value: 'b'},
+                { text: 'C', value: 'c'},
+                { text: 'D', value: 'd'},
+                { text: 'E', value: 'e'},
+                { text: 'F', value: 'f'},
+                { text: 'G', value: 'g'},
+                { text: 'H', value: 'h'},
+                { text: 'I', value: 'i'},
+                { text: 'J', value: 'j'},
+                { text: 'K', value: 'k'},
             ],
             optionTopik: [],
             listMatkul: [],
@@ -479,6 +710,7 @@ export default {
             listJadwalUjianMatkul: [],
             listJadwalKhusus: [],
             listJadwalPembayaran: [],
+            listJadwalMataKuliah: [],
             isMobile: false,
             jumlahPageJadwalKhusus: null,
             pageJadwalKhusus: 1,
@@ -487,7 +719,9 @@ export default {
             jumlahPageJadwalUjianMatkul: null,
             pageJadwalUjianMatkul: 1,
             jumlahPageJadwalPembayaran: null,
-            pageJadwalPembayaran: 1
+            pageJadwalPembayaran: 1,
+            jumlahPageJadwalMataKuliah: null,
+            pageJadwalMatakuliah: 1
         }
     },
     created() {
@@ -498,9 +732,52 @@ export default {
             this.getListJadwalPembayaran()
             this.getListJadwalUjian()
             this.getListJadwalUjianMatkul()
+            this.getListJadwalMataKuliah()
         }
     },
     methods: {
+        add() {
+            this.form.jadwal_mingguan.push({
+                hari: null,
+                sesi: null,
+                jam: null,
+                grup: null
+            })
+        },
+        remove(index) {
+            this.form.jadwal_mingguan.splice(index, 1)
+        },
+        jamSesiFunction() {
+            for(var i = 0; i < this.form.jadwal_mingguan.length; i++){
+                if(this.form.jadwal_mingguan[i].hari != null && this.form.jadwal_mingguan[i].hari){
+                    if(this.form.jadwal_mingguan[i].hari == 'senin') { // JAM SESI UNTUK HARI SENIN
+                        if(this.form.jadwal_mingguan[i].sesi && this.form.jadwal_mingguan[i].sesi != null){
+                            if(this.form.jadwal_mingguan[i].sesi == 1){ 
+                                this.form.jadwal_mingguan[i].jam = '08.30 - 11.20 WIB'
+                            } else if(this.form.jadwal_mingguan[i].sesi == 2){
+                                this.form.jadwal_mingguan[i].jam = '11.30 - 14.20 WIB'
+                            } else if(this.form.jadwal_mingguan[i].sesi == 3){
+                                this.form.jadwal_mingguan[i].jam = '14.30 - 17.20 WIB'
+                            } else if(this.form.jadwal_mingguan[i].sesi == 4){
+                                this.form.jadwal_mingguan[i].jam = '17.30 - 20.20 WIB'
+                            }
+                        }
+                    } else {
+                        if(this.form.jadwal_mingguan[i].sesi && this.form.jadwal_mingguan[i].sesi != null){
+                            if(this.form.jadwal_mingguan[i].sesi == 1){ 
+                                this.form.jadwal_mingguan[i].jam = '07.30 - 10.20 WIB'
+                            } else if(this.form.jadwal_mingguan[i].sesi == 2){
+                                this.form.jadwal_mingguan[i].jam = '10.30 - 13.20 WIB'
+                            } else if(this.form.jadwal_mingguan[i].sesi == 3){
+                                this.form.jadwal_mingguan[i].jam = '13.30 - 16.20 WIB'
+                            } else if(this.form.jadwal_mingguan[i].sesi == 4){
+                                this.form.jadwal_mingguan[i].jam = '16.30 - 19.20 WIB'
+                            }
+                        }
+                    }
+                }
+            }
+        },
         kembali() {
             this.$router.replace('/srm/AdminPage')
         },
@@ -520,10 +797,10 @@ export default {
             try {
                 await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/jadwal-ujian`).then((response)=>{
                     this.listJadwalUjian = response.data.reverse()
-                    for(var i=0; i < this.listJadwalUjian.length; i++){
-                        this.listJadwalUjian[i].tanggal_mulai = moment(this.listJadwalUjian[i].tanggal_mulai).locale('id').format("DD-MM-YYYY")
-                        this.listJadwalUjian[i].tanggal_selesai = moment(this.listJadwalUjian[i].tanggal_selesai).locale('id').format("DD-MM-YYYY")
-                    }
+                    // for(var i=0; i < this.listJadwalUjian.length; i++){
+                    //     this.listJadwalUjian[i].tanggal_mulai = moment(this.listJadwalUjian[i].tanggal_mulai).locale('id').format("DD-MM-YYYY")
+                    //     this.listJadwalUjian[i].tanggal_selesai = moment(this.listJadwalUjian[i].tanggal_selesai).locale('id').format("DD-MM-YYYY")
+                    // }
                     this.jumlahPageJadwalUjian = this.listJadwalUjian.length/5
                     this.pageJadwalUjian = 1
                 })
@@ -537,7 +814,7 @@ export default {
                     this.listJadwalUjianMatkul = response.data.reverse()
                     this.jumlahPageJadwalUjianMatkul = this.listJadwalUjianMatkul.length/5
                     this.pageJadwalUjianMatkul = 1
-                    // console.log(response.data);
+                    // console.log(this.listJadwalUjianMatkul);
                 })
             } catch (error) {
                 console.log(error);
@@ -547,10 +824,10 @@ export default {
             try {
                 await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/jadwal-khusus`).then((response)=>{
                     this.listJadwalKhusus = response.data.reverse()
-                    for(var i=0; i < this.listJadwalKhusus.length; i++){
-                        this.listJadwalKhusus[i].tanggal_mulai = moment(this.listJadwalKhusus[i].tanggal_mulai).locale('id').format("DD-MM-YYYY")
-                        this.listJadwalKhusus[i].tanggal_selesai = moment(this.listJadwalKhusus[i].tanggal_selesai).locale('id').format("DD-MM-YYYY")
-                    }
+                    // for(var i=0; i < this.listJadwalKhusus.length; i++){
+                    //     this.listJadwalKhusus[i].tanggal_mulai = moment(this.listJadwalKhusus[i].tanggal_mulai).locale('id').format("DD-MM-YYYY")
+                    //     this.listJadwalKhusus[i].tanggal_selesai = moment(this.listJadwalKhusus[i].tanggal_selesai).locale('id').format("DD-MM-YYYY")
+                    // }
                     this.jumlahPageJadwalKhusus = this.listJadwalKhusus.length/5
                     this.pageJadwalKhusus = 1
                     // console.log(this.listJadwalKhusus);
@@ -565,6 +842,18 @@ export default {
                     this.listJadwalPembayaran = response.data.reverse()
                     this.jumlahPageJadwalPembayaran = this.listJadwalPembayaran.length/5
                     this.pageJadwalPembayaran = 1
+                    // console.log(this.listJadwalPembayaran);
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getListJadwalMataKuliah(){
+            try {
+                await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/jadwal-kelas`).then((response) => {
+                    this.listJadwalMataKuliah = response.data.reverse()
+                    this.jumlahPageJadwalMataKuliah = this.listJadwalMataKuliah.length/5
+                    this.pageJadwalMataKuliah = 1
                 })
             } catch (error) {
                 console.log(error);
@@ -572,33 +861,89 @@ export default {
         },
         async submit() {
             try {
-                await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-jadwal`, this.form).then((response) => {
-                    this.$toast.open({
-                        message: 'Form ' + this.form.nama_kegiatan + ' Berhasil Disimpan',
-                        type: 'success',
-                        position: 'top'
-                    });
-                    if(this.form.jenis_jadwal == 'jadwal_ujian_mata_kuliah'){
-                        // console.log(response);
-                        this.getListJadwalUjianMatkul()
-                    }else if(this.form.jenis_jadwal == 'jadwal_ujian'){
-                        this.getListJadwalUjian()
-                    }else if(this.form.jenis_jadwal =='jadwal_khusus'){
-                        this.getListJadwalKhusus()
-                    }else if(this.form.jenis_jadwal == 'pembayaran'){
-                        this.getListJadwalPembayaran()
-                    }else{
-                        console.log(response);
-                    }
-                    this.form.jenis_jadwal = null,
-                    this.form.topik_jadwal = '',
-                    this.form.nama_kegiatan = '',
-                    this.form.selected = { nama_matkul: ''},
-                    this.form.tanggal_mulai = '',
-                    this.form.tanggal_selesai = '',
-                    this.form.attachment = null
-
-                })
+                if(this.tempForm.jenis_jadwal == '' || this.tempForm.jenis_jadwal == null || this.id == null){
+                    console.log('Tambah Baru');
+                    await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-jadwal`, this.form).then((response) => {
+                        this.$toast.open({
+                            message: 'Form ' + this.form.nama_kegiatan + ' Berhasil Disimpan',
+                            type: 'success',
+                            position: 'top'
+                        });
+                        if(this.form.jenis_jadwal == 'jadwal_ujian_mata_kuliah'){
+                            this.getListJadwalUjianMatkul()
+                        }else if(this.form.jenis_jadwal == 'jadwal_ujian'){
+                            this.getListJadwalUjian()
+                        }else if(this.form.jenis_jadwal =='jadwal_khusus'){
+                            this.getListJadwalKhusus()
+                        }else if(this.form.jenis_jadwal == 'pembayaran'){
+                            this.getListJadwalPembayaran()
+                        }else{
+                            console.log(response);
+                        }
+                        this.form.jenis_jadwal = null,
+                        this.form.topik_jadwal = '',
+                        this.form.nama_kegiatan = '',
+                        this.form.selected = { nama_matkul: ''},
+                        this.form.tanggal_mulai = '',
+                        this.form.tanggal_selesai = '',
+                        this.form.attachment = null,
+                        this.form.jadwal_mingguan = [
+                            {
+                                hari: null,
+                                sesi: null,
+                                jam: null,
+                                grup: null
+                            }
+                        ]
+                    })
+                } else if (this.tempForm.jenis_jadwal != '' || this.tempForm.jenis_jadwal != null || this.id != null) {
+                    console.log('Edit');
+                    var id = this.id
+                    await axios.put(`http://localhost:10003/admin/${this.firebaseUID.uid}/edit-jadwal/${id}`, {
+                        jenis_jadwal: this.form.jenis_jadwal,
+                        topik_jadwal: this.form.topik_jadwal,
+                        nama_kegiatan: this.form.nama_kegiatan,
+                        selected: this.form.selected,
+                        tanggal_mulai: this.form.tanggal_mulai,
+                        tanggal_selesai: this.form.tanggal_selesai,
+                        attachment: this.form.attachment,
+                        jadwal_mingguan: this.form.jadwal_mingguan
+                    }).then((response) => {
+                        this.$toast.open({
+                            message: 'Form ' + this.form.nama_kegiatan + ' Berhasil Diedit',
+                            type: 'success',
+                            position: 'top'
+                        });
+                        if(this.form.jenis_jadwal == 'jadwal_ujian_mata_kuliah'){
+                            this.getListJadwalUjianMatkul()
+                        }else if(this.form.jenis_jadwal == 'jadwal_ujian'){
+                            this.getListJadwalUjian()
+                        }else if(this.form.jenis_jadwal =='jadwal_khusus'){
+                            this.getListJadwalKhusus()
+                        }else if(this.form.jenis_jadwal == 'pembayaran'){
+                            this.getListJadwalPembayaran()
+                        }else{
+                            console.log(response);
+                        }
+                        this.form.jenis_jadwal = null,
+                        this.form.topik_jadwal = '',
+                        this.form.nama_kegiatan = '',
+                        this.form.selected = { nama_matkul: ''},
+                        this.form.tanggal_mulai = '',
+                        this.form.tanggal_selesai = '',
+                        this.form.attachment = null,
+                        this.form.jadwal_mingguan = [
+                            {
+                                hari: null,
+                                sesi: null,
+                                jam: null,
+                                grup: null
+                            }
+                        ]
+                        this.tempForm.jenis_jadwal = null
+                        this.id = null
+                    })
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -610,7 +955,29 @@ export default {
             this.form.selected = { nama_matkul: ''},
             this.form.tanggal_mulai = '',
             this.form.tanggal_selesai = '',
-            this.form.attachment = null
+            this.form.attachment = null,
+            this.form.jadwal_mingguan = [{
+                hari: null,
+                sesi: null,
+                jam: null,
+                grup: null
+            }]
+
+            this.tempForm.jenis_jadwal = null,
+            this.tempForm.topik_jadwal = null,
+            this.tempForm.nama_kegiatan = '',
+            this.tempForm.selected = { nama_matkul: ''},
+            this.tempForm.tanggal_mulai = '',
+            this.tempForm.tanggal_selesai = '',
+            this.tempForm.attachment = null,
+            this.tempForm.jadwal_mingguan = [{
+                hari: null,
+                sesi: null,
+                jam: null,
+                grup: null
+            }]
+
+            this.id = null
         },
         optionType(){
             this.form.topik_jadwal = null,
@@ -626,7 +993,8 @@ export default {
                     { text: 'Kuliah Umum', value: 'kuliah_umum' },
                     { text: 'Registrasi', value: 'registrasi' },
                     { text: 'Wisuda', value: 'wisuda' },
-                    { text: 'Perwalian', value: 'perwalian' }
+                    { text: 'Perwalian', value: 'perwalian' },
+                    { text: 'P2KMM', value: 'p2kmm'}
                 ]
             } else if (this.form.jenis_jadwal == 'jadwal_ujian_mata_kuliah'){
                 this.optionTopik = [
@@ -659,12 +1027,110 @@ export default {
             // }
         },
         namaKegiatan() {
-            if(this.form.topik_jadwal != '' && this.form.topik_jadwal != null && this.form.selected != null){
-                if(this.form.selected ){
-                    this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase() + ' ' + this.form.selected.nama_matkul
-                } else {
-                    this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase()
+            if(this.form.jenis_jadwal == 'jadwal_ujian_mata_kuliah'){
+                if(this.form.topik_jadwal != '' && this.form.topik_jadwal != null && this.form.selected != null){
+                    if(this.form.selected ){
+                        this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase() + ' ' + this.form.selected.nama_matkul
+                    } else {
+                        this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase()
+                    }
                 }
+            } else if(this.form.jenis_jadwal == 'jadwal_mata_kuliah'){
+                if(this.form.selected.nama_matkul != ''){
+                    if(this.form.selected ){
+                        this.form.nama_kegiatan = this.form.selected.nama_matkul
+                    }
+                }
+            }
+        },
+        async getJadwal(item){
+            console.log(item);
+            try {
+                if(item.id)
+                    this.id = item.id
+                if(item.jenis_jadwal != null && item.jenis_jadwal){
+                    this.tempForm.jenis_jadwal = item.jenis_jadwal
+                    this.form.jenis_jadwal = item.jenis_jadwal
+                    if(item.tipe_jadwal)
+                        this.optionType()
+                        this.form.topik_jadwal = item.tipe_jadwal
+                    if(item.nama_kegiatan)
+                        this.form.nama_kegiatan = item.nama_kegiatan
+                    if(item.selected)
+                        this.form.selected = item.selected
+                    if(item.tanggal_mulai)
+                        this.form.tanggal_mulai = item.tanggal_mulai
+                    if(item.tanggal_selesai)
+                        this.form.tanggal_selesai = item.tanggal_selesai
+                    if(item.attachment)
+                        this.form.attachment = item.attachment
+                    if(item.jadwal_mingguan)
+                        this.form.jadwal_mingguan = item.jadwal_mingguan
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async hapusJadwal(item){
+            console.log(item);
+            if(item.jenis_jadwal != null && item.jenis_jadwal){
+                this.tempForm.jenis_jadwal = item.jenis_jadwal
+                if(item.tipe_jadwal)
+                    this.optionType()
+                    this.tempForm.topik_jadwal = item.tipe_jadwal
+                if(item.nama_kegiatan)
+                    this.tempForm.nama_kegiatan = item.nama_kegiatan
+                if(item.selected)
+                    this.tempForm.selected = item.selected
+                if(item.tanggal_mulai)
+                    this.tempForm.tanggal_mulai = item.tanggal_mulai
+                if(item.tanggal_selesai)
+                    this.tempForm.tanggal_selesai = item.tanggal_selesai
+                if(item.attachment)
+                    this.tempForm.attachment = item.attachment
+                if(item.jadwal_mingguan)
+                    this.tempForm.jadwal_mingguan = item.jadwal_mingguan
+                await axios.delete(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/delete-jadwal/${item.id}`, { params: {
+                    jenis_jadwal: this.tempForm.jenis_jadwal,
+                    topik_jadwal: this.tempForm.topik_jadwal,
+                    nama_kegiatan: this.tempForm.nama_kegiatan,
+                    selected: this.tempForm.selected,
+                    tanggal_mulai: this.tempForm.tanggal_mulai,
+                    tanggal_selesai: this.tempForm.tanggal_selesai,
+                    attachment: this.tempForm.attachment,
+                    jadwal_mingguan: this.tempForm.jadwal_mingguan
+                }}).then(() => {
+                    this.$toast.open({
+                        message: 'Form ' + this.tempForm.nama_kegiatan + ' Berhasil Dihapus',
+                        type: 'success',
+                        position: 'top'
+                    });
+                    if(this.tempForm.jenis_jadwal == 'jadwal_ujian_mata_kuliah'){
+                        this.getListJadwalUjianMatkul()
+                    }else if(this.tempForm.jenis_jadwal == 'jadwal_ujian'){
+                        this.getListJadwalUjian()
+                    }else if(this.tempForm.jenis_jadwal =='jadwal_khusus'){
+                        this.getListJadwalKhusus()
+                    }else if(this.tempForm.jenis_jadwal == 'pembayaran'){
+                        this.getListJadwalPembayaran()
+                    }
+                    this.tempForm.jenis_jadwal = null,
+                    this.tempForm.topik_jadwal = '',
+                    this.tempForm.nama_kegiatan = '',
+                    this.tempForm.selected = { nama_matkul: ''},
+                    this.tempForm.tanggal_mulai = '',
+                    this.tempForm.tanggal_selesai = '',
+                    this.tempForm.attachment = null,
+                    this.tempForm.jadwal_mingguan = [
+                        {
+                            hari: null,
+                            sesi: null,
+                            jam: null,
+                            grup: null
+                        }
+                    ]
+                    this.id = null
+                })
             }
         }
     }
@@ -672,6 +1138,43 @@ export default {
 </script>
 
 <style scoped>
+.grup-jadwal-mingguan {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+}
+.button {
+    display: flex;
+    justify-content: center;
+}
+.listJadwalButton{
+    /* display: flex;
+    flex-direction: row; */
+}
+.button .tambahField{
+    color: #32a3df;
+    background-color: transparent;
+    border: none;
+}
+.button .hapusField{
+    color: #ee1010;
+    background-color: transparent;
+    border: none;
+}
+.button .editJadwal{
+    color: #32a3df;
+    background-color: transparent;
+    border: none;
+}
+.button .hapusJadwal{
+    color: #ee1010;
+    background-color: transparent;
+    border: none;
+}
+.sesi-hari-jam{
+    min-width: 100%;
+    display: flex;
+}
 .canvas{
     @media only screen and (max-width: 600px) {
         margin: 0 1rem;

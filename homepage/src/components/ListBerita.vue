@@ -1,31 +1,63 @@
 <template>
-<div>
-    <div v-if="loading" style="text-align:center; margin-top:15rem;">
-        <div class="loadingio-spinner-ellipsis-f9g8sm63oof"><div class="ldio-mr6hs88yhu">
-        <div></div><div></div><div></div><div></div><div></div>
-        </div></div>
-    </div>
-    <div style="width:100%" v-else>
-        <h5 style="font-size:calc(125% + 1vw); width:100%; text-align:center;" >Berita Informatika</h5>
-        <ul style="display: grid; grid-template-columns:repeat(auto-fit, minmax(400px,1fr)); padding:0;">
-            <li v-for="item in listBerita" :key="item._id" style="display:inline; padding: 10px;">
-                <div class="shadow p-0 mb-3 bg-white rounded">
-                    <div class="card-body">
-                        <p style=" font-size:calc(80% + 0.5vw);font-weight:bold;">{{item.judul_berita}}</p>
-                    <div v-html="item.isi_berita"></div>
-                    <span v-if="item.file.length != 0">Attachment: </span><br>
-                    <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
+    <div>
+        <h5 style="font-size:calc(125% + 1vw); width:100%; text-align:center;">Berita Informatika</h5>
+        <div class="form-row">
+            <div class="col-md-12">
+                <div class="form-inline mr-2" style="display: flex; justify-content: right;">
+                    <input v-model="keyword" class="form-control mr-sm-2" type="search" placeholder="Search by Judul" aria-label="Search" style="width: 20rem;">
+                </div>
+            </div>
+        </div>
+        <div v-if="loading && listBerita.length != 0" style="text-align:center; margin-top:15rem;">
+            <div class="loadingio-spinner-ellipsis-f9g8sm63oof"><div class="ldio-mr6hs88yhu">
+            <div></div><div></div><div></div><div></div><div></div>
+            </div></div>
+        </div>
+        <div v-else-if="listBerita.length == 0&& !loading">
+            <h3 style="font-size:calc(100% + 1vw); width:100%; text-align:center; color: darkslategray;" class="mt-10">Belum Ada Berita</h3>
+        </div>
+        <div class="centered" v-else>
+            <section class="cards">
+                <article class="card p-4 shadow p-2 mb-3 bg-white rounded" v-for="item in searchBerita" :key="item._id">
+                    <h3 style="border-left: #32a3df 5px solid; padding-left: 1rem;">{{ item.judul_berita }}</h3>
+                    <p v-html="item.isi_berita" style="text-align: justify;"></p>
+                    <div>
+                        <span v-if="item.file.length != 0">Attachment: </span><br>
+                        <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
                             <span><a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a></span>
                         </div>
                     </div>
-                    <div class="card-footer text-muted">
-                        {{item.tanggal}}
+                    <div class="footer ">
+                        <div class="mb-2 mt-4">
+                            Dibuat pada tanggal {{ item.tanggal }}
+                        </div>
                     </div>
-                </div>
-            </li>
-        </ul>
+                </article>
+            </section>
+        </div>
+        <!-- <div style="width:100%" v-else>
+            <h5 style="font-size:calc(125% + 1vw); width:100%; text-align:center;" >Berita Informatika</h5>
+            <ul style="display: grid; grid-template-columns:repeat(auto-fit, minmax(400px,1fr)); padding:0;">
+                <li v-for="item in listBerita" :key="item._id" style="display:inline; padding: 10px;">
+                    <div style="flex-grow: 1;" class="shadow p-0 mb-3 bg-white rounded">
+                        <div>
+                            <p style="font-size:calc(80% + 0.5vw);font-weight:bold;">{{item.judul_berita}}</p>
+                        </div>
+                        <div v-html="item.isi_berita" style="flex-grow: 1;"></div>
+                        <div >
+                            <span v-if="item.file.length != 0">Attachment: </span><br>
+                            <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
+                                <span><a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a></span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-muted">
+                            {{item.tanggal}}
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div> -->
     </div>
-</div>
     
 </template>
 
@@ -45,6 +77,7 @@ export default {
             dataDiri: [],
             listBerita: [],
             loading:true,
+            keyword: ''
         }
     },
     created() {
@@ -58,6 +91,7 @@ export default {
         async getBerita(){
             await axios.get(`https://beritaapi.fti.ukdw.ac.id/news`).then((response)=>{
                 this.listBerita = response.data
+                this.listBerita = JSON.parse(JSON.stringify(this.listBerita))
                 this.loading = false
             })
         },
@@ -69,11 +103,67 @@ export default {
                 this.getBerita()
             })
         },
+    },
+    computed: {
+        searchBerita(){
+            if(this.keyword != ''){
+                return this.listBerita.filter((item)=>{
+                    return this.keyword.toLowerCase().split(' ').every(v => item.judul_berita.toLowerCase().includes(v))
+                })
+            } else {
+                return this.listBerita
+            }
+        }
     }
 
 }
 </script>
+
 <style scoped>
+
+@media screen and (min-width: 480px) {
+    .card {
+       max-width: calc(25%);
+    }
+}
+ 
+@media screen and (max-width: 480px) {
+    .card {
+        max-width: calc(100%);
+    }
+}
+.centered{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    
+}
+.cards {
+    min-width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+ }
+ 
+.card {
+    align-content: space-evenly;
+    flex: 1 1 400px;
+    box-sizing: border-box;
+    margin: 1rem .5em;
+    position: relative; 
+    display: flex; 
+    flex-direction: column;
+    transition: ease-in-out 0.5s;
+}
+.card:hover{
+    transform: scale(1.05);
+}
+.card .footer{
+    flex: 1 1 auto;
+    position: relative; 
+    display: flex; 
+    flex-direction: column;
+    justify-content: flex-end;
+}
 @keyframes ldio-mr6hs88yhu {
    0% { transform: translate(12px,80px) scale(0); }
   25% { transform: translate(12px,80px) scale(0); }

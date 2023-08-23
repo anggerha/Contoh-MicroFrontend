@@ -141,8 +141,11 @@
                                 </b-row>
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.length != 0" readonly></b-input>
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.length == 0"></b-input>
-                                <VueTrix @trix-attachment-add="handleAttachmentChanges" @trix-attachment-remove="hapusFile" v-model="isiPengumuman" v-if="itemBerita.length != 0" :disabled-editor="true" @hook:mounted="hapusTool"/>
-                                <VueTrix @trix-attachment-add="handleAttachmentChanges" @trix-attachment-remove="hapusFile" v-model="isiPengumuman" v-if="itemBerita.length == 0" @hook:mounted="hapusTool"/>
+                                <VueTrix v-model="isiPengumuman" v-if="itemBerita.length != 0" :disabled-editor="true" @hook:mounted="hapusTool"/>
+                                <VueTrix v-model="isiPengumuman" v-if="itemBerita.length == 0" @hook:mounted="hapusTool"/>
+                                <b-form-file id="attachment" multiple ref="file-input" class="mb-2 mt-2" @change="handleAttachmentChanges" plain>
+                                    <label id="fileLabel">Choose file</label>
+                                </b-form-file>
                                 <span v-if="itemBerita.length != 0 || files.length != 0">Attachment: </span><br>
                                 <div v-show="itemBerita.file.length != 0" v-for="attachment in itemBerita.file" :key="attachment.id">
                                     <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
@@ -247,7 +250,7 @@
                             <div v-if="listPengumuman.length != 0 && isFilterActive">
                                 <ul class="daftar-pengumuman">
                                     <li v-for="item in hasilFilter.slice(page*10-10,page*10 )" :key="item._id" style="display:inline; padding: 5px;">
-                                        <b-container class="shadow p-2 mb-3 bg-white rounded" >
+                                        <b-container class="shadow p-2 mb-3 bg-white rounded">
                                             <div>
                                                 <div>
                                                     <b-col>
@@ -362,6 +365,9 @@ export default {
         }
     },
     methods: {
+        previewFiles(event) {
+            console.log(event.target.files);
+        },
         kodeSemesterFilter() {
             if(this.tahunAngkatan != '' && this.tahunAngkatan.length == 4){
                 this.daftarPerwalian = []
@@ -470,6 +476,8 @@ export default {
         hapusTool(){
             const del = document.querySelector(".trix-button-group--block-tools");
             del.style.display = 'none'
+            const attach = document.querySelector("span.trix-button-group.trix-button-group--file-tools")
+            attach.style.display = 'none'
         },
         hapusPengumuman(){
             this.judulPengumuman = ''
@@ -623,25 +631,28 @@ export default {
         },
         handleAttachmentChanges(event) {
             try {
-                var file = event.attachment
-                const storageRef = firebase.storage().ref(`${file.file.name}`).put(file.file)
-                storageRef.on("state_changed", snapshot => {
-                    this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
-                    // console.log(this.uploadValue); 
-                    const progress = document.querySelector("progress")
-                    progress.setAttribute("value",this.uploadValue)
-                }, error => {console.log(error)},
-                    () => {
-                        storageRef.snapshot.ref.getDownloadURL().then((url)=>{
-                            this.files.push({
-                                id: file.id,
-                                file_name: file.file.name,
-                                type: file.file.type,
-                                url: url
+                var file = event.target.files
+                console.log(file);
+                for(let i = 0; i < file.length; i++){
+                    const storageRef = firebase.storage().ref(`${file[i].name}`).put(file[i])
+                    storageRef.on("state_changed", snapshot => {
+                        this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
+                        console.log(file[i].name + ' ' +this.uploadValue); 
+                        // const progress = document.querySelector("progress")
+                        // progress.setAttribute("value",this.uploadValue)
+                    }, error => {console.log(error)},
+                        () => {
+                            storageRef.snapshot.ref.getDownloadURL().then((url)=>{
+                                this.files.push({
+                                    file_name: file[i].name,
+                                    type: file[i].type,
+                                    file_size: file[i].size,
+                                    url: url
+                                })
                             })
-                        })
-                    }
-                )
+                        }
+                    )
+                }
             } catch (error) {
                 console.log(error.message);
             }
@@ -690,6 +701,9 @@ export default {
     }
   
     
+}
+.form-file-text{
+    display: none;
 }
 .deleteFile{
     color: #ee1010;
