@@ -16,6 +16,7 @@
     "core-js": "^3.8.3",
     "firebase": "^8.10.0",
     "flowbite": "^1.5.0",
+    "moment": "^2.29.4",
     "node-sass": "^8.0.0",
     "postcss": "^8.4.21",
     "register-service-worker": "^1.7.2",

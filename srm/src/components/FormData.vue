@@ -872,7 +872,7 @@ export default {
         },
         async getListJadwalMataKuliah(){
             try {
-                await axios.get(`http://192.168.0.122:10003/admin/${this.firebaseUID.uid}/jadwal-kelas`).then((response) => {
+                await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/jadwal-kelas`).then((response) => {
                     this.listJadwalMataKuliah = response.data
                     this.jumlahPageJadwalMataKuliah = this.listJadwalMataKuliah.length/5
                     this.pageJadwalMataKuliah = 1
@@ -884,7 +884,7 @@ export default {
         async submit() {
             try {
                 if(this.tempForm.jenis_jadwal == '' || this.tempForm.jenis_jadwal == null || this.id == null){
-                    await axios.post(`http://192.168.0.122:10003/admin/${this.firebaseUID.uid}/new-jadwal`, this.form).then((response) => {
+                    await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-jadwal`, this.form).then((response) => {
                         this.$toast.open({
                             message: 'Form ' + this.form.nama_kegiatan + ' Berhasil Disimpan',
                             type: 'success',
@@ -922,7 +922,7 @@ export default {
                     })
                 } else if (this.tempForm.jenis_jadwal != '' || this.tempForm.jenis_jadwal != null || this.id != null) {
                     var id = this.id
-                    await axios.put(`http://192.168.0.122:10003/admin/${this.firebaseUID.uid}/edit-jadwal/${id}`, {
+                    await axios.put(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/edit-jadwal/${id}`, {
                         jenis_jadwal: this.form.jenis_jadwal,
                         topik_jadwal: this.form.topik_jadwal,
                         nama_kegiatan: this.form.nama_kegiatan,
@@ -1138,7 +1138,7 @@ export default {
                     this.tempForm.attachment = item.attachment
                 if(item.jadwal_mingguan)
                     this.tempForm.jadwal_mingguan = item.jadwal_mingguan
-                await axios.delete(`http://192.168.0.122:10003/admin/${this.firebaseUID.uid}/delete-jadwal/${item.id}`, { params: {
+                await axios.delete(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/delete-jadwal/${item.id}`, { params: {
                     jenis_jadwal: this.tempForm.jenis_jadwal,
                     topik_jadwal: this.tempForm.topik_jadwal,
                     nama_kegiatan: this.tempForm.nama_kegiatan,

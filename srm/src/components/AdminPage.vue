@@ -172,7 +172,7 @@
                         </b-row>
 <!-- LIST PENGUMUMAN -->
                         <div class="perwalian" v-if="daftarBerita.length != 0">
-                            <div v-if="daftarBerita[statusBerita] != null">
+                            <div v-if="daftarBerita[statusBerita]">
                                 <div class="centered">
                                     <section class="cards">
                                         <article class="card p-4 shadow p-2 mb-3 bg-white rounded" v-for="item in daftarBerita[statusBerita].slice(page*10-10,page*10 )" :key="item.id">
@@ -354,7 +354,6 @@ export default {
             this.page = 1
             this.jumlahPage = null
             this.getAllBerita()
-           
         },
         kembali() {
             this.$router.replace('/listMenu')
@@ -481,11 +480,11 @@ export default {
                                 type: 'success',
                                 position: 'top'
                             });
+                            this.getAllBerita()
                             this.isiPengumuman = ''
                             this.judulPengumuman = ''
                             this.periode_akhir = null
                             this.files = []
-                            this.getAllBerita()
                         })
                     }
                 } catch (error) {
@@ -520,12 +519,12 @@ export default {
                                     type: 'success',
                                     position: 'top'
                                 });
+                                this.getAllBerita()
                                 this.judulPengumuman = ''
                                 this.isiPengumuman = ''
                                 this.files = []
                                 this.isRemoveBerita = true
                                 this.itemBerita = []
-                                this.getAllBerita()
                             } else {
                                 this.$toast.open({
                                     dismissible: true,
@@ -570,20 +569,31 @@ export default {
             }
         },
         async getAllBerita(){
-            this.page = 1
-            this.jumlahPage = null
-            await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/berita`)
-            .then((response)=>{
-                this.daftarBerita = response.data
-                this.daftarBerita = this.daftarBerita.groupBy((berita) => {
-                    return berita.status
-                })
-                if(this.daftarBerita[this.statusBerita] == null){
-                    this.jumlahPage = null
-                }else{
-                    this.jumlahPage = this.daftarBerita[this.statusBerita].length/10
+            try {
+                this.page = 1
+                this.jumlahPage = null
+                if(this.statusBerita != null){
+                    await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/berita/${this.statusBerita}`)
+                    .then((response)=>{
+                        this.daftarBerita = response.data
+                        if(this.daftarBerita.length != 0){
+                            this.daftarBerita = this.daftarBerita.groupBy((berita) => {
+                                return berita.status
+                            })
+                            if(this.daftarBerita[this.statusBerita] == null){
+                                this.jumlahPage = null
+                            }else{
+                                this.jumlahPage = this.daftarBerita[this.statusBerita].length/10
+                            }
+                        } else if (this.daftarBerita.length == 0 || this.daftarBerita.length) {
+                            console.log('Berita Kosong');
+                        }
+                    })
                 }
-            })
+            // eslint-disable-next-line no-empty
+            } catch (error) {
+                this.daftarBerita = !this.daftarBerita[this.statusBerita]
+            }
         },
         handleAttachmentChanges(event) {
             try {

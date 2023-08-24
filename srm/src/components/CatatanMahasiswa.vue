@@ -82,7 +82,7 @@
                                                         <b-card-text>
                                                             {{ data.pembahasan }}
                                                         </b-card-text>
-                                                    <b-card-text class="small text-muted">Dikirim pada tanggal {{ data.tanggal}}</b-card-text>
+                                                    <b-card-text class="small text-muted">Dikirim pada tanggal {{ moment(data.tanggal).locale('id').format('lll') }}</b-card-text>
                                                 </b-card>
                                             </div>
                                         </div>
@@ -233,7 +233,7 @@ export default {
             try {
                 await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/log-mahasiswa/${this.dataPerwalian.nim}`, )
                 .then( async (response) => {
-                    this.logMahasiswa = response.data
+                    this.logMahasiswa = response.data.reverse()
                     this.logMahasiswaGrouped = this.logMahasiswa.groupBy((log) => {
                         return log.kode_semester
                     })

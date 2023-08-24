@@ -65,8 +65,6 @@
 
 import axios from 'axios'
 
-//import moment from 'moment';
-
 export default {
     name: 'ListBerita',
     compatConfig: { MODE: 3 },
