@@ -9,7 +9,6 @@
             Kembali
         </button>
             </tr>
-            {{ dataDiri }}
             <div class="form">
                 <tr class="avatar">
                     <img class="avatar" :src="firebaseUID.profilPicture" alt="Profile Picture">
