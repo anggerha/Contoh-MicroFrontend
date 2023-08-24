@@ -21,7 +21,7 @@
         </b-skeleton-wrapper>
         
         <div class="accordion mt-3" role="tablist">
-            <h1>Pengumuman</h1>
+            <h1>Pengumuman Perwalian</h1>
             <b-row>
                 <b-col v-if="pengumuman.length != 0">
                         <div v-if="!loadingPengumuman">
@@ -246,6 +246,8 @@ export default {
                     
                 }
             })
+        } else {
+            this.$router.replace('/login').then(() => { this.$router.go() })
         }
     },
     methods: {

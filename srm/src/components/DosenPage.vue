@@ -143,17 +143,28 @@
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.length == 0"></b-input>
                                 <VueTrix v-model="isiPengumuman" v-if="itemBerita.length != 0" :disabled-editor="true" @hook:mounted="hapusTool"/>
                                 <VueTrix v-model="isiPengumuman" v-if="itemBerita.length == 0" @hook:mounted="hapusTool"/>
-                                <b-form-file id="attachment" multiple ref="file-input" class="mb-2 mt-2" @change="handleAttachmentChanges" plain>
-                                    <label id="fileLabel">Choose file</label>
-                                </b-form-file>
-                                <span v-if="itemBerita.length != 0 || files.length != 0">Attachment: </span><br>
-                                <div v-show="itemBerita.file.length != 0" v-for="attachment in itemBerita.file" :key="attachment.id">
-                                    <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
+                                <div v-if="itemBerita.length != 0">
+                                    <b-form-file id="attachment" multiple ref="file-input" class="mb-2 mt-2" @change="handleAttachmentChanges" plain disabled>
+                                        <label id="fileLabel">Choose file</label>
+                                    </b-form-file>
+                                    <b-progress-bar v-if="uploadValue != 0 && uploadValue != 100" :label="label + '   ' + Math.round(uploadValue) + '%'" :value="uploadValue" variant="primary"></b-progress-bar>
+                                    <span v-if="files.length != 0">Attachment: </span><br>
+                                    <div v-show="files.length != 0" v-for="attachment in files" :key="attachment.id">
+                                        <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
+                                        <span>&nbsp;</span>
+                                    </div>
                                 </div>
-                                <div v-show="files.length != 0" v-for="attachment in files" :key="attachment.id">
-                                    <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
-                                    <span>&nbsp;</span>
-                                    <span><button class="deleteFile" @click="hapusFile(attachment)">&#10005;</button></span>
+                                <div v-else> 
+                                    <b-form-file id="attachment" multiple ref="file-input" class="mb-2 mt-2" @change="handleAttachmentChanges" plain>
+                                        <label id="fileLabel">Choose file</label>
+                                    </b-form-file>
+                                    <b-progress-bar v-if="uploadValue != 0 && uploadValue != 100" :label="label + '   ' + Math.round(uploadValue) + '%'" :value="uploadValue" variant="primary"></b-progress-bar>
+                                    <span v-if="files.length != 0">Attachment: </span><br>
+                                    <div v-show="files.length != 0" v-for="attachment in files" :key="attachment.id">
+                                        <a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a>
+                                        <span>&nbsp;</span>
+                                        <span><button class="deleteFile" @click="hapusFile(attachment)">&#10005;</button></span>
+                                    </div>
                                 </div>
                                 <p class="tanggalBerakhir">Tanggal Pengumuman Berakhir</p>
                                 <b-input required placeholder="Tanggal Berakhir" type="datetime-local" v-model="periode_akhir"></b-input>
@@ -185,7 +196,7 @@
                         <div style="display: flex; margin:auto;">
                             <div id="judulFilter">Tanggal&nbsp;Dibuat:&nbsp;</div>
                             <b-input required placeholder="Tanggal Berakhir" type="date" v-model="filterTanggal" id="filterTanggal" @change="convertFilter(filterTanggal)"></b-input>
-                            <div><b-button @click="resetFilter">reset</b-button></div>
+                            <div><b-button variant="danger" @click="resetFilter">reset</b-button></div>
                         </div>
                         <div v-if="loadingListPengumuman && !isPengumumanError"  style="text-align:center;">
                             <div class="loadingio-spinner-ellipsis-f9g8sm63oof"><div class="ldio-mr6hs88yhu">
@@ -222,7 +233,7 @@
                                                     <p style=" font-size:calc(85% + 0.5vw);font-weight:bold;border-bottom:1px solid #32a3df;">{{item.judul}}</p>
                                                       <div>{{item.tanggal.format('LLLL')}}</div>
                                                 <div v-html="item.pengumuman"></div>
-                                                <span v-if="item.file.length != 0">Attachment: </span><br>
+                                                <span v-if="item.file.length != 0">Attachment Pengumuman: </span><br>
                                                 <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
                                                     <span><a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a></span>
                                                 </div>
@@ -350,7 +361,9 @@ export default {
         itemBerita: [],
         tahunAngkatan: '',
 
-        kodeSemesterTerbaru: ''
+        kodeSemesterTerbaru: '',
+        uploadValue: 0,
+        label: ''
       }
     },
     // watch: {
@@ -362,6 +375,8 @@ export default {
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
             this.getLastKodeSemester()
+        } else {
+            this.$router.replace('/login').then(() => { this.$router.go() })
         }
     },
     methods: {
@@ -404,7 +419,7 @@ export default {
             this.showListMahasiswa = true
             this.showListPengumuman = false
             this.page = 1
-             this.jumlahPage = null
+            this.jumlahPage = null
         },
         toggleBerita() {
             this.showListMahasiswa = false
@@ -460,6 +475,9 @@ export default {
             this.isRemovePengumuman = false
             this.itemBerita = item
             this.periode_akhir = moment(item.periode_akhir).format('YYYY-MM-DDTHH:mm:ss')
+            if(this.itemBerita.file.length != 0){
+                this.files = item.file
+            }
             if(item.judul){
                 this.judulPengumuman = item.judul
                 this.isiPengumuman = item.pengumuman
@@ -486,70 +504,73 @@ export default {
             this.periode_akhir = null
         },
         async kirimTele(){
-            if(this.itemBerita.length != 0){
-                await axios.put(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/update-pengumuman/${this.itemBerita.id}`, {
-                    periode_akhir: moment(this.periode_akhir).locale('id').toString()
-                })
-                .then((response) => {
-                    if(response.status == 201){
-                        this.$toast.open({
-                            dismissible: true,
-                            duration:0,
-                            message: 'Pengumuman Berhasil Disimpan',
-                            type: 'success',
-                            position: 'top'
-                        });
-                        this.getAllPengumuman()
-                    } else {
-                        this.$toast.open({
-                            dismissible: true,
-                            duration:0,
-                            message: 'Pengumuman Gagal Disimpan pada ',
-                            type: 'warning',
-                            position: 'top'
-                        });
-                    }
-                })
-                
-            } else {
-                try {
-                    if(this.isiPengumuman == '' || this.judulPengumuman == '' || this.periode_akhir == null){
-                        this.$toast.open({
-                            message: 'Pengumuman Gagal Terkirim, semua field tidak boleh kosong',
-                            type: 'warning',
-                            position: 'top'
-                        });
-                    }else{
-                        await axios.post(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
-                            nama_dosen: this.profile.nama,
-                            email: this.profile.email,
-                            role: this.profile.role,
-                            kode_semester: this.kodeSemesterTerbaru,
-                            semester: this.kodeSemesterTerbaru.slice(4, 5),
-                            pengumuman: this.isiPengumuman,
-                            file: this.files,
-                            judul: this.judulPengumuman,
-                            periode_akhir: moment(this.periode_akhir).locale('id').toString()
-                            })
-                            .then(()=>{
-                                console.log(this.files);
-                                this.$toast.open({
-                                    dismissible: true,
-                                    duration:0,
-                                    message: 'Pengumuman Berhasil Terkirim pada '+ moment().locale('id').toString() ,
-                                    type: 'success',
-                                    position: 'top'
-                                });
-                                this.isiPengumuman = ''
-                                this.judulPengumuman = ''
-                                this.periode_akhir = null
-                                this.files = []
-                            })
+            try {
+                if(this.itemBerita.length != 0){
+                    await axios.put(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/update-pengumuman/${this.itemBerita.id}`, {
+                        periode_akhir: moment(this.periode_akhir).locale('id').toString()
+                    })
+                    .then((response) => {
+                        if(response.status == 201){
+                            this.$toast.open({
+                                dismissible: true,
+                                duration:0,
+                                message: 'Pengumuman Berhasil Disimpan',
+                                type: 'success',
+                                position: 'top'
+                            });
                             this.getAllPengumuman()
+                        } else {
+                            this.$toast.open({
+                                dismissible: true,
+                                duration:0,
+                                message: 'Pengumuman Gagal Disimpan pada ',
+                                type: 'warning',
+                                position: 'top'
+                            });
+                        }
+                    })
+                } else {
+                    try {
+                        if(this.isiPengumuman == '' || this.judulPengumuman == '' || this.periode_akhir == null){
+                            this.$toast.open({
+                                message: 'Pengumuman Gagal Terkirim, semua field tidak boleh kosong',
+                                type: 'warning',
+                                position: 'top'
+                            });
+                        }else{
+                            await axios.post(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
+                                nama_dosen: this.profile.nama,
+                                email: this.profile.email,
+                                role: this.profile.role,
+                                kode_semester: this.kodeSemesterTerbaru,
+                                semester: this.kodeSemesterTerbaru.slice(4, 5),
+                                pengumuman: this.isiPengumuman,
+                                file: this.files,
+                                judul: this.judulPengumuman,
+                                periode_akhir: moment(this.periode_akhir).locale('id').toString()
+                                })
+                                .then(()=>{
+                                    console.log(this.files);
+                                    this.$toast.open({
+                                        dismissible: true,
+                                        duration:0,
+                                        message: 'Pengumuman Berhasil Terkirim pada '+ moment().locale('id').toString() ,
+                                        type: 'success',
+                                        position: 'top'
+                                    });
+                                    this.isiPengumuman = ''
+                                    this.judulPengumuman = ''
+                                    this.periode_akhir = null
+                                    this.files = []
+                                })
+                                this.getAllPengumuman()
+                        }
+                    } catch (error) {
+                        console.log(error.response.data.message);
                     }
-                } catch (error) {
-                    console.log(error.response.data.message);
                 }
+            } catch (error) {
+                console.log(error);
             }
         },
         async getAllPengumuman(){
@@ -632,14 +653,12 @@ export default {
         handleAttachmentChanges(event) {
             try {
                 var file = event.target.files
-                console.log(file);
                 for(let i = 0; i < file.length; i++){
+                    this.uploadValue = 0
                     const storageRef = firebase.storage().ref(`${file[i].name}`).put(file[i])
                     storageRef.on("state_changed", snapshot => {
                         this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
-                        console.log(file[i].name + ' ' +this.uploadValue); 
-                        // const progress = document.querySelector("progress")
-                        // progress.setAttribute("value",this.uploadValue)
+                        this.label = file[i].name
                     }, error => {console.log(error)},
                         () => {
                             storageRef.snapshot.ref.getDownloadURL().then((url)=>{

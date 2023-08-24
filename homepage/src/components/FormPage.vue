@@ -24,8 +24,7 @@
                 <p>Cara mendapatkan Chat ID Telegram anda:</p>
                 <ol style="list-style-type: number; margin-left: 2rem">
                     <li>Buka <a href="https://t.me/srm_informatika_ukdw_bot" target="_blank">Bot SRM Informatika UKDW</a> di Telegram,</li>
-                    <li>Tekan START,</li>
-                    <li>Tekan pilihan MAHASISWA</li>
+                    <li>Tekan START</li>
                     <li>Masukkan NIM anda</li>
                     <li>Tunggu konfirmasi dari BOT</li>
                     <li>Tekan tombol SUBMIT pada halaman ini</li>
@@ -54,6 +53,8 @@ export default {
         if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
             this.check()
+        } else{
+            this.$router.replace('/login').then(() => { this.$router.go() })
         }
     },
     methods: {
