@@ -3,7 +3,7 @@
         <body class="bv-example-row">
             <b-row>
                 <b-col>
-                    <div class="shadow-lg p-3 mb-5 bg-white rounded-4">
+                    <div class="shadow-sm p-3 mb-5 bg-white rounded-4">
                         <b-row style="margin-bottom:1rem;">
                             <b-col>
                                 <h3>Catatan Mahasiswa </h3>
@@ -50,14 +50,31 @@
                                         <span v-if="itemMahasiswa[1] == 'admin'" style="margin-left: 0.5rem;">{{ dataPerwalian.nama_lengkap }}</span>
                                     </div>
                                 </b-col>
-                            </b-row>
-                            <b-row v-if="itemMahasiswa[1] == 'admin'">
-                                <b-col>
+                                <b-col v-if="itemMahasiswa[1] == 'admin'">
                                     <div class="email">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-envelope-fill" viewBox="0 0 16 16">
                                             <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z"/>
                                         </svg>
                                         <span  style="margin-left: 0.5rem;">{{ dataPerwalian.email }}</span>
+                                    </div>
+                                </b-col>
+                            </b-row>
+                            <b-row class="mt-3">
+                                <b-col>
+                                    <div class="nama">
+                                        <svg style="margin-top: .35rem;" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-badge-fill" viewBox="0 0 16 16">
+                                            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm4.5 0a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zM8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm5 2.755C12.146 12.825 10.623 12 8 12s-4.146.826-5 1.755V14a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-.245z"/>
+                                        </svg>
+                                        <b-form-select
+                                            id="input-2"
+                                            v-model="statusMahasiswa"
+                                            :options="optionStatusMahasiswa"
+                                            required
+                                            style="max-width: 20rem; margin: 0 .5rem;"
+                                        ></b-form-select>
+                                        <b-button pill class="shadow btn-general"> 
+                                            Simpan
+                                        </b-button>
                                     </div>
                                 </b-col>
                             </b-row>
@@ -189,6 +206,13 @@ export default {
     props: ['itemMahasiswa'],
     data() {
         return {
+            statusMahasiswa: null,
+            optionStatusMahasiswa: [ 
+                { text: 'Pilih status mahasiswa', value: null, disabled: true },
+                { text: 'Aktif', value: 'aktif' },
+                { text: 'Tidak Aktif', value: 'tidak_aktif' },
+                { text: 'Alumni', value: 'alumni' }
+            ],
             dataPerwalian: [],
             detailMahasiswa: [],
             logMahasiswa: [],
@@ -288,6 +312,19 @@ export default {
         margin: auto;
         max-width: 1500px;
     }
+}
+.btn-general{
+    background-color: white;
+    color: #32a3df;
+    transition: ease-in-out;
+    transition-duration: 300ms;
+    border-style: none;
+    transition-delay: 100ms;
+}
+.btn-general:hover{
+    background-color: #32a3df;
+    color: white;
+    border-style: none;
 }
 .btn-info{
     color: #32a3df;

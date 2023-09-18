@@ -18,23 +18,23 @@
             <b-row>
                 <b-col>
                     <div v-if="isRemoveCatatan == false">
-                        <CatatanMahasiswa :itemMahasiswa="itemMahasiswa"  :key="JSON.stringify(itemMahasiswa)" @clicked=onClickChildCatatan />
+                        <CatatanMahasiswa :itemMahasiswa="itemMahasiswa" :key="JSON.stringify(itemMahasiswa)" @clicked=onClickChildCatatan />
                     </div>
                     <b-row>
                         <b-col>
                             <div align="center" >
-                                <b-button block id="listMenuAdmin" @click="toggleBerita" :class="[showListBerita ? 'active':'']">List Pengumuman</b-button>
+                                <b-button block id="listMenuAdmin" class="shadow btn-general" @click="toggleBerita" :class="[showListBerita ? 'active':'']">List Pengumuman</b-button>
                             </div>
                        </b-col>
                        <b-col>
                             <div align="center">
-                                <b-button block id="listMenuAdmin" @click="toggle" :class="[showListMahasiswa ? 'active':'']">List Mahasiswa</b-button>
+                                <b-button block id="listMenuAdmin" class="shadow btn-general" @click="toggle" :class="[showListMahasiswa ? 'active':'']">List Mahasiswa</b-button>
                             </div>
                        </b-col>
                        
                     </b-row>
 <!-- LIST MAHASISWA DOSEN -->
-                    <div v-if="showListMahasiswa" class="listMahasiswa">
+                    <div v-if="showListMahasiswa" class="listMahasiswa mt-5">
                         <h4>Daftar Mahasiswa Informatika</h4>
                         <div v-if="loadingListMahasiswa" style="text-align:center;">
                             <div class="loadingio-spinner-ellipsis-f9g8sm63oof"><div class="ldio-mr6hs88yhu">
@@ -56,7 +56,7 @@
                             <div class="perwalian">
                                 <ul class="daftar-mahasiswa">
                                     <li v-for="item in daftarPerwalian.slice(page*12-12,page*12 )" :key="item.id" style="display:inline; padding: 5px;" >
-                                        <b-container class="shadow p-2 mb-3 bg-white rounded">
+                                        <b-container class="p-2 mb-3 bg-white rounded" style="border: 1px #f6f6f6 solid;">
                                             <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
                                                 <b-col cols="8">
                                                     <b-row>{{ item.nim }}</b-row>
@@ -66,8 +66,8 @@
                                                 <div class="justify-content-center">
                                                     <div class="button">
                                                         <a href="#catatanMahasiswa">
-                                                        <b-button block @click="sendDataCatatan(item,'admin')" style="margin: .2rem; justify-content: center;" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" type="button" class="send" >
-                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
+                                                        <b-button block @click="sendDataCatatan(item,'admin')" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" class="shadow-sm btn-general" >
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 576" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
                                                                 <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
                                                             </svg>
                                                                 &nbsp;Lihat Detail
@@ -78,14 +78,13 @@
                                         </b-container>
                                     </li>
                                 </ul>
-                                
                             </div>
                         </div>
                     </div>
 <!-- FORM PENGUMUMAN -->
-                    <div v-if="showListBerita" class="mt-10">
+                    <div v-if="showListBerita" class="mt-5">
                         <h4>Daftar Pengumuman</h4>
-                        <b-button block class="btn-buat-pengumuman" @click="tambahKomponenPengumuman" style="display:flex;justify-content:center;">
+                        <b-button block class="shadow btn-general" @click="tambahKomponenPengumuman" style="display:flex; justify-content:center; font-size: large;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                                 <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
@@ -144,7 +143,7 @@
                                         </b-button>
                                     </div>
                                     <div class="button">
-                                        <b-button class="send" @click="kirimTele">
+                                        <b-button class="shadow-sm btn-general" @click="kirimTele">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-send-fill" viewBox="0 0 16 16">
                                                 <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/>
                                             </svg>
@@ -191,7 +190,7 @@
                                                 <b-row >
                                                     <b-col>
                                                         <div class="button">
-                                                            <b-button id="lihat-detail" block @click="sendDataBerita(item)" style="margin: .2rem; justify-content: center;" type="button" class="send" >
+                                                            <b-button id="lihat-detail" block @click="sendDataBerita(item)" style="margin: .2rem; justify-content: center;" type="button" class="shadow-sm btn-general">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
                                                                     <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
                                                                 </svg>
@@ -689,6 +688,23 @@ export default {
     .card {
         max-width: calc(100%);
     }
+}
+
+.btn-general{
+    background-color: white;
+    color: #32a3df;
+    transition: ease-in-out;
+    transition-duration: 300ms;
+    border-style: none;
+    transition-delay: 100ms;
+}
+.btn-general:hover{
+    background-color: #32a3df;
+    color: white;
+    border-style: none;
+}
+a:hover{
+    text-decoration: none;
 }
 .centered{
     width: 100%;
