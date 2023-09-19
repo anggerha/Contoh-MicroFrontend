@@ -19,12 +19,12 @@
         <div class="centered" v-else>
             <section class="cards">
                 <article class="card p-4 shadow p-2 mb-3 bg-white rounded" v-for="item in searchBerita" :key="item._id">
-                    <h3 style="border-left: #32a3df 5px solid; padding-left: 1rem;">{{ item.judul_berita }}</h3>
+                    <h3 style="border-left: #32a3df 5px solid; padding-left: 1rem; font-size: 180%; font-weight: bold;">{{ item.judul_berita }}</h3>
                     <p v-html="item.isi_berita" style="text-align: justify;"></p>
                     <div>
                         <span v-if="item.file.length != 0">Attachment: </span><br>
                         <div v-show="item.file.length != 0" v-for="attachment in item.file" :key="attachment.id">
-                            <span><a :href="attachment.url" target="_blank">{{ attachment.file_name }}</a></span>
+                            <span><a :href="attachment.url" target="_blank" style="color: #32a3df;">{{ attachment.file_name }}</a></span>
                         </div>
                     </div>
                     <div class="footer ">

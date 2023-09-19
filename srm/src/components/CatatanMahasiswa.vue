@@ -59,7 +59,7 @@
                                     </div>
                                 </b-col>
                             </b-row>
-                            <b-row class="mt-3">
+                            <b-row class="mt-3" v-if="isAdmin">
                                 <b-col>
                                     <div class="nama">
                                         <svg style="margin-top: .35rem;" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-badge-fill" viewBox="0 0 16 16">
@@ -82,7 +82,7 @@
                             <div v-if="logMahasiswa.length != 0">
                                 <b-row style="margin-top: 1rem">
                                     <b-col>
-                                        <h2 v-if="logMahasiswa.length != 0">Catatan Perwalian {{ logMahasiswa[logMahasiswa.length-1]?.kode_semester?.slice(0, 4) }}</h2>
+                                        <h4 v-if="logMahasiswa.length != 0">Catatan Perwalian {{ logMahasiswa[logMahasiswa.length-1]?.kode_semester?.slice(0, 4) }}</h4>
                                         <b-row style="margin-bottom: 0.5rem;">
                                             <b-col style="display: flex;">
                                                 <h4 v-if="logMahasiswa[0]?.kode_semester?.slice(4, 5) == 1">Semester Gasal</h4>
