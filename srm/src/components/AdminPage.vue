@@ -17,9 +17,7 @@
         <body class="bv-example-row">
             <b-row>
                 <b-col>
-                    <div v-if="isRemoveCatatan == false">
-                        <CatatanMahasiswa :itemMahasiswa="itemMahasiswa" :key="JSON.stringify(itemMahasiswa)" @clicked=onClickChildCatatan />
-                    </div>
+                    
                     <b-row>
                         <b-col>
                             <div align="center" >
@@ -32,6 +30,13 @@
                             </div>
                        </b-col>
                        
+                    </b-row>
+                    <b-row class="mt-5">
+                        <b-col>
+                            <div v-if="isRemoveCatatan == false" id="catatanMahasiswa">
+                                <CatatanMahasiswa :itemMahasiswa="itemMahasiswa" :key="JSON.stringify(itemMahasiswa)" @clicked=onClickChildCatatan />
+                            </div>
+                        </b-col>
                     </b-row>
 <!-- LIST MAHASISWA DOSEN -->
                     <div v-if="showListMahasiswa" class="listMahasiswa mt-5">
@@ -53,20 +58,27 @@
                                     <b-button class="page" id="next" :disabled="page >= jumlahPage" @click="page +=1">next</b-button>
                                 </b-col>
                             </b-row>
+                            <b-row class="mt-2">
+                                <b-col>
+                                    <div class="form-inline" style="display: flex; justify-content: right;">
+                                        <input v-model="keyword" class="form-control" type="search" placeholder="Search by Nim" aria-label="Search" style="width: 20rem;">
+                                    </div>
+                                </b-col>
+                            </b-row>
                             <div class="perwalian">
                                 <ul class="daftar-mahasiswa">
-                                    <li v-for="item in daftarPerwalian.slice(page*12-12,page*12 )" :key="item.id" style="display:inline; padding: 5px;" >
-                                        <b-container class="p-2 mb-3 bg-white rounded" style="border: 1px #f6f6f6 solid;">
+                                    <li v-for="item in searchMahasiswa.slice(page*12-12,page*12 )" :key="item.id" style="display:inline; padding: 5px;" >
+                                        <b-container class="shadow-sm p-2 mb-3 rounded" style=" background-color: white">
                                             <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
                                                 <b-col cols="8">
-                                                    <b-row>{{ item.nim }}</b-row>
+                                                    <b-row><h5>{{ item.nim }} <b-badge variant="success">Success</b-badge></h5> </b-row>
                                                     <b-row>{{ item.nama_lengkap }}</b-row>
                                                 </b-col>
                                             </b-row>
                                                 <div class="justify-content-center">
                                                     <div class="button">
                                                         <a href="#catatanMahasiswa">
-                                                        <b-button block @click="sendDataCatatan(item,'admin')" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" class="shadow-sm btn-general" >
+                                                        <b-button block @click="sendDataCatatan(item,'admin')" data-toggle="tooltip" data-placement="top" title="Lihat Catatan Perwalian" class="btn-general" >
                                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 576" width="1.4rem" height="1.4rem" fill="currentColor" class="bi bi-send-fill">
                                                                 <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
                                                             </svg>
@@ -317,7 +329,8 @@ export default {
         isiPengumuman:'',
         judulPengumuman:'',
         uploadValue: 0,
-        label: ''
+        label: '',
+        keyword: ''
       }
     },
     created(){
@@ -325,6 +338,17 @@ export default {
             this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
         } else {
             this.$router.replace('/login').then(() => { this.$router.go() })
+        }
+    },
+    computed:{
+        searchMahasiswa(){
+            if(this.keyword != ''){
+                return this.daftarPerwalian.filter((item)=>{
+                    return this.keyword.toLowerCase().split(' ').every(v => item.nim.toLowerCase().includes(v))
+                })
+            } else {
+                return this.daftarPerwalian
+            }
         }
     },
     methods: {
