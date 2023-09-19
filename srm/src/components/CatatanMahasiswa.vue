@@ -6,7 +6,7 @@
                     <div class="shadow-sm p-3 mb-5 bg-white rounded-4">
                         <b-row style="margin-bottom:1rem;">
                             <b-col>
-                                <h3>Catatan Mahasiswa </h3>
+                                <h3 style="border-left: #32a3df 5px solid; padding-left: 1rem;">Catatan Mahasiswa </h3>
                             </b-col>
                             <b-col style="display: flex; justify-content: flex-end;">
                                 <div>
