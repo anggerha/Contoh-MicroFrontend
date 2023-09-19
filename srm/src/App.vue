@@ -18,19 +18,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.btn-general{
-    background-color: white;
-    color: #32a3df;
-    transition: ease-in-out;
-    transition-duration: 300ms;
-    border-style: none;
-    transition-delay: 100ms;
-}
-.btn-general:hover{
-    background-color: #32a3df;
-    color: white;
-    border-style: none;
-}
-</style>
