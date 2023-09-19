@@ -71,9 +71,9 @@
                                         <b-container class="shadow-sm p-2 mb-3 rounded" style=" background-color: white">
                                             <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
                                                 <b-col cols="8">
-                                                    <b-row v-if="item.status == 'aktif' "><h5>{{ item.nim }} <b-badge variant="success">{{item.status}}</b-badge></h5> </b-row>
-                                                    <b-row v-if="item.status == 'tidak_aktif' "><h5>{{ item.nim }} <b-badge variant="warning">{{item.status}}</b-badge></h5> </b-row>
-                                                    <b-row v-if="item.status == 'alumni' "><h5>{{ item.nim }} <b-badge variant="primary">{{item.status}}</b-badge></h5> </b-row>
+                                                    <b-row v-if="item.status == 'aktif' "><h5>{{ item.nim }} <b-badge variant="success">Aktif</b-badge></h5> </b-row>
+                                                    <b-row v-if="item.status == 'tidak_aktif' "><h5>{{ item.nim }} <b-badge variant="warning">Tidak Aktif</b-badge></h5> </b-row>
+                                                    <b-row v-if="item.status == 'alumni' "><h5>{{ item.nim }} <b-badge variant="primary">Alumni</b-badge></h5> </b-row>
                                                     <b-row v-if="item.status == null || !item.status"><h5>{{ item.nim }}</h5> </b-row>
                                                     <b-row>{{ item.nama_lengkap }}</b-row>
                                                 </b-col>
