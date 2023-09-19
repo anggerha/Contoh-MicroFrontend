@@ -154,8 +154,8 @@
                                             <div style="margin-top: 1rem; width: 100%;">
                                                 <ul style="display: grid; grid-template-columns:repeat(auto-fit, minmax(110px,1fr)); padding:0;">
                                                     <li v-for="item in kodeSemesterNilai" :key="item" style="display:inline; padding: 10px; ">
-                                                        <b-button class="tombolNilai" v-if="item.slice(4, 5) == 1" style="margin-bottom: 1rem; display:flex; width:6.5rem; " v-b-toggle="'accordion-' + item"><div style="float:left;">{{ item.slice(0, 4) }}</div> &nbsp;<div style="float:right;">Gasal</div> </b-button>
-                                                        <b-button class="tombolNilai" v-if="item.slice(4, 5) == 2" style="margin-bottom: 1rem; display:flex; width:6.5rem; " v-b-toggle="'accordion-' + item"><div style="float:left;">{{ item.slice(0, 4) }}</div> &nbsp;<div style="float:right;">Genap</div> </b-button>
+                                                        <b-button class="shadow-sm btn-general" v-if="item.slice(4, 5) == 1" style="margin-bottom: 1rem; display:flex; width:6.5rem; " v-b-toggle="'accordion-' + item"><div style="float:left;">{{ item.slice(0, 4) }}</div> &nbsp;<div style="float:right;">Gasal</div> </b-button>
+                                                        <b-button class="shadow-sm btn-general" v-if="item.slice(4, 5) == 2" style="margin-bottom: 1rem; display:flex; width:6.5rem; " v-b-toggle="'accordion-' + item"><div style="float:left;">{{ item.slice(0, 4) }}</div> &nbsp;<div style="float:right;">Genap</div> </b-button>
                                                     </li>
                                                 </ul>                                            
                                             </div>
