@@ -59,21 +59,36 @@
                                     </div>
                                 </b-col>
                             </b-row>
-                            <b-row class="mt-3">
+                            <b-row class="mt-3" >
                                 <b-col>
-                                    <div class="nama">
+                                    <div class="nama" v-if="dataPerwalian.status == null || !dataPerwalian.status || isUbahClicked">
                                         <svg style="margin-top: .35rem;" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-badge-fill" viewBox="0 0 16 16">
                                             <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm4.5 0a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zM8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm5 2.755C12.146 12.825 10.623 12 8 12s-4.146.826-5 1.755V14a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-.245z"/>
                                         </svg>
                                         <b-form-select
+                                            
                                             id="input-2"
                                             v-model="statusMahasiswa"
                                             :options="optionStatusMahasiswa"
                                             required
                                             style="max-width: 20rem; margin: 0 .5rem;"
                                         ></b-form-select>
-                                        <b-button pill class="shadow btn-general"> 
+                                        <b-button pill class="shadow btn-general" @click="setStatusMahasiswa"> 
                                             Simpan
+                                        </b-button>
+                                      
+                                            <!-- <p class="">{{dataPerwalian.status}} <b-badge variant="success">Aktif</b-badge></p> -->
+                                       
+                                    </div>
+                                    <div class="nama" v-if="dataPerwalian.status != null && !isUbahClicked">
+                                        <svg style="margin-top: .35rem;" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-badge-fill" viewBox="0 0 16 16">
+                                            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm4.5 0a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zM8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm5 2.755C12.146 12.825 10.623 12 8 12s-4.146.826-5 1.755V14a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-.245z"/>
+                                        </svg>
+                                        <span v-if="dataPerwalian.status == 'aktif' " style="margin:0 0.5rem; "><h5 class="mt-1" style="text-align: center;"><b-badge variant="success">Aktif</b-badge></h5></span>
+                                        <span v-if="dataPerwalian.status == 'tidak_aktif' " style="margin:0 0.5rem; "><h5 class="mt-1" style="text-align: center;"><b-badge variant="warning">Tidak Aktif</b-badge></h5></span>
+                                        <span v-if="dataPerwalian.status == 'alumni' " style="margin:0 0.5rem; "><h5 class="mt-1" style="text-align: center;"><b-badge variant="primary">Alumni</b-badge></h5></span>
+                                        <b-button pill size="sm"  class="shadow btn-general" @click="isUbahClicked = true"> 
+                                            Ubah Status
                                         </b-button>
                                     </div>
                                 </b-col>
@@ -223,7 +238,8 @@ export default {
             kodeSemesterNilai: [],
             kodeSemester: null,
             isAdmin: null,
-            loadingCatatanMahasiswa: true
+            loadingCatatanMahasiswa: true,
+            isUbahClicked: false,
         }
     },
     created(){
@@ -290,12 +306,28 @@ export default {
                 await axios.get(`https://userapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/view-mahasiswa/${this.dataPerwalian.nim}`)
                 .then((response) => {
                     this.detailMahasiswa = response.data
+                    console.log(this.detailMahasiswa);
                     this.nilaiGrouped = response.data.nilai.groupBy((nilai) => {
                         return nilai.kode_semester
                     })
                     this.kodeSemesterNilai = Object.keys(this.nilaiGrouped).reverse()
                 })
             } catch (error) {
+                console.log(error.message);
+            }
+        }, 
+        async setStatusMahasiswa(){
+            try{
+                await axios.post(`https://userapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/update-mahasiswa/${this.dataPerwalian.nim}`,{
+                    nama_mahasiswa: this.detailMahasiswa.biodata.nama,
+                    nama_lengkap: this.detailMahasiswa.biodata.nama_lengkap,
+                    status: this.statusMahasiswa
+                })
+                console.log('panggil bos');
+                this.statusMahasiswa = null
+                this.getDetailMahasiswa()
+            }
+            catch (error){
                 console.log(error.message);
             }
         },

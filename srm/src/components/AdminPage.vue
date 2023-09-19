@@ -68,10 +68,14 @@
                             <div class="perwalian">
                                 <ul class="daftar-mahasiswa">
                                     <li v-for="item in searchMahasiswa.slice(page*12-12,page*12 )" :key="item.id" style="display:inline; padding: 5px;" >
+                                        {{item.nim}}
                                         <b-container class="shadow-sm p-2 mb-3 rounded" style=" background-color: white">
                                             <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
                                                 <b-col cols="8">
-                                                    <b-row><h5>{{ item.nim }} <b-badge variant="success">Success</b-badge></h5> </b-row>
+                                                    <b-row v-if="item.status == 'aktif' "><h5>{{ item.nim }} <b-badge variant="success">{{item.status}}</b-badge></h5> </b-row>
+                                                    <b-row v-if="item.status == 'tidak_aktif' "><h5>{{ item.nim }} <b-badge variant="warning">{{item.status}}</b-badge></h5> </b-row>
+                                                    <b-row v-if="item.status == 'alumni' "><h5>{{ item.nim }} <b-badge variant="primary">{{item.status}}</b-badge></h5> </b-row>
+                                                    <b-row v-if="item.status == null || !item.status"><h5>{{ item.nim }}</h5> </b-row>
                                                     <b-row>{{ item.nama_lengkap }}</b-row>
                                                 </b-col>
                                             </b-row>
@@ -343,11 +347,25 @@ export default {
     computed:{
         searchMahasiswa(){
             if(this.keyword != ''){
-                return this.daftarPerwalian.filter((item)=>{
+
+                var temp = this.daftarPerwalian.filter((item)=>{
                     return this.keyword.toLowerCase().split(' ').every(v => item.nim.toLowerCase().includes(v))
+                    
                 })
+                return temp
+                
             } else {
                 return this.daftarPerwalian
+            }
+            
+        }
+    },
+    watch:{
+        searchMahasiswa:{
+            deep: true,
+            handler: function (newVal) {
+                this.jumlahPage = newVal.length/10
+                this.page = 1
             }
         }
     },
