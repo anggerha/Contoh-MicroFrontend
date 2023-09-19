@@ -68,7 +68,6 @@
                             <div class="perwalian">
                                 <ul class="daftar-mahasiswa">
                                     <li v-for="item in searchMahasiswa.slice(page*12-12,page*12 )" :key="item.id" style="display:inline; padding: 5px;" >
-                                        {{item.nim}}
                                         <b-container class="shadow-sm p-2 mb-3 rounded" style=" background-color: white">
                                             <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
                                                 <b-col cols="8">
