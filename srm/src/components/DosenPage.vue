@@ -52,6 +52,9 @@
                                 <b-form-select v-model="semester" :options="options" @change="kodeSemesterFilter"></b-form-select>
                             </b-col>
                             <b-col cols="auto" class="p-1">
+                                <input v-model="keyword" class="form-control" type="search" placeholder="Cari NIM, Nama, atau Status Mahasiswa" aria-label="Search" style="width: 20rem;">
+                            </b-col>
+                            <b-col cols="auto" class="p-1">
                                 <b-button variant="danger" @click="getLastKodeSemester">reset</b-button>
                             </b-col>
                         </b-row>
@@ -74,8 +77,8 @@
                             </b-row>
                             <div class="perwalian">
                                 <ul class="daftar-perwalian" v-if="daftarPerwalian.length != 0">
-                                    <li v-for="item in daftarPerwalian.slice(page*10-10,page*10 )" :key="item.id" style="display:inline; padding: 5px;">
-                                        <b-container class="shadow p-2 mb-3 bg-white rounded">
+                                    <li v-for="item in searchMahasiswa.slice(page*10-10,page*10 )" :key="item.id" style="display:inline; padding: 5px;">
+                                        <b-container class="shadow p-2 mb-3 bg-white rounded" v-if="searchMahasiswa.length != 0">
                                             <div>
                                                 <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap;">
                                                     <b-col cols="8">
@@ -109,6 +112,7 @@
                                             </div>
                                         </b-container>
                                     </li>
+                                    <li v-if="searchMahasiswa.length == 0" style="text-align: center;">Tidak Dapat Menemukan Data dengan Keyword {{ keyword }}</li>
                                 </ul>
                                 <ul style="margin: auto; text-align: center;" v-if="daftarPerwalian == 0">
                                     <h3>Daftar Perwalian Pada Tahun {{ tahunAngkatan }} Semester <span v-if="semester == 1">Ganjil</span> <span v-if="semester == 2">Genap</span> Kosong</h3>
@@ -387,7 +391,8 @@ export default {
             { text: 'Tidak Aktif', value: 'tidak_aktif' },
             { text: 'Alumni', value: 'alumni' }
         ],
-        statusPenerima: null
+        statusPenerima: null,
+        keyword: ''
       }
     },
     // watch: {
@@ -401,6 +406,32 @@ export default {
             this.getLastKodeSemester()
         } else {
             this.$router.replace('/login').then(() => { this.$router.go() })
+        }
+    },
+    computed:{
+        searchMahasiswa(){
+            if(this.keyword != ''){
+                var temp = this.daftarPerwalian.filter((item)=>{
+                    if(item.status) {
+                        return this.keyword.toLowerCase().split(' ').every(v => item.status.toLowerCase().includes(v) || item.nim.toLowerCase().includes(v) || item.nama_mahasiswa.toLowerCase().includes(v))
+                    } else {
+                        return this.keyword.toLowerCase().split(' ').every(v => item.nim.toLowerCase().includes(v) || item.nama_mahasiswa.toLowerCase().includes(v))
+                    }
+                })
+                return temp
+            } else {
+                return this.daftarPerwalian
+            }
+            
+        }
+    },
+    watch:{
+        searchMahasiswa:{
+            deep: true,
+            handler: function (newVal) {
+                this.jumlahPage = newVal.length/10
+                this.page = 1
+            }
         }
     },
     methods: {
@@ -478,7 +509,6 @@ export default {
                 await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-perwalian/${kodeSemester}`)
                 .then((response) => {
                     this.daftarPerwalian = response.data
-                    console.log(this.daftarPerwalian);
                     this.jumlahPage = this.daftarPerwalian.length/10
                     this.loadingListMahasiswa = false
                 })

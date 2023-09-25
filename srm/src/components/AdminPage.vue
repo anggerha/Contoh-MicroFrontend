@@ -61,7 +61,7 @@
                             <b-row class="mt-2">
                                 <b-col>
                                     <div class="form-inline" style="display: flex; justify-content: right;">
-                                        <input v-model="keyword" class="form-control" type="search" placeholder="Search by Nim" aria-label="Search" style="width: 20rem;">
+                                        <input v-model="keyword" class="form-control" type="search" placeholder="Cari NIM, Nama, atau Status Mahasiswa" aria-label="Search" style="width: 20rem;">
                                     </div>
                                 </b-col>
                             </b-row>
@@ -92,6 +92,7 @@
                                                 </div>
                                         </b-container>
                                     </li>
+                                    <li v-if="searchMahasiswa.length == 0" style="text-align: center;">Tidak Dapat Menemukan Data dengan Keyword {{ keyword }}</li>
                                 </ul>
                             </div>
                         </div>
@@ -366,10 +367,12 @@ export default {
     computed:{
         searchMahasiswa(){
             if(this.keyword != ''){
-
                 var temp = this.daftarPerwalian.filter((item)=>{
-                    return this.keyword.toLowerCase().split(' ').every(v => item.nim.toLowerCase().includes(v))
-                    
+                    if(item.status) {
+                        return this.keyword.toLowerCase().split(' ').every(v => item.status.toLowerCase().includes(v) || item.nim.toLowerCase().includes(v) || item.nama.toLowerCase().includes(v))
+                    } else {
+                        return this.keyword.toLowerCase().split(' ').every(v => item.nim.toLowerCase().includes(v) || item.nama.toLowerCase().includes(v))
+                    }
                 })
                 return temp
                 
@@ -383,8 +386,13 @@ export default {
         searchMahasiswa:{
             deep: true,
             handler: function (newVal) {
-                this.jumlahPage = newVal.length/10
-                this.page = 1
+                if (newVal.length != 0) {
+                    this.jumlahPage = newVal.length/10
+                    this.page = 1
+                } else {
+                    this.jumlahPage = 0
+                    this.page = 0
+                }
             }
         }
     },
