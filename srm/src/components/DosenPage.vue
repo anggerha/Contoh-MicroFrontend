@@ -143,6 +143,18 @@
                                         </div>
                                     </b-col>
                                 </b-row>
+                                <div style="display: flex; align-items: center; margin-bottom: 1rem;" v-if="itemBerita.length == 0">
+                                    <span style="margin-right: 1rem;">Kepada: </span>
+                                    <b-form-select
+                                    id="input-2"
+                                    v-model="statusPenerima"
+                                    :options="daftarStatusMahasiswa"
+                                    required
+                                    ></b-form-select>
+                                </div>
+                                <div style="display: flex; align-items: center; margin-bottom: 1rem;" v-if="itemBerita.length != 0">
+                                    <span style="margin-right: 1rem;">Kepada: {{ statusPenerima }}</span>
+                                </div>
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.length != 0" readonly></b-input>
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.length == 0"></b-input>
                                 <VueTrix v-model="isiPengumuman" v-if="itemBerita.length != 0" :disabled-editor="true" @hook:mounted="hapusTool"/>
@@ -367,7 +379,15 @@ export default {
 
         kodeSemesterTerbaru: '',
         uploadValue: 0,
-        label: ''
+        label: '',
+        daftarStatusMahasiswa: [
+            { text: 'Status Mahasiswa', value: 'null', disabled: true },
+            { text: 'Kirim ke Semua Mahasiswa', value: 'all' },
+            { text: 'Aktif', value: 'aktif' },
+            { text: 'Tidak Aktif', value: 'tidak_aktif' },
+            { text: 'Alumni', value: 'alumni' }
+        ],
+        statusPenerima: null
       }
     },
     // watch: {
@@ -458,6 +478,7 @@ export default {
                 await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-perwalian/${kodeSemester}`)
                 .then((response) => {
                     this.daftarPerwalian = response.data
+                    console.log(this.daftarPerwalian);
                     this.jumlahPage = this.daftarPerwalian.length/10
                     this.loadingListMahasiswa = false
                 })
@@ -510,48 +531,101 @@ export default {
         async kirimTele(){
             try {
                 if(this.itemBerita.length != 0){
-                    await axios.put(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/update-pengumuman/${this.itemBerita.id}`, {
-                        periode_akhir: moment(this.periode_akhir).locale('id').toString()
-                    })
-                    .then((response) => {
-                        if(response.status == 201){
-                            this.$toast.open({
-                                dismissible: true,
-                                duration:0,
-                                message: 'Pengumuman Berhasil Disimpan',
-                                type: 'success',
-                                position: 'top'
-                            });
-                            this.getAllPengumuman()
+                    if(this.statusPenerima == null){
+                        this.$toast.open({
+                            message: 'Pesan Gagal Disimpan, Status Penerima Tidak Boleh Kosong',
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    } else if(this.judulPengumuman == ''){
+                        this.$toast.open({
+                            message: 'Pesan Gagal Disimpan, Judul Berita Tidak Boleh Kosong',
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    } else if(this.isiPengumuman == '') {
+                        this.$toast.open({
+                            message: 'Pesan Gagal Terkirim, Isi Berita Tidak Boleh Kosong',
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    } else if (this.periode_akhir == null) {
+                        this.$toast.open({
+                            message: 'Pengumuman Gagal Terkirim, semua field tidak boleh kosong',
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    } else {
+                        if(this.statusPenerima != null && this.judulPengumuman != '' && this.isiPengumuman != '' && this.periode_akhir != null) {
+                            await axios.put(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/update-pengumuman/${this.itemBerita.id}`, {
+                                periode_akhir: moment(this.periode_akhir).locale('id').toString()
+                            })
+                            .then((response) => {
+                                if(response.status == 201){
+                                    this.$toast.open({
+                                        dismissible: true,
+                                        duration:0,
+                                        message: 'Pengumuman Berhasil Disimpan',
+                                        type: 'success',
+                                        position: 'top'
+                                    });
+                                    this.getAllPengumuman()
+                                } else {
+                                    this.$toast.open({
+                                        dismissible: true,
+                                        duration:0,
+                                        message: 'Pengumuman Gagal Disimpan pada ',
+                                        type: 'warning',
+                                        position: 'top'
+                                    });
+                                }
+                            })
                         } else {
                             this.$toast.open({
-                                dismissible: true,
-                                duration:0,
-                                message: 'Pengumuman Gagal Disimpan pada ',
+                                message: 'Pesan Gagal Disimpan, Ada Field yang Masih Kosong',
                                 type: 'warning',
                                 position: 'top'
                             });
                         }
-                    })
+                    }
                 } else {
                     try {
-                        if(this.isiPengumuman == '' || this.judulPengumuman == '' || this.periode_akhir == null){
+                        if(this.statusPenerima == null || this.statusPenerima == ''){
                             this.$toast.open({
-                                message: 'Pengumuman Gagal Terkirim, semua field tidak boleh kosong',
+                                message: 'Pesan Gagal Disimpan, Status Penerima Tidak Boleh Kosong',
                                 type: 'warning',
                                 position: 'top'
                             });
-                        }else{
-                            await axios.post(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
-                                nama_dosen: this.profile.nama,
-                                email: this.profile.email,
-                                role: this.profile.role,
-                                kode_semester: this.kodeSemesterTerbaru,
-                                semester: this.kodeSemesterTerbaru.slice(4, 5),
-                                pengumuman: this.isiPengumuman,
-                                file: this.files,
-                                judul: this.judulPengumuman,
-                                periode_akhir: moment(this.periode_akhir).locale('id').toString()
+                        } else if(this.judulPengumuman == ''){
+                            this.$toast.open({
+                                message: 'Pesan Gagal Disimpan, Judul Berita Tidak Boleh Kosong',
+                                type: 'warning',
+                                position: 'top'
+                            });
+                        } else if(this.isiPengumuman == '') {
+                            this.$toast.open({
+                                message: 'Pesan Gagal Terkirim, Isi Berita Tidak Boleh Kosong',
+                                type: 'warning',
+                                position: 'top'
+                            });
+                        } else if (this.periode_akhir == null) {
+                            this.$toast.open({
+                                message: 'Pengumuman Gagal Terkirim, Tanggal Tidak Bolek Kosong',
+                                type: 'warning',
+                                position: 'top'
+                            });
+                        } else{
+                            if(this.judulPengumuman != '' && this.statusPenerima != null && this.isiPengumuman != '') {
+                                await axios.post(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
+                                    nama_dosen: this.profile.nama,
+                                    email: this.profile.email,
+                                    role: this.profile.role,
+                                    kode_semester: this.kodeSemesterTerbaru,
+                                    semester: this.kodeSemesterTerbaru.slice(4, 5),
+                                    pengumuman: this.isiPengumuman,
+                                    file: this.files,
+                                    judul: this.judulPengumuman,
+                                    periode_akhir: moment(this.periode_akhir).locale('id').toString()
                                 })
                                 .then(()=>{
                                     console.log(this.files);
@@ -564,10 +638,18 @@ export default {
                                     });
                                     this.isiPengumuman = ''
                                     this.judulPengumuman = ''
+                                    this.statusPenerima = null
                                     this.periode_akhir = null
                                     this.files = []
                                 })
                                 this.getAllPengumuman()
+                            } else {
+                                this.$toast.open({
+                                    message: 'Pengumuman Gagal Terkirim, Tanggal Tidak Bolek Kosong',
+                                    type: 'warning',
+                                    position: 'top'
+                                });
+                            }
                         }
                     } catch (error) {
                         console.log(error.response.data.message);
@@ -695,6 +777,7 @@ export default {
             this.isRemovePengumuman = false
             this.judulPengumuman = ''
             this.isiPengumuman = ''
+            this.statusPenerima = null
             this.files = []
             this.periode_akhir = null
             this.itemBerita = []

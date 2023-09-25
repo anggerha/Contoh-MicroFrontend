@@ -291,6 +291,7 @@ export default {
             try {
                 await axios.get(`https://userapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/view-mahasiswa/${this.dataPerwalian.nim}`)
                 .then((response) => {
+                    console.log(response);
                     this.detailMahasiswa = response.data
                     this.nilaiGrouped = response.data.nilai.groupBy((nilai) => {
                         return nilai.kode_semester

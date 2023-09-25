@@ -124,6 +124,18 @@
                                         </div>
                                     </b-col>
                                 </b-row>
+                                <div style="display: flex; align-items: center; margin-bottom: 1rem;" v-if="itemBerita.length == 0">
+                                    <span style="margin-right: 1rem;">Kepada: </span>
+                                    <b-form-select
+                                    id="input-2"
+                                    v-model="statusPenerima"
+                                    :options="daftarStatusMahasiswa"
+                                    required
+                                    ></b-form-select>
+                                </div>
+                                <div style="display: flex; align-items: center; margin-bottom: 1rem;" v-if="itemBerita.length != 0">
+                                    <span style="margin-right: 1rem;">Kepada: {{ statusPenerima }}</span>
+                                </div>
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.status == 'PUBLISHED'" readonly></b-input>
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.status != 'PUBLISHED'"></b-input>
                                 <VueTrix v-model="isiPengumuman" v-if="itemBerita.status == 'PUBLISHED'" :disabled-editor="true" @hook:mounted="hapusTool"/>
@@ -333,7 +345,15 @@ export default {
         judulPengumuman:'',
         uploadValue: 0,
         label: '',
-        keyword: ''
+        keyword: '',
+        daftarStatusMahasiswa: [
+            { text: 'Status Mahasiswa', value: 'null', disabled: true },
+            { text: 'Kirim ke Semua Mahasiswa', value: 'all' },
+            { text: 'Aktif', value: 'aktif' },
+            { text: 'Tidak Aktif', value: 'tidak_aktif' },
+            { text: 'Alumni', value: 'alumni' }
+        ],
+        statusPenerima: null
       }
     },
     created(){
@@ -455,153 +475,219 @@ export default {
             this.files = []
         },
         async simpan(){
-            if(this.itemBerita.length != 0){
-                if(this.judulPengumuman ==''){
-                    this.$toast.open({
-                        message: 'Pesan Gagal Disimpan, Judul Berita Tidak Boleh Kosong',
-                        type: 'warning',
-                        position: 'top'
-                    });
-                } else {
-                    await axios.put(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/edit-berita/${this.itemBerita.id}`, {
-                        //tanggal: moment().locale('id').toString(),
-                        nama: "Admin FTI",
-                        isi_berita: this.isiPengumuman,
-                        file: this.files,
-                        judul_berita: this.judulPengumuman,
-                        status:"DRAFT",
-                    })
-                    .then((response) => {
-                        if(response.status == 201){
-                            this.$toast.open({
-                                dismissible: true,
-                                duration:0,
-                                message: 'Perubahan Berita Berhasil Disimpan',
-                                type: 'success',
-                                position: 'top'
-                            });
-                            this.judulPengumuman = ''
-                            this.isiPengumuman = ''
-                            this.files = []
-                            this.isRemoveBerita = true
-                            this.getAllBerita()
-                        } else {
-                            this.$toast.open({
-                                dismissible: true,
-                                duration:0,
-                                message: 'Berita Gagal Disimpan',
-                                type: 'warning',
-                                position: 'top'
-                            });
-                        }
-                    })
-                } 
-            }
-            else{
-                try {
-                    if(this.isiPengumuman == '' || this.judulPengumuman == ''){
+            try {
+                if(this.itemBerita.length != 0){
+                    if(this.statusPenerima == null){
                         this.$toast.open({
-                            message: 'Pesan Gagal Terkirim, Isi Berita Tidak Boleh Kosong',
+                            message: 'Pesan Gagal Disimpan, Status Penerima Tidak Boleh Kosong',
                             type: 'warning',
                             position: 'top'
                         });
-                    } else {
-                        await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-berita`, {
-                            nama: "ADMIN FTI",
-                            isi_berita: this.isiPengumuman,
-                            file: this.files,
-                            judul_berita: this.judulPengumuman,
-                            status:"DRAFT",
-                            tanggal: moment().locale('id').toString()
-                        })
-                        .then(()=>{
-                            this.$toast.open({
-                                message: 'Pesan Berhasil Disimpan',
-                                type: 'success',
-                                position: 'top'
-                            });
-                            this.getAllBerita()
-                            this.isiPengumuman = ''
-                            this.judulPengumuman = ''
-                            this.periode_akhir = null
-                            this.files = []
-                        })
-                    }
-                } catch (error) {
-                    console.log(error);
-                }
-            }
-        },
-        async kirimTele(){
-            try {
-                if(this.itemBerita.length != 0){
-                    if(this.judulPengumuman ==''){
+                    } else if(this.judulPengumuman == ''){
                         this.$toast.open({
                             message: 'Pesan Gagal Disimpan, Judul Berita Tidak Boleh Kosong',
                             type: 'warning',
                             position: 'top'
                         });
-                    } else {
-                        await axios.put(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/edit-berita/${this.itemBerita.id}`, {
-                            //tanggal: moment().locale('id').toString(),
-                            nama: "Admin FTI",
-                            isi_berita: this.isiPengumuman,
-                            file: this.files,
-                            judul_berita: this.judulPengumuman,
-                            status:"PUBLISHED",
-                        })
-                        .then((response) => {
-                            if(response.status == 201){
-                                this.$toast.open({
-                                    dismissible: true,
-                                    duration:0,
-                                    message: 'Perubahan Berita Berhasil Dikirim',
-                                    type: 'success',
-                                    position: 'top'
-                                });
-                                this.getAllBerita()
-                                this.judulPengumuman = ''
-                                this.isiPengumuman = ''
-                                this.files = []
-                                this.isRemoveBerita = true
-                                this.itemBerita = []
-                            } else {
-                                this.$toast.open({
-                                    dismissible: true,
-                                    duration:0,
-                                    message: 'Berita Gagal Dikirim',
-                                    type: 'warning',
-                                    position: 'top'
-                                });
-                            }
-                        })
-                    } 
-                } else {
-                    if(this.isiPengumuman == ''){
+                    } else if(this.isiPengumuman == '') {
                         this.$toast.open({
                             message: 'Pesan Gagal Terkirim, Isi Berita Tidak Boleh Kosong',
                             type: 'warning',
                             position: 'top'
                         });
-                    }else{
-                        await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-berita`, {
-                            nama: "Admin FTI",
-                            isi_berita: this.isiPengumuman,
-                            file: this.files,
-                            judul_berita: this.judulPengumuman,
-                            status:"PUBLISHED",
-                        })
-                        .then(()=>{
+                    } else {
+                        if(this.judulPengumuman != '' && this.statusPenerima != null && this.isiPengumuman != '') {
+                            await axios.put(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/edit-berita/${this.itemBerita.id}`, {
+                                //tanggal: moment().locale('id').toString(),
+                                nama: "Admin FTI",
+                                isi_berita: this.isiPengumuman,
+                                file: this.files,
+                                judul_berita: this.judulPengumuman,
+                                status:"DRAFT",
+                                statusPenerima: this.statusPenerima
+                            })
+                            .then((response) => {
+                                if(response.status == 201){
+                                    this.$toast.open({
+                                        dismissible: true,
+                                        duration:0,
+                                        message: 'Perubahan Berita Berhasil Disimpan',
+                                        type: 'success',
+                                        position: 'top'
+                                    });
+                                    this.judulPengumuman = ''
+                                    this.isiPengumuman = ''
+                                    this.statusPenerima = null
+                                    this.files = []
+                                    this.isRemoveBerita = true
+                                    this.getAllBerita()
+                                } else {
+                                    this.$toast.open({
+                                        dismissible: true,
+                                        duration:0,
+                                        message: 'Berita Gagal Disimpan',
+                                        type: 'warning',
+                                        position: 'top'
+                                    });
+                                }
+                            })
+                        } else {
                             this.$toast.open({
-                                message: 'Berita Berhasil Terkirim',
-                                type: 'success',
+                                message: 'Pesan Gagal Disimpan, Ada Field yang Masih Kosong',
+                                type: 'warning',
                                 position: 'top'
                             });
-                            this.getAllBerita()
-                            this.isiPengumuman = ''
-                            this.judulPengumuman = ''
-                            this.files = []
-                        })
+                        }
+                    } 
+                } else {
+                    if(this.statusPenerima == null){
+                        this.$toast.open({
+                            message: 'Pesan Gagal Disimpan, Status Penerima Tidak Boleh Kosong',
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    } else if(this.judulPengumuman == ''){
+                        this.$toast.open({
+                            message: 'Pesan Gagal Disimpan, Judul Berita Tidak Boleh Kosong',
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    } else if (this.isiPengumuman == '') {
+                        this.$toast.open({
+                            message: 'Pesan Gagal Terkirim, Isi Berita Tidak Boleh Kosong',
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    } else {
+                        if(this.judulPengumuman != '' && this.statusPenerima != null && this.isiPengumuman != '') {
+                            await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-berita`, {
+                                nama: "ADMIN FTI",
+                                isi_berita: this.isiPengumuman,
+                                file: this.files,
+                                judul_berita: this.judulPengumuman,
+                                status:"DRAFT",
+                                tanggal: moment().locale('id').toString(),
+                                statusPenerima: this.statusPenerima
+                            })
+                            .then(()=>{
+                                this.$toast.open({
+                                    message: 'Pesan Berhasil Disimpan',
+                                    type: 'success',
+                                    position: 'top'
+                                });
+                                this.getAllBerita()
+                                this.isiPengumuman = ''
+                                this.judulPengumuman = ''
+                                this.periode_akhir = null
+                                this.statusPenerima = null
+                                this.isRemoveBerita = true
+                                this.files = []
+                            })
+                        }
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async kirimTele(){
+            try {
+                if(this.itemBerita.length != 0){
+                    if(this.statusPenerima == null){
+                        this.$toast.open({
+                            message: 'Pesan Gagal Disimpan, Status Penerima Tidak Boleh Kosong',
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    } else if(this.judulPengumuman == ''){
+                        this.$toast.open({
+                            message: 'Pesan Gagal Disimpan, Judul Berita Tidak Boleh Kosong',
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    } else if (this.isiPengumuman == '') {
+                        this.$toast.open({
+                            message: 'Pesan Gagal Terkirim, Isi Berita Tidak Boleh Kosong',
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    } else {
+                        if(this.judulPengumuman != '' && this.statusPenerima != null && this.isiPengumuman != ''){
+                            await axios.put(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/edit-berita/${this.itemBerita.id}`, {
+                                //tanggal: moment().locale('id').toString(),
+                                nama: "Admin FTI",
+                                isi_berita: this.isiPengumuman,
+                                file: this.files,
+                                judul_berita: this.judulPengumuman,
+                                status:"PUBLISHED",
+                            })
+                            .then((response) => {
+                                if(response.status == 201){
+                                    this.$toast.open({
+                                        dismissible: true,
+                                        duration:0,
+                                        message: 'Perubahan Berita Berhasil Dikirim',
+                                        type: 'success',
+                                        position: 'top'
+                                    });
+                                    this.getAllBerita()
+                                    this.judulPengumuman = ''
+                                    this.isiPengumuman = ''
+                                    this.files = []
+                                    this.isRemoveBerita = true
+                                    this.itemBerita = []
+                                } else {
+                                    this.$toast.open({
+                                        dismissible: true,
+                                        duration:0,
+                                        message: 'Berita Gagal Dikirim',
+                                        type: 'warning',
+                                        position: 'top'
+                                    });
+                                }
+                            })
+                        }
+                    } 
+                } else {
+                    if(this.statusPenerima == null){
+                        this.$toast.open({
+                            message: 'Pesan Gagal Disimpan, Status Penerima Tidak Boleh Kosong',
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    } else if(this.judulPengumuman == ''){
+                        this.$toast.open({
+                            message: 'Pesan Gagal Disimpan, Judul Berita Tidak Boleh Kosong',
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    } else if (this.isiPengumuman == '') {
+                        this.$toast.open({
+                            message: 'Pesan Gagal Terkirim, Isi Berita Tidak Boleh Kosong',
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    } else {
+                        if(this.judulPengumuman != '' && this.statusPenerima != null && this.isiPengumuman != '') {
+                            await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-berita`, {
+                                nama: "Admin FTI",
+                                isi_berita: this.isiPengumuman,
+                                file: this.files,
+                                judul_berita: this.judulPengumuman,
+                                status:"PUBLISHED",
+                            })
+                            .then(()=>{
+                                this.$toast.open({
+                                    message: 'Berita Berhasil Terkirim',
+                                    type: 'success',
+                                    position: 'top'
+                                });
+                                this.getAllBerita()
+                                this.isiPengumuman = ''
+                                this.judulPengumuman = ''
+                                this.files = []
+                            })
+                        }
                     }
                 }
             } catch (error) {
@@ -711,6 +797,7 @@ export default {
             this.isRemoveBerita = false
             this.judulPengumuman = ''
             this.isiPengumuman = ''
+            this.statusPenerima = null
             this.files = []
             this.itemBerita = []
         }
