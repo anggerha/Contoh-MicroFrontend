@@ -11,7 +11,7 @@
                 <p class="judul">ADMIN SRM FTI UKDW</p>
             </b-col>
             <b-col cols="12" md="6" lg="6" xl="6" align-self="center">
-                <b-button id="listMenuAdmin" class="float-right" @click="goToForm()">Form Data</b-button>
+                <b-button id="listMenuAdmin" class="float-right shadow btn-general" style="border: 1px solid #32a3df;" @click="goToForm()">Form Data</b-button>
             </b-col>
         </b-row>
         <body class="bv-example-row">
@@ -192,7 +192,7 @@
                                 <b-button class="page" id="next" :disabled="page >= jumlahPage" @click="page +=1">next</b-button>
                             </b-col>
                         </b-row>
-                        <b-row style="margin-top: 1rem;">
+                        <b-row style="margin-bottom: 1rem; margin-top: 1rem;">
                             <b-col>
                                 <b-form-select v-model="statusBerita" :options="optionStatusBerita" @change="toggleBerita"></b-form-select>
                             </b-col>

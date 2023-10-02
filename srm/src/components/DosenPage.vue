@@ -36,8 +36,8 @@
 <!-- LIST MAHASISWA DOSEN -->
                     <div v-if="showListMahasiswa" class="list-mahasiswa">
                         <div style="margin-bottom: 2rem;" v-if="!loadingListMahasiswa">
-                            <h4 v-if="semester == null && tahunAngkatan != ''">Daftar Mahasiswa Perwalian Tahun Ajaran {{ parseInt(tahunAngkatan) }}/{{ parseInt(tahunAngkatan)+1 }}</h4>
-                            <h4 v-if="semester == null && tahunAngkatan == ''" >{{ getLastKodeSemester() }}</h4>
+                            <h4 v-if="semester == null && tahunAngkatan != ''">Daftar Mahasiswa Perwalian Semester Terbaru</h4>
+                            <!-- <h4 v-if="semester == null && tahunAngkatan == ''" >{{ getLastKodeSemester() }}</h4> -->
                             <h4 v-if="semester == 1">Daftar Mahasiswa Perwalian Tahun Ajaran {{ parseInt(tahunAngkatan) }}/{{ parseInt(tahunAngkatan)+1 }} Semester Ganjil</h4>
                             <h4 v-if="semester == 2">Daftar Mahasiswa Perwalian Tahun Ajaran {{ parseInt(tahunAngkatan) }}/{{ parseInt(tahunAngkatan)+1 }} Semester Genap</h4>
                         </div>
@@ -46,7 +46,7 @@
                                 <span>Filter: </span>
                             </b-col>
                             <b-col cols="auto" class="p-1">
-                                <b-input maxlength="4" onkeypress="return event.charCode >= 48 && event.charCode <=57" v-model="tahunAngkatan" placeholder="Tahun angkatan"></b-input>
+                                <b-input maxlength="4" onkeypress="return event.charCode >= 48 && event.charCode <=57" v-model="tahunAngkatan" @input="kodeSemesterFilter" placeholder="Tahun angkatan"></b-input>
                             </b-col>
                             <b-col cols="auto" class="p-1">
                                 <b-form-select v-model="semester" :options="options" @change="kodeSemesterFilter"></b-form-select>
@@ -115,7 +115,7 @@
                                     <li v-if="searchMahasiswa.length == 0" style="text-align: center;">Tidak Dapat Menemukan Data dengan Keyword {{ keyword }}</li>
                                 </ul>
                                 <ul style="margin: auto; text-align: center;" v-if="daftarPerwalian == 0">
-                                    <h3>Daftar Perwalian Pada Tahun {{ tahunAngkatan }} Semester <span v-if="semester == 1">Ganjil</span> <span v-if="semester == 2">Genap</span> Kosong</h3>
+                                    <h3> Oops List Kosong</h3>
                                 </ul>
                             </div>
                         </div>
@@ -429,8 +429,14 @@ export default {
         searchMahasiswa:{
             deep: true,
             handler: function (newVal) {
-                this.jumlahPage = newVal.length/10
-                this.page = 1
+                if(newVal.length != 0){
+                    this.jumlahPage = newVal.length/10
+                    this.page = 1
+                }else{
+                    this.jumlahPage = 0
+                    this.page = 0
+                }
+                
             }
         }
     },
@@ -439,19 +445,22 @@ export default {
             console.log(event.target.files);
         },
         kodeSemesterFilter() {
-            if(this.tahunAngkatan != '' && this.tahunAngkatan.length == 4){
-                this.daftarPerwalian = []
-                var kodeSemester = this.tahunAngkatan + this.semester
-                this.getMahasiswaPerwalian(kodeSemester)
-            } else {
-                if(this.tahunAngkatan.length != 4){
-                    this.$toast.open({
-                        message: 'Tahun Tidak Valid',
-                        type: 'error',
-                        position: 'top'
-                    });
+            if(this.tahunAngkatan != '' && this.tahunAngkatan.length == 4 ){
+                
+                if(this.semester != null){
+                    this.daftarPerwalian = []
+                    var kodeSemester = this.tahunAngkatan + this.semester
+                    this.getMahasiswaPerwalian(kodeSemester)
                 }
-                if(this.tahunAnkatan == '') {
+            } else {
+                // if(this.tahunAngkatan.length != 4){
+                //     this.$toast.open({
+                //         message: 'Tahun Tidak Valid',
+                //         type: 'error',
+                //         position: 'top'
+                //     });
+                // }
+                if(this.tahunAngkatan == '') {
                     this.$toast.open({
                         message: 'Tahun Angkatan Tidak Boleh Kosong',
                         type: 'error',
@@ -475,6 +484,7 @@ export default {
             this.showListPengumuman = false
             this.page = 1
             this.jumlahPage = null
+            this.getLastKodeSemester()
         },
         toggleBerita() {
             this.showListMahasiswa = false
@@ -498,6 +508,7 @@ export default {
                     var temp = response.data.reverse()
                     this.tahunAngkatan = temp[0].kode_semester.slice(0, 4)
                     this.kodeSemesterTerbaru = temp[0].kode_semester
+                    this.semester = null
                     var kodeSemester = temp[0].kode_semester
                     this.getMahasiswaPerwalian(kodeSemester)
                     this.loadingListMahasiswa = false

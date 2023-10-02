@@ -67,8 +67,11 @@
                     ></b-form-input>
                 </b-form-group>
 
-                <b-button class="btn" @click="submit" variant="primary">Submit</b-button>
-                <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
+                <div style="float: right; ">
+                    <b-button class="btn" style="margin: 0.5rem;" @click="submit" variant="primary">Submit</b-button>
+                    <b-button class="btn" style="margin: 0.5rem;" @click="reset" variant="danger">Reset</b-button>
+                </div>
+                
             </div>
           
 <!-- Jadwal Khusus -->
@@ -132,8 +135,10 @@
                     ></b-form-input>
                 </b-form-group>
 
-                <b-button class="btn" @click="submit" variant="primary">Submit</b-button>
-                <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
+                <div style="float: right; ">
+                    <b-button class="btn" style="margin: 0.5rem;" @click="submit" variant="primary">Submit</b-button>
+                    <b-button class="btn" style="margin: 0.5rem;" @click="reset" variant="danger">Reset</b-button>
+                </div>
             </div>
 <!-- Jadwal Ujian -->
             <div v-if="form.jenis_jadwal == 'jadwal_ujian'">
@@ -180,8 +185,10 @@
                     ></b-form-input>
                 </b-form-group>
 
-                <b-button class="btn" @click="submit" variant="primary">Submit</b-button>
-                <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
+                <div style="float: right; ">
+                    <b-button class="btn" style="margin: 0.5rem;" @click="submit" variant="primary">Submit</b-button>
+                    <b-button class="btn" style="margin: 0.5rem;" @click="reset" variant="danger">Reset</b-button>
+                </div>
             </div>
 <!-- Pembayaran -->
             <div v-if="form.jenis_jadwal == 'pembayaran'">
@@ -228,8 +235,10 @@
                     ></b-form-input>
                 </b-form-group>
 
-                <b-button class="btn" @click="submit" variant="primary">Submit</b-button>
-                <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
+                <div style="float: right; ">
+                    <b-button class="btn" style="margin: 0.5rem;" @click="submit" variant="primary">Submit</b-button>
+                    <b-button class="btn" style="margin: 0.5rem;" @click="reset" variant="danger">Reset</b-button>
+                </div>
             </div>
 <!-- Informasi Umum -->
             <!-- <div v-if="form.jenis_jadwal == 'informasi_umum'">
@@ -361,8 +370,10 @@
                         </b-button>
                     </div>
                 </div>
-                <b-button class="btn" @click="submit" variant="primary">Submit</b-button>
-                <b-button class="btn" @click="reset" variant="danger">Reset</b-button>
+                <div style="float: right; ">
+                    <b-button class="btn" style="margin: 0.5rem;" @click="submit" variant="primary">Submit</b-button>
+                    <b-button class="btn" style="margin: 0.5rem;" @click="reset" variant="danger">Reset</b-button>
+                </div>
             </div>
         </b-form>
 <!-- LIST -->
@@ -1212,10 +1223,26 @@ export default {
     color: #32a3df;
     background-color: transparent;
     border: none;
+    transition: ease-in-out;
+    transition-duration: 300ms;
+    transition-delay: 150ms;
+}
+.button .editJadwal:hover{
+    color: white;
+    background-color: #32a3df;
+    border: none;
 }
 .button .hapusJadwal{
     color: #ee1010;
     background-color: transparent;
+    border: none;
+    transition: ease-in-out;
+    transition-duration: 300ms;
+    transition-delay: 150ms;
+}
+.button .hapusJadwal:hover{
+    color: white;
+    background-color: #ee1010;
     border: none;
 }
 .sesi-hari-jam{
