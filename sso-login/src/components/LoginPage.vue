@@ -40,7 +40,7 @@ export default {
             firebase.auth().signInWithPopup(provider).then(
                 async (result) => {
                     if(result.additionalUserInfo.profile.hd){
-                      if(result.additionalUserInfo.profile.hd == 'ti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'staff.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'fti.ukdw.ac.id') {
+                      if(result.additionalUserInfo.profile.hd == 'ti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'staff.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'fti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'si.ukdw.ac.id') {
                         try {
                           await axios.get(`https://userapi.fti.ukdw.ac.id/login/${result.user.uid}`, { params: {
                             email: result.user.email.toString() 
