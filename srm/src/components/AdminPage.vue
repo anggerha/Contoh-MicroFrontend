@@ -418,6 +418,7 @@ export default {
             this.showListBerita = true
             this.page = 1
             this.jumlahPage = null
+            this.isRemoveCatatan = true
             this.getAllBerita()
         },
         kembali() {

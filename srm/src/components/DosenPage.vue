@@ -80,9 +80,12 @@
                                     <li v-for="item in searchMahasiswa.slice(page*10-10,page*10 )" :key="item.id" style="display:inline; padding: 5px;">
                                         <b-container class="shadow p-2 mb-3 bg-white rounded" v-if="searchMahasiswa.length != 0">
                                             <div>
-                                                <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap;">
+                                                <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
                                                     <b-col cols="8">
-                                                        <b-row>{{ item.nim }}</b-row>
+                                                        <b-row v-if="item.status == 'aktif' "><h5>{{ item.nim }} <b-badge variant="success">Aktif</b-badge></h5> </b-row>
+                                                        <b-row v-if="item.status == 'tidak_aktif' "><h5>{{ item.nim }} <b-badge variant="warning">Tidak Aktif</b-badge></h5> </b-row>
+                                                        <b-row v-if="item.status == 'alumni' "><h5>{{ item.nim }} <b-badge variant="primary">Alumni</b-badge></h5> </b-row>
+                                                        <b-row v-if="item.status == null || !item.status"><h5>{{ item.nim }}</h5> </b-row>
                                                         <b-row>{{ item.nama_mahasiswa }}</b-row>
                                                     </b-col>
                                                 </b-row>

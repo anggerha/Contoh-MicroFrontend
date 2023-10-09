@@ -59,6 +59,19 @@
                                     </div>
                                 </b-col>
                             </b-row>
+                            <b-row v-if="!isAdmin">
+                                <b-col>
+                                    <div class="nama">
+                                        <svg style="margin-top: .35rem;" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-badge-fill" viewBox="0 0 16 16">
+                                            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm4.5 0a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zM8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm5 2.755C12.146 12.825 10.623 12 8 12s-4.146.826-5 1.755V14a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-.245z"/>
+                                        </svg>
+                                        <span v-if="dataPerwalian.status == 'aktif' " style="margin:0 0.5rem; "><h5 class="mt-1" style="text-align: center;"><b-badge variant="success">Aktif</b-badge></h5></span>
+                                        <span v-if="dataPerwalian.status == 'tidak_aktif' " style="margin:0 0.5rem; "><h5 class="mt-1" style="text-align: center;"><b-badge variant="warning">Tidak Aktif</b-badge></h5></span>
+                                        <span v-if="dataPerwalian.status == 'alumni' " style="margin:0 0.5rem; "><h5 class="mt-1" style="text-align: center;"><b-badge variant="primary">Alumni</b-badge></h5></span>
+                                    </div>
+                                    
+                                </b-col>
+                            </b-row>
                             <b-row class="mt-3" v-if="isAdmin" >
                                 <b-col>
                                     <div class="nama" v-if="dataPerwalian.status == null || !dataPerwalian.status || isUbahClicked">
@@ -317,14 +330,16 @@ export default {
         }, 
         async setStatusMahasiswa(){
             try{
-                await axios.post(`https://userapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/update-mahasiswa/${this.dataPerwalian.nim}`,{
-                    nama_mahasiswa: this.detailMahasiswa.biodata.nama,
+                console.log(this.detailMahasiswa.biodata.nama);
+                await axios.put(`https://userapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/update-mahasiswa/${this.dataPerwalian.nim}`,{
+                    nama: this.detailMahasiswa.biodata.nama,
                     nama_lengkap: this.detailMahasiswa.biodata.nama_lengkap,
                     status: this.statusMahasiswa
                 })
-                console.log('panggil bos');
-                this.statusMahasiswa = null
+                // this.statusMahasiswa = null
+                this.isUbahClicked = true
                 this.getDetailMahasiswa()
+                this.$parent.getMahasiswa()
             }
             catch (error){
                 console.log(error.message);
