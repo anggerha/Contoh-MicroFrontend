@@ -386,9 +386,7 @@ export default {
         label: '',
         daftarStatusMahasiswa: [
             { text: 'Status Mahasiswa', value: 'null', disabled: true },
-            { text: 'Kirim ke Semua Mahasiswa', value: 'all' },
             { text: 'Aktif', value: 'aktif' },
-            { text: 'Tidak Aktif', value: 'tidak_aktif' },
             { text: 'Alumni', value: 'alumni' }
         ],
         statusPenerima: null,
@@ -519,6 +517,7 @@ export default {
             try {
                 await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-perwalian/${kodeSemester}`)
                 .then((response) => {
+                    console.log(response.data);
                     this.daftarPerwalian = response.data
                     this.jumlahPage = this.daftarPerwalian.length/10
                     this.loadingListMahasiswa = false

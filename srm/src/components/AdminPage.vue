@@ -72,7 +72,6 @@
                                             <b-row style="align-items:center; margin-left: .2rem; display:flex; flex-wrap:wrap; " >
                                                 <b-col cols="8">
                                                     <b-row v-if="item.status == 'aktif' "><h5>{{ item.nim }} <b-badge variant="success">Aktif</b-badge></h5> </b-row>
-                                                    <b-row v-if="item.status == 'tidak_aktif' "><h5>{{ item.nim }} <b-badge variant="warning">Tidak Aktif</b-badge></h5> </b-row>
                                                     <b-row v-if="item.status == 'alumni' "><h5>{{ item.nim }} <b-badge variant="primary">Alumni</b-badge></h5> </b-row>
                                                     <b-row v-if="item.status == null || !item.status"><h5>{{ item.nim }}</h5> </b-row>
                                                     <b-row>{{ item.nama_lengkap }}</b-row>
@@ -349,9 +348,7 @@ export default {
         keyword: '',
         daftarStatusMahasiswa: [
             { text: 'Status Mahasiswa', value: 'null', disabled: true },
-            { text: 'Kirim ke Semua Mahasiswa', value: 'all' },
             { text: 'Aktif', value: 'aktif' },
-            { text: 'Tidak Aktif', value: 'tidak_aktif' },
             { text: 'Alumni', value: 'alumni' }
         ],
         statusPenerima: null
