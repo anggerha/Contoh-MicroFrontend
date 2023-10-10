@@ -366,9 +366,9 @@ export default {
             if(this.keyword != ''){
                 var temp = this.daftarPerwalian.filter((item)=>{
                     if(item.status) {
-                        return this.keyword.toLowerCase().split(' ').every(v => item.status.toLowerCase().includes(v) || item.nim.toLowerCase().includes(v) || item.nama.toLowerCase().includes(v))
+                        return this.keyword.toLowerCase().split(' ').every(v => item.status.toLowerCase().includes(v) || item.nim.toLowerCase().includes(v) || item.nama_lengkap.toLowerCase().includes(v))
                     } else {
-                        return this.keyword.toLowerCase().split(' ').every(v => item.nim.toLowerCase().includes(v) || item.nama.toLowerCase().includes(v))
+                        return this.keyword.toLowerCase().split(' ').every(v => item.nim.toLowerCase().includes(v) || item.nama_lengkap.toLowerCase().includes(v))
                     }
                 })
                 return temp

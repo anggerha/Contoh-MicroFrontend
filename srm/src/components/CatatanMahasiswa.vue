@@ -202,7 +202,7 @@
                                                         <div v-for="nilai in nilaiGrouped[item]" :key="nilai._id" class="col-md-6 col-6 my-1 col-lg-4 col-xl-4">
                                                             <b-card style="height:100%; ">
                                                                 <b-card-text>
-                                                                    <p style=" font-size:calc(80% + 0.5vw);">{{nilai.nama_matkul}}</p>
+                                                                    <p style=" font-size:calc(80% + 0.5vw);">{{nilai.nama_matakuliah}}</p>
                                                                     <span class="badge badge-pill badge-info"> Nilai: {{ nilai.nilai}}</span>
                                                                 </b-card-text>
                                                             </b-card>
