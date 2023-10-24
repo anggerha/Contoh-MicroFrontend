@@ -7,7 +7,7 @@
             Kembali
         </b-button>
         <h5>Form Data</h5>
-        <b-form ref="formInput" class="form">
+        <b-form ref="formInput" class="form" id="inputForm">
             <b-form-group v-if="tempForm.jenis_jadwal == null || this.id == null" id="input-group-1" label="Jenis Jadwal" label-for="input-1">
                 <b-form-select
                 id="input-1"
@@ -39,7 +39,7 @@
                 </b-form-group>
 
                 <b-form-group id="input-group-3" label="Nama Matakuliah" label-for="input-3">
-                    <v-select label="nama_matkul" :options="listMatkul"  v-model="form.selected" @input="namaKegiatan"></v-select>
+                    <v-select label="placeholder" :options="listMatkul"  v-model="form.selected" @input="namaKegiatan"></v-select>
                 </b-form-group>
 
                 <b-form-group
@@ -303,8 +303,10 @@
             </div> -->
 <!-- Jadwal Matakuliah -->  
             <div v-if="form.jenis_jadwal == 'jadwal_mata_kuliah'">
+                
                 <b-form-group id="input-group-2" label="Nama Matakuliah" label-for="input-2">
-                    <v-select label="nama_matkul" :options="listMatkul" v-model="form.selected" @input="namaKegiatan"></v-select>
+                  
+                    <v-select label="placeholder" :options="listMatkul" v-model="form.selected" @input="namaKegiatan"></v-select>
                 </b-form-group>
 
                 <b-form-group
@@ -355,16 +357,16 @@
                         required
                         ></b-form-select>
                     </b-form-group>
-                    <div class="button">
-                        <b-button id="lihat-detail" block @click="add(k)" v-show="k == form.jadwal_mingguan.length-1" type="button" class="tambahField">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                    <div class="button " >
+                        <b-button id="lihat-detail" block @click="add(k)" v-if="k == form.jadwal_mingguan.length-1" type="button" class="tambahField" >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus button-tambah" viewBox="0 0 16 16">
                                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
                             </svg>
-                        </b-button>
+                        </b-button>  
                     </div>
                     <div class="button">
-                        <b-button id="hapus-pengumuman" block @click="remove(k)" v-show="k || ( !k && form.jadwal_mingguan.length > 1)" type="button" class="hapusField">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
+                        <b-button id="hapus-pengumuman" block @click="remove(k)" v-if="k || ( !k && form.jadwal_mingguan.length > 1)" type="button" class="hapusField">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-dash button-hapus" viewBox="0 0 16 16">
                                 <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
                             </svg>
                         </b-button>
@@ -380,7 +382,7 @@
 <!-- List Jadwal Khusus -->
         <div>
             <b-row class="list">
-                <b-col cols="12" md="4" lg="3" xl="3" class="mt-5">
+                <b-col v-if="listJadwalKhusus.length != 0" cols="12" md="4" lg="3" xl="3" class="mt-5">
                     <h5 class="judul-kategori">List Jadwal Khusus</h5>
                     <b-row v-if="jumlahPageJadwalKhusus !=null" class="pagination">
                         <b-col>
@@ -434,7 +436,7 @@
                     </div>
                 </b-col>
 <!-- list Jadwal Ujian -->
-                <b-col cols="12" md="4" lg="3" xl="3" class="mt-5">
+                <b-col v-if="listJadwalUjian.length != 0" cols="12" md="4" lg="3" xl="3" class="mt-5">
                     <h5 class="judul-kategori">List Jadwal Ujian</h5>
                     <b-row v-if="jumlahPageJadwalUjian !=null" class="pagination">
                         <b-col>
@@ -479,7 +481,7 @@
                     </div>
                 </b-col>
 <!-- list jadwal ujian matkul -->
-                <b-col cols="12" md="4" lg="3" xl="3" class="mt-5">
+                <b-col v-if="listJadwalUjianMatkul.length != 0" cols="12" md="4" lg="3" xl="3" class="mt-5">
                     <h5 class="judul-kategori">List Jadwal Ujian Matakuliah</h5>
                     <b-row v-if="jumlahPageJadwalUjianMatkul !=null" class="pagination">
                         <b-col>
@@ -522,7 +524,7 @@
                     </div>
                 </b-col>
 <!-- list jadwal pembayaran -->
-                <b-col cols="12" md="4" lg="3" xl="3" class="mt-5">
+                <b-col v-if="listJadwalPembayaran.length != 0" cols="12" md="4" lg="3" xl="3" class="mt-5">
                     <h5 class="judul-kategori">List Jadwal Pembayaran</h5>
                     <b-row v-if="jumlahPageJadwalPembayaran !=null" class="pagination">
                         <b-col>
@@ -565,7 +567,7 @@
                     </div>
                 </b-col>
 <!-- list jadwal mata kuliah -->
-                <b-col cols="12" md="4" lg="3" xl="3" class="mt-5">
+                <b-col v-if="listJadwalMataKuliah.length != 0" cols="12" md="4" lg="3" xl="3" class="mt-5">
                     <h5 class="judul-kategori">List Jadwal Kelas Mata Kuliah</h5>
                     <b-row v-if="jumlahPageJadwalMataKuliah !=null" class="pagination">
                         <b-col>
@@ -586,7 +588,7 @@
                     </b-row>
                     <div v-for="item in listJadwalMataKuliah.slice(pageJadwalMataKuliah*5-5,pageJadwalMataKuliah*5)" :key="item._id" class="listCard shadow p-3 mb-2 bg-white rounded">
                         <div class="isiList" >   
-                            <h6>{{item.nama_kegiatan}} - {{ item.selected.kode_matkul }}</h6>
+                            <h6>{{item.nama_kegiatan}} - {{ item.selected.kode_matakuliah }}</h6>
                             <div v-for="i in item.jadwal_mingguan" :key="i.grup" class="grup-jadwal-mingguan">
                                 <div class="jadwal-mingguan" v-if="i.grup != null">
                                     Grup {{ i.grup.toUpperCase() }}
@@ -601,7 +603,7 @@
                         </div>
                         <b-row class="listJadwalButton">
                             <b-col class="button">
-                                <b-button block id="edit-jadwal" type="button" class="editJadwal" @click="getJadwal(item)">
+                                <b-button block id="edit-jadwal" type="button" class="editJadwal" href="#inputForm" @click="getJadwal(item)">
                                     Edit
                                 </b-button>
                             </b-col>
@@ -663,7 +665,7 @@ export default {
                 jenis_jadwal: null,
                 topik_jadwal: null,
                 nama_kegiatan: '',
-                selected: { nama_matkul: ''},
+                selected: { nama_matakuliah: ''},
                 tanggal_mulai: '',
                 tanggal_selesai: '',
                 attachment: null,
@@ -680,7 +682,7 @@ export default {
                 jenis_jadwal: null,
                 topik_jadwal: null,
                 nama_kegiatan: '',
-                selected: { nama_matkul: ''},
+                selected: { nama_matakuliah: ''},
                 tanggal_mulai: '',
                 tanggal_selesai: '',
                 attachment: null,
@@ -917,7 +919,7 @@ export default {
                         this.form.jenis_jadwal = null,
                         this.form.topik_jadwal = '',
                         this.form.nama_kegiatan = '',
-                        this.form.selected = { nama_matkul: ''},
+                        this.form.selected = { nama_matakuliah: ''},
                         this.form.tanggal_mulai = '',
                         this.form.tanggal_selesai = '',
                         this.form.attachment = null,
@@ -964,7 +966,7 @@ export default {
                         this.form.jenis_jadwal = null,
                         this.form.topik_jadwal = '',
                         this.form.nama_kegiatan = '',
-                        this.form.selected = { nama_matkul: ''},
+                        this.form.selected = { nama_matakuliah: ''},
                         this.form.tanggal_mulai = '',
                         this.form.tanggal_selesai = '',
                         this.form.attachment = null,
@@ -989,7 +991,7 @@ export default {
             this.form.jenis_jadwal = null,
             this.form.topik_jadwal = null,
             this.form.nama_kegiatan = '',
-            this.form.selected = { nama_matkul: ''},
+            this.form.selected = { nama_matakuliah: ''},
             this.form.tanggal_mulai = '',
             this.form.tanggal_selesai = '',
             this.form.attachment = null,
@@ -1003,7 +1005,7 @@ export default {
             this.tempForm.jenis_jadwal = null,
             this.tempForm.topik_jadwal = null,
             this.tempForm.nama_kegiatan = '',
-            this.tempForm.selected = { nama_matkul: ''},
+            this.tempForm.selected = { nama_matakuliah: ''},
             this.tempForm.tanggal_mulai = '',
             this.tempForm.tanggal_selesai = '',
             this.tempForm.attachment = null,
@@ -1019,7 +1021,7 @@ export default {
         optionType(){
             this.form.topik_jadwal = null,
             this.form.nama_kegiatan = '',
-            this.form.selected = { nama_matkul: ''},
+            this.form.selected = { nama_matakuliah: ''},
             this.form.tanggal_mulai = '',
             this.form.tanggal_selesai = '',
             this.form.attachment = null
@@ -1071,15 +1073,15 @@ export default {
             if(this.form.jenis_jadwal == 'jadwal_ujian_mata_kuliah'){
                 if(this.form.topik_jadwal != '' && this.form.topik_jadwal != null && this.form.selected != null){
                     if(this.form.selected ){
-                        this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase() + ' ' + this.form.selected.nama_matkul
+                        this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase() + ' ' + this.form.selected.nama_matakuliah
                     } else {
                         this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase()
                     }
                 }
             } else if(this.form.jenis_jadwal == 'jadwal_mata_kuliah'){
-                if(this.form.selected.nama_matkul != ''){
+                if(this.form.selected.nama_matakuliah != ''){
                     if(this.form.selected){
-                        this.form.nama_kegiatan = this.form.selected.nama_matkul
+                        this.form.nama_kegiatan = this.form.selected.nama_matakuliah
                     }
                 }
             } else if(this.form.jenis_jadwal == 'jadwal_khusus'){
@@ -1178,7 +1180,7 @@ export default {
                     this.tempForm.jenis_jadwal = null,
                     this.tempForm.topik_jadwal = '',
                     this.tempForm.nama_kegiatan = '',
-                    this.tempForm.selected = { nama_matkul: ''},
+                    this.tempForm.selected = { nama_matakuliah: ''},
                     this.tempForm.tanggal_mulai = '',
                     this.tempForm.tanggal_selesai = '',
                     this.tempForm.attachment = null,
@@ -1214,6 +1216,15 @@ export default {
     background-color: transparent;
     border: none;
 }
+.button-tambah{
+    border: 1px solid #32a3df;
+    border-radius: 15%;
+}
+.button-hapus{
+    border: 1px solid #ee1010;
+    border-radius: 15%;
+}
+
 .button .hapusField{
     color: #ee1010;
     background-color: transparent;
@@ -1248,7 +1259,10 @@ export default {
 .sesi-hari-jam{
     min-width: 100%;
     display: flex;
+    gap: 0.5rem;
 }
+
+
 .canvas{
     @media only screen and (max-width: 600px) {
         margin: 0 1rem;

@@ -331,7 +331,7 @@ export default {
             try{
                 console.log(this.detailMahasiswa.biodata.nama);
                 await axios.put(`https://userapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/update-mahasiswa/${this.dataPerwalian.nim}`,{
-                    nama: this.detailMahasiswa.biodata.nama,
+                    nama: this.detailMahasiswa.biodata.nama_lengkap,
                     nama_lengkap: this.detailMahasiswa.biodata.nama_lengkap,
                     status: this.statusMahasiswa
                 })
