@@ -64,6 +64,7 @@
                             </div></div>
                         </div>
                         <div v-if="!loadingListMahasiswa">
+                            <!-- LIST MAHASISWA -->
                             <b-row v-if="jumlahPage !=null" style="margin-top: 1rem;">
                                 <b-col>
                                     <b-button class="page" id="prev" :disabled="page <=1" @click="page -=1">prev</b-button>
@@ -482,6 +483,7 @@ export default {
         toggle() {
             this.showListMahasiswa = true
             this.showListPengumuman = false
+            
             this.page = 1
             this.jumlahPage = null
             this.getLastKodeSemester()
@@ -489,6 +491,8 @@ export default {
         toggleBerita() {
             this.showListMahasiswa = false
             this.showListPengumuman = true
+            this.isRemoveCatatan = true
+            this.isRemoveProfile = true
             this.page = 1
             this.jumlahPage = null
             this.getAllPengumuman()
@@ -498,9 +502,11 @@ export default {
         },
         onClickChildCatatan(value){
             this.isRemoveCatatan = value
+          
         },
         onClickChildProfile(value){
             this.isRemoveProfile = value
+     
         },
         async getLastKodeSemester() {
             await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-mahasiswa/`).then((response) => {
@@ -537,6 +543,7 @@ export default {
         sendDataProfile(item) {
             this.item = item
             this.isRemoveProfile = false
+            this.isRemoveCatatan = true
         },
         sendDataBerita(item) {
             this.isRemovePengumuman = false
@@ -557,6 +564,7 @@ export default {
         sendDataCatatan(itemMahasiswa,fromPage) {
             this.itemMahasiswa = [itemMahasiswa,fromPage]
             this.isRemoveCatatan = false
+            this.isRemoveProfile = true
         },
         hapusTool(){
             const del = document.querySelector(".trix-button-group--block-tools");

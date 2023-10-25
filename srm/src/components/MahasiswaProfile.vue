@@ -131,7 +131,7 @@ export default {
                     judul: this.judulPengumuman,
                     role: this.profile.role,
                     pembahasan: this.isiPengumuman,
-                    file: ''
+                    file: []
                     },
                     {
                         params: {
@@ -140,7 +140,6 @@ export default {
                         }
                     })
                     .then((response) => {
-                        console.log(response);
                         this.$toast.open({
                             message: 'Pesan Berhasil Terkirim',
                             type: 'success',
@@ -155,7 +154,6 @@ export default {
         },
         hapusKomponen(){
             this.$emit('clicked',true)
-            //console.log(event);
         }
     }
 }
