@@ -139,7 +139,7 @@ export default {
                             email: this.profile.email
                         }
                     })
-                    .then((response) => {
+                    .then(() => {
                         this.$toast.open({
                             message: 'Pesan Berhasil Terkirim',
                             type: 'success',
