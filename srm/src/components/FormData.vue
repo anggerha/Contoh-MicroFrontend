@@ -506,7 +506,7 @@
                             <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
                                 <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
                                 <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-                                </svg> {{ moment(item.tanggal_mulai).locale('id').format("ll") }}
+                                </svg> {{ moment(item.tanggal_mulai).locale('id').format("lll") }}
                             </p>
                         </div>
                         <b-row class="listJadwalButton">
@@ -1085,17 +1085,13 @@ export default {
                     }
                 }
             } else if(this.form.jenis_jadwal == 'jadwal_khusus'){
-                console.log('Topik Jadwal: '+this.form.topik_jadwal);
-
                 if(this.form.topik_jadwal == 'p2kmm' || this.form.topik_jadwal == 'p3dm'){
-                    console.log(1);
                     if(this.gelombangSelected != null){
                         this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase() + ' Gelombang ' + this.gelombangSelected
                     } else {
                         this.form.nama_kegiatan = this.form.topik_jadwal.toUpperCase()
                     }
                 } else {
-                    console.log(2);
                     this.form.nama_kegiatan =  this.form.topik_jadwal.toUpperCase()
                 }
             }
@@ -1134,68 +1130,96 @@ export default {
             }
         },
         async hapusJadwal(item){
-            if(item.jenis_jadwal != null && item.jenis_jadwal){
-                this.tempForm.jenis_jadwal = item.jenis_jadwal
-                if(item.tipe_jadwal)
-                    this.optionType()
-                    this.tempForm.topik_jadwal = item.tipe_jadwal
-                if(item.nama_kegiatan)
-                    this.tempForm.nama_kegiatan = item.nama_kegiatan
-                if(item.selected)
-                    this.tempForm.selected = item.selected
-                if(item.tanggal_mulai)
-                    this.tempForm.tanggal_mulai = item.tanggal_mulai
-                if(item.tanggal_selesai)
-                    this.tempForm.tanggal_selesai = item.tanggal_selesai
-                if(item.attachment)
-                    this.tempForm.attachment = item.attachment
-                if(item.jadwal_mingguan)
-                    this.tempForm.jadwal_mingguan = item.jadwal_mingguan
-                await axios.delete(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/delete-jadwal/${item.id}`, { params: {
-                    jenis_jadwal: this.tempForm.jenis_jadwal,
-                    topik_jadwal: this.tempForm.topik_jadwal,
-                    nama_kegiatan: this.tempForm.nama_kegiatan,
-                    selected: this.tempForm.selected,
-                    tanggal_mulai: this.tempForm.tanggal_mulai,
-                    tanggal_selesai: this.tempForm.tanggal_selesai,
-                    attachment: this.tempForm.attachment,
-                    jadwal_mingguan: this.tempForm.jadwal_mingguan
-                }}).then(() => {
-                    this.$toast.open({
-                        message: 'Form ' + this.tempForm.nama_kegiatan + ' Berhasil Dihapus',
-                        type: 'success',
-                        position: 'top'
-                    });
-                    if(this.tempForm.jenis_jadwal == 'jadwal_ujian_mata_kuliah'){
-                        this.getListJadwalUjianMatkul()
-                    }else if(this.tempForm.jenis_jadwal == 'jadwal_mata_kuliah'){
-                        this.getListJadwalMataKuliah()
-                    }else if(this.tempForm.jenis_jadwal == 'jadwal_ujian'){
-                        this.getListJadwalUjian()
-                    }else if(this.tempForm.jenis_jadwal =='jadwal_khusus'){
-                        this.getListJadwalKhusus()
-                    }else if(this.tempForm.jenis_jadwal == 'pembayaran'){
-                        this.getListJadwalPembayaran()
-                    }
-                    this.tempForm.jenis_jadwal = null,
-                    this.tempForm.topik_jadwal = '',
-                    this.tempForm.nama_kegiatan = '',
-                    this.tempForm.selected = { nama_matakuliah: ''},
-                    this.tempForm.tanggal_mulai = '',
-                    this.tempForm.tanggal_selesai = '',
-                    this.tempForm.attachment = null,
-                    this.tempForm.jadwal_mingguan = [
-                        {
-                            hari: null,
-                            sesi: null,
-                            jam: null,
-                            grup: null
+            this.$bvModal.msgBoxConfirm(`Apakah Anda Yakin Ingin Menghapus Pengumuman "${item.nama_kegiatan}"` , {
+            title: 'Hapus Pengumuman',
+            size: 'sm',
+            buttonSize: 'sm',
+            okVariant: 'danger',
+            okTitle: 'Ya',
+            cancelTitle: 'Tidak',
+            footerClass: 'p-2',
+            hideHeaderClose: true,
+            centered: true
+            })
+            .then(async value=>{
+                if(value == 0 || value == null){
+                    this.$bvModal.hide()
+                }else{
+                    try {
+                        if(item.jenis_jadwal != null && item.jenis_jadwal){
+                            this.tempForm.jenis_jadwal = item.jenis_jadwal
+                            if(item.tipe_jadwal)
+                                this.optionType()
+                                this.tempForm.topik_jadwal = item.tipe_jadwal
+                            if(item.nama_kegiatan)
+                                this.tempForm.nama_kegiatan = item.nama_kegiatan
+                            if(item.selected)
+                                this.tempForm.selected = item.selected
+                            if(item.tanggal_mulai)
+                                this.tempForm.tanggal_mulai = item.tanggal_mulai
+                            if(item.tanggal_selesai)
+                                this.tempForm.tanggal_selesai = item.tanggal_selesai
+                            if(item.attachment)
+                                this.tempForm.attachment = item.attachment
+                            if(item.jadwal_mingguan)
+                                this.tempForm.jadwal_mingguan = item.jadwal_mingguan
+                            await axios.delete(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/delete-jadwal/${item.id}`, { params: {
+                                jenis_jadwal: this.tempForm.jenis_jadwal,
+                                topik_jadwal: this.tempForm.topik_jadwal,
+                                nama_kegiatan: this.tempForm.nama_kegiatan,
+                                selected: this.tempForm.selected,
+                                tanggal_mulai: this.tempForm.tanggal_mulai,
+                                tanggal_selesai: this.tempForm.tanggal_selesai,
+                                attachment: this.tempForm.attachment,
+                                jadwal_mingguan: this.tempForm.jadwal_mingguan
+                            }}).then(() => {
+                                this.$toast.open({
+                                    message: 'Form ' + this.tempForm.nama_kegiatan + ' Berhasil Dihapus',
+                                    type: 'success',
+                                    position: 'top'
+                                });
+                                if(this.tempForm.jenis_jadwal == 'jadwal_ujian_mata_kuliah'){
+                                    this.getListJadwalUjianMatkul()
+                                }else if(this.tempForm.jenis_jadwal == 'jadwal_mata_kuliah'){
+                                    this.getListJadwalMataKuliah()
+                                }else if(this.tempForm.jenis_jadwal == 'jadwal_ujian'){
+                                    this.getListJadwalUjian()
+                                }else if(this.tempForm.jenis_jadwal =='jadwal_khusus'){
+                                    this.getListJadwalKhusus()
+                                }else if(this.tempForm.jenis_jadwal == 'pembayaran'){
+                                    this.getListJadwalPembayaran()
+                                }
+                                this.tempForm.jenis_jadwal = null,
+                                this.tempForm.topik_jadwal = '',
+                                this.tempForm.nama_kegiatan = '',
+                                this.tempForm.selected = { nama_matakuliah: ''},
+                                this.tempForm.tanggal_mulai = '',
+                                this.tempForm.tanggal_selesai = '',
+                                this.tempForm.attachment = null,
+                                this.tempForm.jadwal_mingguan = [
+                                    {
+                                        hari: null,
+                                        sesi: null,
+                                        jam: null,
+                                        grup: null
+                                    }
+                                ]
+                                this.id = null,
+                                this.gelombangSelected = null
+                            })
                         }
-                    ]
-                    this.id = null,
-                    this.gelombangSelected = null
-                })
-            }
+                    } catch (error) {
+                        this.$toast.open({
+                            message: `Data ${this.tempForm.nama_kegiatan} Gagal Dihapus`,
+                            type: 'warning',
+                            position: 'top'
+                        });
+                    }
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
         }
     }
 }

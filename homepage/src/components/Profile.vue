@@ -96,7 +96,6 @@ export default {
                 if(this.dataDiri.role == 'MAHASISWA'){
                     await axios.put(`https://userapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID.uid}/update`, this.dataDiri, { params: { email: this.dataDiri.email.toString(), role: this.dataDiri.role.toString() }})
                     .then(async () => {
-                        console.log(this.dataDiri);
                         this.$toast.open({
                             message: 'Data berhasil diupdate !',
                             type: 'success',

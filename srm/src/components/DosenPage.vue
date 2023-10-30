@@ -150,7 +150,7 @@
                                         </div>
                                     </b-col>
                                 </b-row>
-                                <div style="display: flex; align-items: center; margin-bottom: 1rem;" v-if="itemBerita.length == 0">
+                                <!-- <div style="display: flex; align-items: center; margin-bottom: 1rem;" v-if="itemBerita.length == 0">
                                     <span style="margin-right: 1rem;">Kepada: </span>
                                     <b-form-select
                                     id="input-2"
@@ -161,7 +161,7 @@
                                 </div>
                                 <div style="display: flex; align-items: center; margin-bottom: 1rem;" v-if="itemBerita.length != 0">
                                     <span style="margin-right: 1rem;">Kepada: {{ statusPenerima }}</span>
-                                </div>
+                                </div> -->
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.length != 0" readonly></b-input>
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.length == 0"></b-input>
                                 <VueTrix v-model="isiPengumuman" v-if="itemBerita.length != 0" :disabled-editor="true" @hook:mounted="hapusTool"/>
@@ -442,9 +442,6 @@ export default {
         }
     },
     methods: {
-        previewFiles(event) {
-            console.log(event.target.files);
-        },
         kodeSemesterFilter() {
             if(this.tahunAngkatan != '' && this.tahunAngkatan.length == 4 ){
                 
@@ -525,7 +522,6 @@ export default {
             try {
                 await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-perwalian/${kodeSemester}`)
                 .then((response) => {
-                    console.log(response.data);
                     this.daftarPerwalian = response.data
                     this.jumlahPage = this.daftarPerwalian.length/10
                     this.loadingListMahasiswa = false
@@ -581,13 +577,7 @@ export default {
         async kirimTele(){
             try {
                 if(this.itemBerita.length != 0){
-                    if(this.statusPenerima == null){
-                        this.$toast.open({
-                            message: 'Pesan Gagal Disimpan, Status Penerima Tidak Boleh Kosong',
-                            type: 'warning',
-                            position: 'top'
-                        });
-                    } else if(this.judulPengumuman == ''){
+                    if(this.judulPengumuman == ''){
                         this.$toast.open({
                             message: 'Pesan Gagal Disimpan, Judul Berita Tidak Boleh Kosong',
                             type: 'warning',
@@ -606,7 +596,7 @@ export default {
                             position: 'top'
                         });
                     } else {
-                        if(this.statusPenerima != null && this.judulPengumuman != '' && this.isiPengumuman != '' && this.periode_akhir != null) {
+                        if(this.judulPengumuman != '' && this.isiPengumuman != '' && this.periode_akhir != null) {
                             await axios.put(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/update-pengumuman/${this.itemBerita.id}`, {
                                 periode_akhir: moment(this.periode_akhir).locale('id').toString()
                             })
@@ -640,13 +630,7 @@ export default {
                     }
                 } else {
                     try {
-                        if(this.statusPenerima == null || this.statusPenerima == ''){
-                            this.$toast.open({
-                                message: 'Pesan Gagal Disimpan, Status Penerima Tidak Boleh Kosong',
-                                type: 'warning',
-                                position: 'top'
-                            });
-                        } else if(this.judulPengumuman == ''){
+                        if(this.judulPengumuman == ''){
                             this.$toast.open({
                                 message: 'Pesan Gagal Disimpan, Judul Berita Tidak Boleh Kosong',
                                 type: 'warning',
@@ -665,7 +649,7 @@ export default {
                                 position: 'top'
                             });
                         } else{
-                            if(this.judulPengumuman != '' && this.statusPenerima != null && this.isiPengumuman != '') {
+                            if(this.judulPengumuman != '' && this.isiPengumuman != '') {
                                 await axios.post(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
                                     nama_dosen: this.profile.nama,
                                     email: this.profile.email,
@@ -678,7 +662,6 @@ export default {
                                     periode_akhir: moment(this.periode_akhir).locale('id').toString()
                                 })
                                 .then(()=>{
-                                    console.log(this.files);
                                     this.$toast.open({
                                         dismissible: true,
                                         duration:0,
@@ -688,7 +671,6 @@ export default {
                                     });
                                     this.isiPengumuman = ''
                                     this.judulPengumuman = ''
-                                    this.statusPenerima = null
                                     this.periode_akhir = null
                                     this.files = []
                                 })
@@ -827,7 +809,6 @@ export default {
             this.isRemovePengumuman = false
             this.judulPengumuman = ''
             this.isiPengumuman = ''
-            this.statusPenerima = null
             this.files = []
             this.periode_akhir = null
             this.itemBerita = []
