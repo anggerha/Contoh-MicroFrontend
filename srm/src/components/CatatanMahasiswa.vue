@@ -301,7 +301,6 @@ export default {
             try {
                 await axios.get(`https://userapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/view-mahasiswa/${this.dataPerwalian.nim}`)
                 .then((response) => {
-                    console.log(response);
                     this.detailMahasiswa = response.data
                     this.nilaiGrouped = response.data.nilai.groupBy((nilai) => {
                         return nilai.kode_semester
@@ -317,7 +316,6 @@ export default {
                 await axios.get(`https://userapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/view-mahasiswa/${this.dataPerwalian.nim}`)
                 .then((response) => {
                     this.detailMahasiswa = response.data
-                    console.log(this.detailMahasiswa);
                     this.nilaiGrouped = response.data.nilai.groupBy((nilai) => {
                         return nilai.kode_semester
                     })
@@ -329,7 +327,6 @@ export default {
         }, 
         async setStatusMahasiswa(){
             try{
-                console.log(this.detailMahasiswa.biodata.nama);
                 await axios.put(`https://userapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/update-mahasiswa/${this.dataPerwalian.nim}`,{
                     nama: this.detailMahasiswa.biodata.nama_lengkap,
                     nama_lengkap: this.detailMahasiswa.biodata.nama_lengkap,

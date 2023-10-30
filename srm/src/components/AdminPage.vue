@@ -134,7 +134,21 @@
                                     ></b-form-select>
                                 </div>
                                 <div style="display: flex; align-items: center; margin-bottom: 1rem;" v-if="itemBerita.length != 0">
-                                    <span style="margin-right: 1rem;">Kepada: {{ statusPenerima }}</span>
+                                    <span style="margin-right: 1rem;">Kepada: </span>
+                                    <b-input
+                                    v-if="itemBerita.status === 'PUBLISHED'"
+                                    id="input-2"
+                                    v-model="statusPenerima"
+                                    readonly
+                                    required
+                                    ></b-input>
+                                    <b-form-select
+                                    v-if="itemBerita.status !== 'PUBLISHED'"
+                                    id="input-2"
+                                    v-model="statusPenerima"
+                                    :options="daftarStatusMahasiswa"
+                                    required
+                                    ></b-form-select>
                                 </div>
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.status == 'PUBLISHED'" readonly></b-input>
                                 <b-input type="text" placeholder="Judul" style="margin-bottom:1rem;" v-model="judulPengumuman" v-if="itemBerita.status != 'PUBLISHED'"></b-input>
@@ -202,6 +216,8 @@
                                 <div class="centered">
                                     <section class="cards">
                                         <article class="card p-4 shadow p-2 mb-3 bg-white rounded" v-for="item in daftarBerita[statusBerita].slice(page*10-10,page*10 )" :key="item.id">
+                                            <h1 v-if="item.group === 'alumni'" class="badge badge-primary badge-status">Alumni</h1>
+                                            <h5 v-if="item.group === 'aktif'" class="badge badge-success badge-status">Mahasiswa Aktif</h5>
                                             <h3>{{ item.judul_berita }}</h3>
                                             <p v-html="item.isi_berita" style="text-align: justify;"></p>
                                             <div>
@@ -458,6 +474,7 @@ export default {
             if(item.judul_berita){
                 this.judulPengumuman = item.judul_berita
                 this.isiPengumuman = item.isi_berita
+                this.statusPenerima = item.group
             }else{
                 this.judulPengumuman = ''
                 this.isiPengumuman = item.isi_berita
@@ -510,7 +527,7 @@ export default {
                                 file: this.files,
                                 judul_berita: this.judulPengumuman,
                                 status:"DRAFT",
-                                statusPenerima: this.statusPenerima
+                                groups: this.statusPenerima
                             })
                             .then((response) => {
                                 if(response.status == 201){
@@ -573,7 +590,7 @@ export default {
                                 judul_berita: this.judulPengumuman,
                                 status:"DRAFT",
                                 tanggal: moment().locale('id').toString(),
-                                statusPenerima: this.statusPenerima
+                                groups: this.statusPenerima
                             })
                             .then(()=>{
                                 this.$toast.open({
@@ -620,12 +637,12 @@ export default {
                     } else {
                         if(this.judulPengumuman != '' && this.statusPenerima != null && this.isiPengumuman != ''){
                             await axios.put(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/edit-berita/${this.itemBerita.id}`, {
-                                //tanggal: moment().locale('id').toString(),
                                 nama: "Admin FTI",
                                 isi_berita: this.isiPengumuman,
                                 file: this.files,
                                 judul_berita: this.judulPengumuman,
                                 status:"PUBLISHED",
+                                groups: this.statusPenerima
                             })
                             .then((response) => {
                                 if(response.status == 201){
@@ -638,6 +655,7 @@ export default {
                                     });
                                     this.getAllBerita()
                                     this.judulPengumuman = ''
+                                    this.statusPenerima = null
                                     this.isiPengumuman = ''
                                     this.files = []
                                     this.isRemoveBerita = true
@@ -681,6 +699,7 @@ export default {
                                 file: this.files,
                                 judul_berita: this.judulPengumuman,
                                 status:"PUBLISHED",
+                                groups: this.statusPenerima
                             })
                             .then(()=>{
                                 this.$toast.open({
@@ -691,6 +710,9 @@ export default {
                                 this.getAllBerita()
                                 this.isiPengumuman = ''
                                 this.judulPengumuman = ''
+                                this.periode_akhir = null
+                                this.statusPenerima = null
+                                this.isRemoveBerita = true
                                 this.files = []
                             })
                         }
