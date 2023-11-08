@@ -218,6 +218,7 @@
                                         <article class="card p-4 shadow p-2 mb-3 bg-white rounded" v-for="item in daftarBerita[statusBerita].slice(page*10-10,page*10 )" :key="item.id">
                                             <h1 v-if="item.group === 'alumni'" class="badge badge-primary badge-status">Alumni</h1>
                                             <h5 v-if="item.group === 'aktif'" class="badge badge-success badge-status">Mahasiswa Aktif</h5>
+                                            <h5 v-if="item.group === 'all'" class="badge badge-secondary badge-status">Mahasiswa Aktif dan Alumni</h5>
                                             <h3>{{ item.judul_berita }}</h3>
                                             <p v-html="item.isi_berita" style="text-align: justify;"></p>
                                             <div>
@@ -365,7 +366,8 @@ export default {
         daftarStatusMahasiswa: [
             { text: 'Status Mahasiswa', value: 'null', disabled: true },
             { text: 'Aktif', value: 'aktif' },
-            { text: 'Alumni', value: 'alumni' }
+            { text: 'Alumni', value: 'alumni' },
+            { text: 'Aktif dan Alumni', value: 'all' }
         ],
         statusPenerima: null
       }

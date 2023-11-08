@@ -21,6 +21,7 @@
                 <article class="card p-4 shadow p-2 mb-3 bg-white rounded" v-for="item in searchBerita" :key="item._id">
                     <h1 v-if="item.group === 'alumni'" class="badge badge-primary badge-status">Alumni</h1>
                     <h5 v-if="item.group === 'aktif'" class="badge badge-success badge-status">Mahasiswa Aktif</h5>
+                    <h5 v-if="item.group === 'all'" class="badge badge-secondary badge-status">Umum</h5>
                     <h3 style="border-left: #32a3df 5px solid; padding-left: 1rem; font-size: 150%; font-weight: bold;">{{ item.judul_berita }}</h3>
                     
                     <p v-html="item.isi_berita" style="text-align: justify;"></p>
@@ -76,6 +77,7 @@ export default {
             firebaseUID: null,
             dataDiri: [],
             listBerita: [],
+            listBeritaTemp: [],
             loading:true,
             keyword: '',
             statusMahasiswa: ''
@@ -97,8 +99,14 @@ export default {
                     if (response.data.role === 'MAHASISWA') {
                         this.statusMahasiswa = response.data.status
                         await axios.get(`https://beritaapi.fti.ukdw.ac.id/news/${response.data.status}`).then((response)=>{
+                            this.listBeritaTemp = response.data
+                            this.listBeritaTemp = JSON.parse(JSON.stringify(this.listBeritaTemp))
+                            this.loading = false
+                        })
+                        await axios.get(`https://beritaapi.fti.ukdw.ac.id/news/all`).then((response)=>{
                             this.listBerita = response.data
-                            this.listBerita = JSON.parse(JSON.stringify(this.listBerita))
+                            this.listBerita = this.listBeritaTemp.concat(JSON.parse(JSON.stringify(this.listBerita)))
+                            this.listBerita.sort((a,b)=> a.updated_at > b.updated_at ? -1: 1)
                             this.loading = false
                         })
                     } else {
