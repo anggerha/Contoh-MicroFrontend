@@ -7,6 +7,8 @@
 <script>
 import ListBerita from './ListBerita.vue'
 import axios from 'axios'
+// import firebase from 'firebase/app'
+import 'firebase/auth'
 
 export default {
     name: 'ListMenu',
@@ -17,15 +19,29 @@ export default {
         }
     },
     created() {
-        if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
-            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+        if(localStorage.getItem('firebase-token') && localStorage.getItem('firebase-uid')){
+            this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
             this.check()
         } else {
-            this.$router.replace("/login").then(() => { this.$router.go() })
+            this.$router.replace("/login").then(() => { })
         }
     },
     methods: {
         async check() {
+            // firebase.auth().onAuthStateChanged((user) => {
+            // if (user) {
+            //     // User is signed in
+            //     localStorage.setItem('user', JSON.stringify(user))
+            //     // Assuming stsTokenManager.expirationTime is a timestamp in seconds
+            //     user = JSON.parse(JSON.stringify(user))
+            //     const expirationTimeInSeconds = user.stsTokenManager.expirationTime;
+            //     const expirationDate = new Date(expirationTimeInSeconds * 1000); // Convert to milliseconds
+            // } else {
+            //     localStorage.setItem('user', user)
+            //     // User is signed out
+            //     // ...
+            // }
+            // });
             await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
             .then((response) => {
                 if(response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){

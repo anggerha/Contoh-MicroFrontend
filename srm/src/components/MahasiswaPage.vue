@@ -232,8 +232,8 @@ export default {
         }
     },
     async created() {
-        if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
-            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+        if(localStorage.getItem('firebase-token') && localStorage.getItem('firebase-uid')){
+            this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
             await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`).then((response) => {
                 if(response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
                     this.$router.replace('/formPage')
@@ -247,7 +247,7 @@ export default {
                 }
             })
         } else {
-            this.$router.replace('/login').then(() => { this.$router.go() })
+            this.$router.replace('/login').then(() => {  })
         }
     },
     methods: {

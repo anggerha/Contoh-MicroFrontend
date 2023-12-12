@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     showNavBar(){
-      if(!sessionStorage.getItem('firebase-token') && !sessionStorage.getItem('firebase-uid')){
+      if(!localStorage.getItem('firebase-token') && !localStorage.getItem('firebase-uid')){
         this.show = false
       } else {
         this.show = true

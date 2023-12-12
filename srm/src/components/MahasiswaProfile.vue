@@ -76,9 +76,9 @@ export default {
     },
     created(){
         this.dataPerwalian = this.item
-        if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
-            //this.user = JSON.parse(sessionStorage.getItem('user'))
-            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+        if(localStorage.getItem('firebase-token') && localStorage.getItem('firebase-uid')){
+            //this.user = JSON.parse(localStorage.getItem('user'))
+            this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
         }
     },
     watch: {

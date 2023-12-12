@@ -20,100 +20,114 @@ export default {
       }
     },
     async created() {
-      if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
-        this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+      // firebase.auth().onAuthStateChanged((user)=>{
+      //   // console.log(user);
+      //   // user.getIdTokenResult().then((result) => {
+      //   //   console.log('Id Token Result ' + JSON.stringify(result));
+      //   // })
+      //   // user.getIdToken().then((result) => {
+      //   //   console.log('Id Token ' + result)
+      //   // })
+      //   // console.log('Refresh Token: ' + user.refreshToken);
+      // })
+      if(localStorage.getItem('firebase-token') && localStorage.getItem('firebase-uid')){  
+        this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
         await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
         .then((response) => {
-            if(response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
-              this.$router.replace('formpage')
-            } else {
-              this.$router.replace('/listmenu')
-            }
+          if(response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
+            this.$router.replace('formpage')
+          } else {
+            this.$router.replace('listmenu')
+          }
         })
       } else {
         this.$router.replace('login')
       }
     },
     methods: {
-        async signInSSO() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            firebase.auth().signInWithPopup(provider).then(
-                async (result) => {
-                    if(result.additionalUserInfo.profile.hd){
-                      if(result.additionalUserInfo.profile.hd == 'ti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'staff.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'fti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'si.ukdw.ac.id') {
-                        try {
-                          await axios.get(`https://userapi.fti.ukdw.ac.id/login/${result.user.uid}`, { params: {
-                            email: result.user.email.toString() 
-                          }})
-                          .then( async (response) => {
-                            if(response.status == 200){
-                              sessionStorage.setItem('firebase-token', result.credential.idToken)
-                              sessionStorage.setItem('firebase-uid', JSON.stringify({
-                                profilPicture: result.additionalUserInfo.profile.picture,
-                                uid: result.user.uid
-                              }))
-                              await axios.get(`https://userapi.fti.ukdw.ac.id/${result.user.uid}`)
-                              .then( async (response) => {
-                                if(response.status == 200) {
-                                  if(response.data.role == 'MAHASISWA'){
-                                    if(response.data.id_telegram !== null && response.data.id_telegram !== ''){
-                                      this.$router.replace("/listmenu").then(() => { this.$router.go() })
-                                    } else {
-                                      this.$router.replace("/formpage")
-                                    }
-                                  } else if (response.data.role == 'DOSEN') {
-                                    this.$router.replace("/listmenu").then(() => { this.$router.go() })
+      async signInSSO() {
+          const provider = new firebase.auth.GoogleAuthProvider();
+          firebase.auth().signInWithPopup(provider).then( // USER SIGN IN MASUK MENGGUNAKAN SSO
+              async (result) => { // DAPET FIREBASE TOKEN & UID USER
+                var stringified = JSON.parse(JSON.stringify(result))
+                localStorage.setItem('token', JSON.stringify(stringified.credential))
+                var temp = JSON.parse(localStorage.getItem('token'))
+                console.log(temp.oauthAccessToken);
+                  if(result.additionalUserInfo.profile.hd){ // CEK APAKAH MENGGUNAKAN DOMAIN YANG DIIZINKAN (TI.UKDW.AC.ID || SI.UKDW.AC.ID || STAFF.UKDW.AC.ID)
+                    if(result.additionalUserInfo.profile.hd == 'ti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'staff.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'fti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'si.ukdw.ac.id') {
+                      try {
+                        await axios.get(`https://userapi.fti.ukdw.ac.id/login/${result.user.uid}`, { params: { // SET UID USER BARU DI DATABASE, SEKALIGUS CEK EMAIL USER ADA DI DB ATAU TIDAK
+                          email: result.user.email.toString() 
+                        }})
+                        .then( async (response) => {
+                          if(response.status == 200){ // JIKA USER ADA SIMPAN DATA TOKEN DAN UID USER DI SESSION STORAGE
+                            localStorage.setItem('firebase-token', result.credential.idToken)
+                            localStorage.setItem('firebase-uid', JSON.stringify({
+                              profilPicture: result.additionalUserInfo.profile.picture,
+                              uid: result.user.uid
+                            }))
+                            await axios.get(`https://userapi.fti.ukdw.ac.id/${result.user.uid}`) // AMBIL USER (EMAIL, ROLE, NAMA, NIK || NIM, DLL)
+                            .then( async (response) => {
+                              if(response.status == 200) {
+                                if(response.data.role == 'MAHASISWA'){ // JIKA MAHASISWA
+                                  if(response.data.id_telegram !== null && response.data.id_telegram !== ''){ // JIKA SUDAH PUNYA ID TELEGRAM
+                                    this.$router.replace("/listmenu").then(() => {  })
+                                  } else { //JIKA BELUM PUNYA ID TELEGRAM
+                                    this.$router.replace("/formpage")
                                   }
-                                } else if(response.status == 404) {
-                                  this.$toast.open({
-                                      message: 'Login gagal!',
-                                      type: 'warning',
-                                      position: 'top'
-                                  })
+                                } else if (response.data.role == 'DOSEN') { // JIKA DOSEN
+                                  this.$router.replace("/listmenu").then(() => {  })
                                 }
-                              })
-                            } else if(response.status == 404) {
-                              this.$toast.open({
-                                  message: 'Login gagal!',
-                                  type: 'warning',
-                                  position: 'top'
-                              })
-                            }
-                          })
-                        } catch (error) {
-                          if (error.response.status == 404) {
+                              } else if(response.status == 404) {
+                                this.$toast.open({
+                                    message: 'Login gagal!',
+                                    type: 'warning',
+                                    position: 'top'
+                                })
+                              }
+                            })
+                          } else if(response.status == 404) { // JIKA USER TIDAK ADA DI DATABASE MUNCUL ALERT
                             this.$toast.open({
-                                message: 'Email Belum Terdaftar, Hubungi Admin!',
+                                message: 'Login gagal!',
                                 type: 'warning',
                                 position: 'top'
                             })
                           }
-                        }
-                      } 
-                      else {
-                        sessionStorage.clear()
-                        this.$toast.open({
-                              message: 'Harap Login Menggunakan Email TI atau Staff UKDW Anda.',
+                        })
+                      } catch (error) {
+                        if (error.response.status == 404) {
+                          this.$toast.open({
+                              message: 'Email Belum Terdaftar, Hubungi Admin!',
                               type: 'warning',
                               position: 'top'
                           })
+                        }
                       }
-                    } else {
-                      sessionStorage.clear()
+                    } 
+                    else {
+                      localStorage.clear()
                       this.$toast.open({
-                          message: 'Harap Login Menggunakan Email TI atau Staff Anda.',
-                          type: 'warning',
-                          position: 'top'
-                      })
+                            message: 'Harap Login Menggunakan Email TI atau Staff UKDW Anda.',
+                            type: 'warning',
+                            position: 'top'
+                        })
                     }
-                }
-            )
-            .catch((error) => {
-              sessionStorage.clear()
-              console.log(error.message);
-            })
-        }
-    }
+                  } else {
+                    localStorage.clear()
+                    this.$toast.open({
+                        message: 'Harap Login Menggunakan Email TI atau Staff Anda.',
+                        type: 'warning',
+                        position: 'top'
+                    })
+                  }
+              }
+          )
+          .catch((error) => {
+            localStorage.clear()
+            console.log(error.message);
+          })
+      }
+  }
 }
 </script>
 

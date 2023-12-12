@@ -16,6 +16,9 @@
                         <router-link class="nav-flex" :to="route">
                             <img style="width: 3rem;" src="../assets/fti-ukdw.png" class="d-inline-block align-top" alt="FTI UKDW">&nbsp;SRM
                         </router-link>
+                        <a :href="liber" class="nav-flex" target="_blank">
+                            <img style="width: 3rem;" src="../assets/libre_logo.jpg" class="d-inline-block align-top" alt="LIBRE">&nbsp;LIBRE
+                        </a>
                     </div>
                     <div style="display:flex;">
                         <span style="font-size:30px;cursor:pointer" @click="openNav"> &#9776;</span>
@@ -37,6 +40,7 @@
 <script>
 import firebase from 'firebase'
 import axios from 'axios'
+import { getAuth, signInWithCustomToken } from "firebase/auth";
 
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
@@ -44,35 +48,48 @@ export default {
     data() {
         return {
             profilPicture: null,
-            route: ''
+            route: '',
+            liber: ''
         }
     },
     created() {
-        this.profilPicture = JSON.parse(sessionStorage.getItem('firebase-uid'))
+        this.profilPicture = JSON.parse(localStorage.getItem('firebase-uid'))
         this.checkRole()
     },
     methods: {
         async checkRole() {
             try {
-                if(!sessionStorage.getItem('firebase-token') && !sessionStorage.getItem('firebase-uid')){
-                this.$router.replace('/login').then(() => { this.$router.go() })
+                if(!localStorage.getItem('firebase-token') && !localStorage.getItem('firebase-uid')){
+                    this.$router.replace('/login').then(() => {  })
                 } else {
-                this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
-                await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
-                .then( async (response) => {
-                    if(response.status == 200){
-                    var listAdmin = await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}/accessPass`)
-                    if(listAdmin.data.access == "granted"){
-                        this.route = '/srm/AdminPage'
-                    } else if (listAdmin.data.access == "denied") {
-                        if(response.data.role == 'DOSEN') {
-                            this.route = '/srm/DosenPage'
-                        } else {
-                            this.route = '/srm/MahasiswaPage'
+                    const auth = getAuth();
+                    signInWithCustomToken(auth, token)
+                    .then((userCredential) => {
+                        // Signed in
+                        const user = userCredential.user;
+                        // ...
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        // ...
+                    });
+                    this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
+                    await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
+                    .then( async (response) => {
+                        if(response.status == 200){
+                        var listAdmin = await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}/accessPass`)
+                        if(listAdmin.data.access == "granted"){
+                            this.route = '/srm/AdminPage'
+                        } else if (listAdmin.data.access == "denied") {
+                            if(response.data.role == 'DOSEN') {
+                                this.route = '/srm/DosenPage'
+                            } else {
+                                this.route = '/srm/MahasiswaPage'
+                            }
                         }
-                    }
-                    }
-                })
+                        }
+                    })
                 }
             } catch (error) {
                 console.log(error.message);
@@ -81,8 +98,8 @@ export default {
         signOut() {
             firebase.auth().signOut()
                 .then(() => {
-                    sessionStorage.clear()
-                    this.$router.replace("/login").then(() => { this.$router.go() })
+                    localStorage.clear()
+                    this.$router.replace("/login").then(() => {  })
                 }).catch((err) => {
                     console.log(err);
             });
@@ -99,6 +116,9 @@ export default {
         closeNav() {
             document.getElementById("mySidenav").style.width = "0";
         },
+        linkLibre() {
+            this.liber = `https://liber.fti.ukdw.ac.id/?token=ya29.a0AfB_byApmGM1deDCCthhFzVPThlXNIk-kfht9rzk70N0phV3P7pBdx3d-eT6PdjQTpwo-hGf9kyJDpWtCQFzVfpIGeV_yxqAq17nsPX0-NituZfZeGjjp_gp8E01WRANjB37UEdyfREMYa2pJWVk0sJk2CdKQOLHW8s8aCgYKAekSARESFQHGX2Mi-CIwFxv4n1scbAXGVJFoZg0171&type=student&name=LUKAS KURNIAWAN&nim=71190413`
+        }
         // goToSrm(){
         //     this.$router.replace('/srm')
         // }

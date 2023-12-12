@@ -373,10 +373,10 @@ export default {
       }
     },
     created(){
-        if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
-            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+        if(localStorage.getItem('firebase-token') && localStorage.getItem('firebase-uid')){
+            this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
         } else {
-            this.$router.replace('/login').then(() => { this.$router.go() })
+            this.$router.replace('/login').then(() => {  })
         }
     },
     computed:{
