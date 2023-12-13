@@ -61,8 +61,8 @@ export default {
         }
     },
     created() {
-        if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
-            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+        if(localStorage.getItem('firebase-token') && localStorage.getItem('firebase-uid')){
+            this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
             this.check()
         } else {
             this.$router.replace('/login').then(() => { this.$router.go() })
@@ -80,7 +80,7 @@ export default {
             })
         },
         async getMahasiswa() {
-            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+            this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
             await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
             .then( async (response) => {
                 if(response.status == 200){
@@ -103,7 +103,7 @@ export default {
                         });
                         await axios.get('https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}', { params: {email: this.user.email.toString(), role: this.dataDiri.role.toString() }})
                         .then((response) => {
-                            sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
+                            localStorage.setItem('dataDiri', JSON.stringify(response.data))
                             //this.$router.replace("/listmenu").then(() => {})
                         })
                     })
@@ -118,7 +118,7 @@ export default {
                 //         });
                 //         await axios.get('https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}', { params: { nama : this.user.displayName.toString().toUpperCase(), email: this.user.email.toString() }})
                 //         .then((response) => {
-                //             sessionStorage.setItem('dataDiri', JSON.stringify(response.data))
+                //             localStorage.setItem('dataDiri', JSON.stringify(response.data))
                 //             this.$router.replace("/listmenu").then(() => {})
                 //         })
                 //     })

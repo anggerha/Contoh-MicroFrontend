@@ -20,8 +20,8 @@ export default {
       }
     },
     async created() {
-      if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
-        this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+      if(localStorage.getItem('firebase-token') && localStorage.getItem('firebase-uid')){
+        this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
         await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
         .then((response) => {
             if(response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
@@ -47,8 +47,8 @@ export default {
                           }})
                           .then( async (response) => {
                             if(response.status == 200){
-                              sessionStorage.setItem('firebase-token', result.credential.idToken)
-                              sessionStorage.setItem('firebase-uid', JSON.stringify({
+                              localStorage.setItem('firebase-token', result.credential.idToken)
+                              localStorage.setItem('firebase-uid', JSON.stringify({
                                 profilPicture: result.additionalUserInfo.profile.picture,
                                 uid: result.user.uid
                               }))
@@ -91,7 +91,7 @@ export default {
                         }
                       } 
                       else {
-                        sessionStorage.clear()
+                        localStorage.clear()
                         this.$toast.open({
                               message: 'Harap Login Menggunakan Email TI atau Staff UKDW Anda.',
                               type: 'warning',
@@ -99,7 +99,7 @@ export default {
                           })
                       }
                     } else {
-                      sessionStorage.clear()
+                      localStorage.clear()
                       this.$toast.open({
                           message: 'Harap Login Menggunakan Email TI atau Staff Anda.',
                           type: 'warning',
@@ -109,7 +109,7 @@ export default {
                 }
             )
             .catch((error) => {
-              sessionStorage.clear()
+              localStorage.clear()
               console.log(error.message);
             })
         }

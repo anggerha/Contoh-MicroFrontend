@@ -254,8 +254,8 @@ export default {
     },
     created(){
         this.dataPerwalian = this.itemMahasiswa[0]
-        if(sessionStorage.getItem('firebase-token') && sessionStorage.getItem('firebase-uid')){
-            this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+        if(localStorage.getItem('firebase-token') && localStorage.getItem('firebase-uid')){
+            this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
         }
     },
     watch: {

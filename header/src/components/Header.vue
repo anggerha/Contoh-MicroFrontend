@@ -48,16 +48,16 @@ export default {
         }
     },
     created() {
-        this.profilPicture = JSON.parse(sessionStorage.getItem('firebase-uid'))
+        this.profilPicture = JSON.parse(localStorage.getItem('firebase-uid'))
         this.checkRole()
     },
     methods: {
         async checkRole() {
             try {
-                if(!sessionStorage.getItem('firebase-token') && !sessionStorage.getItem('firebase-uid')){
+                if(!localStorage.getItem('firebase-token') && !localStorage.getItem('firebase-uid')){
                 this.$router.replace('/login').then(() => { this.$router.go() })
                 } else {
-                this.firebaseUID = JSON.parse(sessionStorage.getItem('firebase-uid'))
+                this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
                 await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
                 .then( async (response) => {
                     if(response.status == 200){
@@ -81,7 +81,7 @@ export default {
         signOut() {
             firebase.auth().signOut()
                 .then(() => {
-                    sessionStorage.clear()
+                    localStorage.clear()
                     this.$router.replace("/login").then(() => { this.$router.go() })
                 }).catch((err) => {
                     console.log(err);
