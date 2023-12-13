@@ -28,7 +28,7 @@
             <div id="judulHeader" style="font-size: calc(200% + 1vw); text-align: center; width: 100%;">INFORMATIKA</div>
             <b-dropdown class="ml-auto" variant="link" toggle-class="text-decoration-none" no-caret>
                 <template #button-content>
-                    <b-avatar class="avatar" :src="profilPicture.profilPicture" size="4rem"></b-avatar>
+                    <b-avatar class="avatar" :src="profilPicture" size="4rem"></b-avatar>
                 </template>
                 <b-dropdown-item @click="goProfile">Profile</b-dropdown-item>
                 <b-dropdown-item @click="signOut">Sign Out</b-dropdown-item>
@@ -40,7 +40,6 @@
 <script>
 import firebase from 'firebase'
 import axios from 'axios'
-import { getAuth, signInWithCustomToken } from "firebase/auth";
 
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
@@ -53,44 +52,33 @@ export default {
         }
     },
     created() {
-        this.profilPicture = JSON.parse(localStorage.getItem('firebase-uid'))
         this.checkRole()
     },
     methods: {
         async checkRole() {
             try {
-                if(!localStorage.getItem('firebase-token') && !localStorage.getItem('firebase-uid')){
-                    this.$router.replace('/login').then(() => {  })
-                } else {
-                    const auth = getAuth();
-                    signInWithCustomToken(auth, token)
-                    .then((userCredential) => {
-                        // Signed in
-                        const user = userCredential.user;
-                        // ...
-                    })
-                    .catch((error) => {
-                        const errorCode = error.code;
-                        const errorMessage = error.message;
-                        // ...
-                    });
-                    this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
-                    await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
-                    .then( async (response) => {
-                        if(response.status == 200){
-                        var listAdmin = await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}/accessPass`)
-                        if(listAdmin.data.access == "granted"){
-                            this.route = '/srm/AdminPage'
-                        } else if (listAdmin.data.access == "denied") {
-                            if(response.data.role == 'DOSEN') {
-                                this.route = '/srm/DosenPage'
-                            } else {
-                                this.route = '/srm/MahasiswaPage'
+                firebase.auth().onAuthStateChanged(async(user)=>{
+                    if (user) {
+                        this.profilPicture = user.photoURL
+                        await axios.get(`https://userapi.fti.ukdw.ac.id/${user.uid}`)
+                        .then( async (response) => {
+                            if(response.status == 200){
+                                var listAdmin = await axios.get(`https://userapi.fti.ukdw.ac.id/${user.uid}/accessPass`)
+                                if(listAdmin.data.access == "granted"){
+                                    this.route = '/srm/AdminPage'
+                                } else if (listAdmin.data.access == "denied") {
+                                    if(response.data.role == 'DOSEN') {
+                                        this.route = '/srm/DosenPage'
+                                    } else {
+                                        this.route = '/srm/MahasiswaPage'
+                                    }
+                                }
                             }
-                        }
-                        }
-                    })
-                }
+                        })
+                    } else {
+                        this.$router.replace('/login')
+                    }
+                })
             } catch (error) {
                 console.log(error.message);
             }
@@ -99,7 +87,6 @@ export default {
             firebase.auth().signOut()
                 .then(() => {
                     localStorage.clear()
-                    this.$router.replace("/login").then(() => {  })
                 }).catch((err) => {
                     console.log(err);
             });

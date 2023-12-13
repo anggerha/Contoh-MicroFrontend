@@ -20,16 +20,6 @@ export default {
       }
     },
     async created() {
-      // firebase.auth().onAuthStateChanged((user)=>{
-      //   // console.log(user);
-      //   // user.getIdTokenResult().then((result) => {
-      //   //   console.log('Id Token Result ' + JSON.stringify(result));
-      //   // })
-      //   // user.getIdToken().then((result) => {
-      //   //   console.log('Id Token ' + result)
-      //   // })
-      //   // console.log('Refresh Token: ' + user.refreshToken);
-      // })
       if(localStorage.getItem('firebase-token') && localStorage.getItem('firebase-uid')){  
         this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
         await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`)
@@ -51,8 +41,7 @@ export default {
               async (result) => { // DAPET FIREBASE TOKEN & UID USER
                 var stringified = JSON.parse(JSON.stringify(result))
                 localStorage.setItem('token', JSON.stringify(stringified.credential))
-                var temp = JSON.parse(localStorage.getItem('token'))
-                console.log(temp.oauthAccessToken);
+                // var temp = JSON.parse(localStorage.getItem('token'))
                   if(result.additionalUserInfo.profile.hd){ // CEK APAKAH MENGGUNAKAN DOMAIN YANG DIIZINKAN (TI.UKDW.AC.ID || SI.UKDW.AC.ID || STAFF.UKDW.AC.ID)
                     if(result.additionalUserInfo.profile.hd == 'ti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'staff.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'fti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'si.ukdw.ac.id') {
                       try {

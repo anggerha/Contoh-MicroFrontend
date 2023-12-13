@@ -211,6 +211,8 @@
 <script>
 import axios from 'axios'
 import moment from 'moment'
+import firebase from 'firebase/app'
+import 'firebase/auth'
 
 export default {
     name: 'MahasiswaPage',
@@ -232,23 +234,22 @@ export default {
         }
     },
     async created() {
-        if(localStorage.getItem('firebase-token') && localStorage.getItem('firebase-uid')){
-            this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
-            await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID.uid}`).then((response) => {
-                if(response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
-                    this.$router.replace('/formPage')
-                } else {
-                    this.dataDiri = response.data
-                    this.getLastKodeSemester()
-                    this.getPengumuman()
-                    this.getPengumumanPerwalian()
-                    this.getDateNow()
-                    
-                }
-            })
-        } else {
-            this.$router.replace('/login').then(() => {  })
-        }
+        this.getLastKodeSemester()
+        firebase.auth().onAuthStateChanged((user) => {
+            this.firebaseUID = user.uid
+        })
+        await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID}`).then((response) => {
+            if(response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
+                this.$router.replace('/formPage')
+            } else {
+                this.dataDiri = response.data
+                this.getLastKodeSemester()
+                this.getPengumuman()
+                this.getPengumumanPerwalian()
+                this.getDateNow()
+                
+            }
+        })
     },
     methods: {
         alertPengumumanPerwalian(){
@@ -265,14 +266,14 @@ export default {
             this.tanggalNow = moment().locale('id').format('ll')
         },
         async getLastKodeSemester() {
-            await axios.get(`https://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID.uid}/perwalian`).then((response) => {
+            await axios.get(`https://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID}/perwalian`).then((response) => {
                 var kodeSemester = response.data[0].kode_semester
                 this.getDataPerwalian(kodeSemester)
             })
         },
         async getDataPerwalian(kodeSemester){
             try {
-                await axios.get(`https://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID.uid}/perwalian/${kodeSemester}`,  {params:{
+                await axios.get(`https://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID}/perwalian/${kodeSemester}`,  {params:{
                     role:'MAHASISWA',
                     email: this.dataDiri.email,
                     nim: this.dataDiri.nim,
@@ -287,7 +288,7 @@ export default {
         },
         async getPengumuman() {
             try {
-                await axios.get(`https://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID.uid}/list-pengumuman`)
+                await axios.get(`https://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID}/list-pengumuman`)
                 .then((response) => {
                     this.pengumuman = response.data
                     for(let i = 0; i < this.pengumuman.valid.length; i++){
@@ -309,7 +310,7 @@ export default {
         },
         async getPengumumanPerwalian() {
             try {
-                await axios.get(`https://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID.uid}/log-perwalian`)
+                await axios.get(`https://waliapi.fti.ukdw.ac.id/mahasiswa/${this.firebaseUID}/log-perwalian`)
                 .then((response) => {
                     this.pengumumanPerwalian = response.data.reverse()
                     this.pengumumanPerwalianGrouped = this.pengumumanPerwalian.groupBy((log)=>{

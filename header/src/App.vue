@@ -8,6 +8,8 @@
 
 <script>
 import Header from '../src/components/Header.vue'
+import firebase from 'firebase/app'
+import 'firebase/auth'
 
 export default {
   name: 'App',
@@ -18,8 +20,12 @@ export default {
     }
   },
   created() {
-    setInterval(() => {
-      this.showNavBar()
+    firebase.auth().onAuthStateChanged((user)=>{
+      if (user) {
+        this.show = true
+      } else {
+        this.show = false
+      }
     })
   },
   methods: {

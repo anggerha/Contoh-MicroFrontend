@@ -336,6 +336,7 @@
 import axios from 'axios'
 import firebase from 'firebase/app'
 import 'firebase/storage'
+import 'firebase/auth'
 import MahasiswaProfile from './MahasiswaProfile.vue'
 import VueTrix from 'vue-trix'
 import CatatanMahasiswa from './CatatanMahasiswa.vue'
@@ -402,12 +403,12 @@ export default {
     //     }
     // },
     created(){
-        if(localStorage.getItem('firebase-token') && localStorage.getItem('firebase-uid')){
-            this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
-            this.getLastKodeSemester()
-        } else {
-            this.$router.replace('/login').then(() => {  })
-        }
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                this.firebaseUID = user.uid
+                this.getLastKodeSemester()
+            }
+        })
     },
     computed:{
         searchMahasiswa(){
@@ -506,7 +507,7 @@ export default {
      
         },
         async getLastKodeSemester() {
-            await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-mahasiswa/`).then((response) => {
+            await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID}/list-mahasiswa/`).then((response) => {
                 if(response.data.length != 0){
                     var temp = response.data.reverse()
                     this.tahunAngkatan = temp[0].kode_semester.slice(0, 4)
@@ -520,7 +521,7 @@ export default {
         },
         async getMahasiswaPerwalian(kodeSemester) {
             try {
-                await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-perwalian/${kodeSemester}`)
+                await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID}/list-perwalian/${kodeSemester}`)
                 .then((response) => {
                     this.daftarPerwalian = response.data
                     this.jumlahPage = this.daftarPerwalian.length/10
@@ -597,7 +598,7 @@ export default {
                         });
                     } else {
                         if(this.judulPengumuman != '' && this.isiPengumuman != '' && this.periode_akhir != null) {
-                            await axios.put(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/update-pengumuman/${this.itemBerita.id}`, {
+                            await axios.put(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID}/update-pengumuman/${this.itemBerita.id}`, {
                                 periode_akhir: moment(this.periode_akhir).locale('id').toString()
                             })
                             .then((response) => {
@@ -650,7 +651,7 @@ export default {
                             });
                         } else{
                             if(this.judulPengumuman != '' && this.isiPengumuman != '') {
-                                await axios.post(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/new-pengumuman`, {
+                                await axios.post(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID}/new-pengumuman`, {
                                     nama_dosen: this.profile.nama,
                                     email: this.profile.email,
                                     role: this.profile.role,
@@ -695,7 +696,7 @@ export default {
             this.page = 1
             this.jumlahPage = null
             try {
-                    await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID.uid}/list-pengumuman`).then((response)=>{
+                    await axios.get(`https://waliapi.fti.ukdw.ac.id/dosen/${this.firebaseUID}/list-pengumuman`).then((response)=>{
                     this.listPengumuman = response.data.reverse()
                     for(let i=0;i< this.listPengumuman.length;i++){
                     this.listPengumuman[i].tanggal = moment(this.listPengumuman[i].tanggal).locale('id')

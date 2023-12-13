@@ -324,6 +324,7 @@
 import axios from 'axios'
 import firebase from 'firebase/app'
 import 'firebase/storage'
+import 'firebase/auth'
 import VueTrix from 'vue-trix'
 import CatatanMahasiswa from './CatatanMahasiswa.vue'
 import moment from 'moment'
@@ -373,11 +374,17 @@ export default {
       }
     },
     created(){
-        if(localStorage.getItem('firebase-token') && localStorage.getItem('firebase-uid')){
-            this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
-        } else {
-            this.$router.replace('/login').then(() => {  })
-        }
+        // if(localStorage.getItem('firebase-token') && localStorage.getItem('firebase-uid')){
+        //     this.firebaseUID = JSON.parse(localStorage.getItem('firebase-uid'))
+        // } else {
+        //     this.$router.replace('/login').then(() => {  })
+        // }
+        
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                this.firebaseUID = user.uid
+            }
+        })
     },
     computed:{
         searchMahasiswa(){
@@ -450,7 +457,7 @@ export default {
             this.page = 1
             this.daftarPerwalian = []
             try {
-                await axios.get(`https://userapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/list-mahasiswa`)
+                await axios.get(`https://userapi.fti.ukdw.ac.id/admin/${this.firebaseUID}/list-mahasiswa`)
                 .then((response) => {
                     this.daftarPerwalian = response.data
                     this.jumlahPage = this.daftarPerwalian.length/10
@@ -522,7 +529,7 @@ export default {
                         });
                     } else {
                         if(this.judulPengumuman != '' && this.statusPenerima != null && this.isiPengumuman != '') {
-                            await axios.put(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/edit-berita/${this.itemBerita.id}`, {
+                            await axios.put(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID}/edit-berita/${this.itemBerita.id}`, {
                                 //tanggal: moment().locale('id').toString(),
                                 nama: "Admin FTI",
                                 isi_berita: this.isiPengumuman,
@@ -585,7 +592,7 @@ export default {
                         });
                     } else {
                         if(this.judulPengumuman != '' && this.statusPenerima != null && this.isiPengumuman != '') {
-                            await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-berita`, {
+                            await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID}/new-berita`, {
                                 nama: "ADMIN FTI",
                                 isi_berita: this.isiPengumuman,
                                 file: this.files,
@@ -638,7 +645,7 @@ export default {
                         });
                     } else {
                         if(this.judulPengumuman != '' && this.statusPenerima != null && this.isiPengumuman != ''){
-                            await axios.put(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/edit-berita/${this.itemBerita.id}`, {
+                            await axios.put(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID}/edit-berita/${this.itemBerita.id}`, {
                                 nama: "Admin FTI",
                                 isi_berita: this.isiPengumuman,
                                 file: this.files,
@@ -695,7 +702,7 @@ export default {
                         });
                     } else {
                         if(this.judulPengumuman != '' && this.statusPenerima != null && this.isiPengumuman != '') {
-                            await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/new-berita`, {
+                            await axios.post(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID}/new-berita`, {
                                 nama: "Admin FTI",
                                 isi_berita: this.isiPengumuman,
                                 file: this.files,
@@ -729,7 +736,7 @@ export default {
                 this.page = 1
                 this.jumlahPage = null
                 if(this.statusBerita != null){
-                    await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/berita/${this.statusBerita}`)
+                    await axios.get(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID}/berita/${this.statusBerita}`)
                     .then((response)=>{
                         this.daftarBerita = response.data
                         if(this.daftarBerita.length != 0){
@@ -794,7 +801,7 @@ export default {
                     this.$bvModal.hide()
                 }else{
                     try {
-                        await axios.delete(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID.uid}/delete-berita/${item.id}`)
+                        await axios.delete(`https://beritaapi.fti.ukdw.ac.id/admin/${this.firebaseUID}/delete-berita/${item.id}`)
                         .then(()=>{
                             this.$toast.open({
                                 message: 'Berita Berhasil Dihapus',
