@@ -4,7 +4,10 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
-  
+  //  {
+  //   path: '/listmenu',
+  //   name: 'Login'
+  //  }
 ]
 
 const router = new VueRouter({

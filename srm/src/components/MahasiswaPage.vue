@@ -234,11 +234,11 @@ export default {
         }
     },
     async created() {
-        this.getLastKodeSemester()
-        firebase.auth().onAuthStateChanged((user) => {
+        
+        firebase.auth().onAuthStateChanged( async (user) => {
             this.firebaseUID = user.uid
-        })
-        await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID}`).then((response) => {
+            await axios.get(`https://userapi.fti.ukdw.ac.id/${this.firebaseUID}`).then((response) => {
+           
             if(response.data.id_telegram == '' && response.data.role == 'MAHASISWA'){
                 this.$router.replace('/formPage')
             } else {
@@ -250,6 +250,8 @@ export default {
                 
             }
         })
+        })
+       
     },
     methods: {
         alertPengumumanPerwalian(){

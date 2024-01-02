@@ -24,6 +24,11 @@ const routes = [
     name: 'MahasiswaPage',
     component: () => import('../components/MahasiswaPage.vue'),
   },
+  {
+    path: '/listmenu',
+    name: 'ListMenu',
+   
+  },
 ]
 
 const router = new VueRouter({
