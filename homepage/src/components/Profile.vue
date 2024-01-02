@@ -89,7 +89,7 @@ export default {
             })
         },
         kembali() {
-            this.$router.replace('/ListMenu').then(() => {})
+            this.$router.replace('/listMenu').then(() => {})
         },
         async updateData() {
             if(this.dataDiri.id_telegram !== null && this.dataDiri.id_telegram !== ''){

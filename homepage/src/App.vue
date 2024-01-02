@@ -11,7 +11,7 @@ export default {
   created() {
     firebase.auth().onAuthStateChanged((user)=>{
       if (user) {
-        this.$router.replace('/listmenu')
+        this.$router.replace(this.$route.path)
       } else {
         this.$router.replace('/login')
       }

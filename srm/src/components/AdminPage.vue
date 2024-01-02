@@ -383,7 +383,7 @@ export default {
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 this.firebaseUID = user.uid
-            }
+            } 
         })
     },
     computed:{

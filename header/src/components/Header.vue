@@ -48,7 +48,9 @@ export default {
         return {
             profilPicture: null,
             route: '',
-            liber: ''
+            liber: '',
+            to: '',
+            from: ''
         }
     },
     created() {

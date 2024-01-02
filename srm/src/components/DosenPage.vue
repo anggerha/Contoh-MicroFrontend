@@ -424,7 +424,6 @@ export default {
             } else {
                 return this.daftarPerwalian
             }
-            
         }
     },
     watch:{

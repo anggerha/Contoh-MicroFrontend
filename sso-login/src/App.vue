@@ -8,24 +8,12 @@ import 'firebase/auth'
 
 export default {
   name: 'App',
-  data(){
-    return {
-      user: null
-    }
-  },
-  watch: {
-    checkUser: function() {
-      console.log('SSO');
-      firebase.auth().onAuthStateChanged((user)=>{
-        this.user = user
-        console.log('SSO = '+ this.user);
-        if (this.user != null) {
+  created() {
+    firebase.auth().onAuthStateChanged((user)=>{
+        if (user) {
           this.$router.replace('/listmenu')
-        } else {
-          this.$router.replace('/login')
         }
       })
-    }
   }
 }
 </script>

@@ -11,6 +11,7 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import axios from "axios"
+import cookies from "js-cookie"
 
 export default {
     name: 'LoginPage',
@@ -41,7 +42,7 @@ export default {
               async (result) => { // DAPET FIREBASE TOKEN & UID USER
                 var stringified = JSON.parse(JSON.stringify(result))
                 localStorage.setItem('token', JSON.stringify(stringified.credential))
-                // var temp = JSON.parse(localStorage.getItem('token'))
+                var temp = JSON.parse(localStorage.getItem('token'))
                   if(result.additionalUserInfo.profile.hd){ // CEK APAKAH MENGGUNAKAN DOMAIN YANG DIIZINKAN (TI.UKDW.AC.ID || SI.UKDW.AC.ID || STAFF.UKDW.AC.ID)
                     if(result.additionalUserInfo.profile.hd == 'ti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'staff.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'fti.ukdw.ac.id' || result.additionalUserInfo.profile.hd == 'si.ukdw.ac.id') {
                       try {
@@ -55,6 +56,9 @@ export default {
                               profilPicture: result.additionalUserInfo.profile.picture,
                               uid: result.user.uid
                             }))
+                            cookies.set('user-uid', result.user.uid)
+                            cookies.set('auth-token', temp.oauthAccessToken)
+                            cookies.set('user-email', result.user.email)
                             await axios.get(`https://userapi.fti.ukdw.ac.id/${result.user.uid}`) // AMBIL USER (EMAIL, ROLE, NAMA, NIK || NIM, DLL)
                             .then( async (response) => {
                               if(response.status == 200) {
@@ -84,10 +88,16 @@ export default {
                           }
                         })
                       } catch (error) {
-                        if (error.response.status == 404) {
+                        if (error?.response?.status == 404) {
                           this.$toast.open({
                               message: 'Email Belum Terdaftar, Hubungi Admin!',
                               type: 'warning',
+                              position: 'top'
+                          })
+                        } else {
+                          this.$toast.open({
+                              message: 'Login Gagal!',
+                              type: 'error',
                               position: 'top'
                           })
                         }
@@ -113,7 +123,7 @@ export default {
           )
           .catch((error) => {
             localStorage.clear()
-            console.log(error.message);
+            console.log(error);
           })
       }
   }
